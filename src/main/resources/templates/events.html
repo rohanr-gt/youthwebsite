@@ -650,9 +650,10 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix</div>
-        <div class="nav-links">
+    <nav class="dashboard-navbar">
+        <a class="dashboard-logo" href="/home">Zentrix</a>
+        <div class="dashboard-spacer"></div>
+        <div class="dashboard-nav-links">
             <a th:href="${isAdmin} ? '/admin' : '/dashboard'"><i class="fas fa-home"></i></a>
             <a th:if="${!isAdmin}" href="/messages" style="position: relative;">
                 <i class="fas fa-comment-dots"></i>

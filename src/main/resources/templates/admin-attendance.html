@@ -16,9 +16,17 @@
             padding: 0;
         }
 
+        :root {
+            --bg-gradient: linear-gradient(180deg, #050508 0%, #0a0a0f 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
         body {
-            background: #0a0a0f;
-            color: #fff;
+            background: #050508 !important;
+            color: #ffffff !important;
             min-height: 100vh;
         }
 
@@ -579,15 +587,7 @@
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix <span>Admin · Attendance</span></div>
-        <div class="nav-links">
-            <a href="/events/admin/manage"><i class="fas fa-arrow-left"></i> Manage Events</a>
-            <a href="/admin">Dashboard</a>
-            <a href="/logout">Logout</a>
-        </div>
-    </nav>
+    <header th:replace="~{fragments/template :: adminNavbar('manage')}"></header>
 
     <div class="page">
 

@@ -25,7 +25,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         
         // Skip public paths
         if (path.equals("/") || path.equals("/home") || path.equals("/login") || 
-            path.equals("/register") || path.startsWith("/css/") || 
+            path.equals("/register") || path.equals("/about") || path.equals("/support") ||
+            path.equals("/games") ||
+            path.startsWith("/css/") || 
             path.startsWith("/js/") || path.startsWith("/images/") || path.startsWith("/uploads/")) {
             return true;
         }

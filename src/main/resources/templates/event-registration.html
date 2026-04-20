@@ -1333,17 +1333,25 @@
                     </a>
                 </div>
 
-                <!-- Register Button (Free) — opens modal -->
+                <!-- Guest View: Login to register -->
+                <div th:if="${user == null and !isAdmin}" style="text-align:center;">
+                    <a href="/login" class="btn-register" style="text-decoration:none;">
+                        <i class="fas fa-sign-in-alt"></i> Login to Register
+                    </a>
+                    <p style="margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px;">
+                        Account required to book events
+                    </p>
+                </div>
+
                 <div
-                    th:if="${!isAdmin and !isRegistered and (spotsLeft == null or spotsLeft == -1 or spotsLeft > 0) and event.entryFeeType != 'Paid'}">
+                    th:if="${user != null and !isAdmin and !isRegistered and (spotsLeft == null or spotsLeft == -1 or spotsLeft > 0) and event.entryFeeType != 'Paid'}">
                     <button type="button" class="btn-register" onclick="openRegModal('free')">
                         <i class="fas fa-ticket-alt"></i> Register for Free
                     </button>
                 </div>
 
-                <!-- Register Button (Paid) — opens modal -->
                 <div
-                    th:if="${!isAdmin and !isRegistered and (spotsLeft == null or spotsLeft == -1 or spotsLeft > 0) and event.entryFeeType == 'Paid'}">
+                    th:if="${user != null and !isAdmin and !isRegistered and (spotsLeft == null or spotsLeft == -1 or spotsLeft > 0) and event.entryFeeType == 'Paid'}">
                     <button type="button" class="btn-register" onclick="openRegModal('paid')">
                         <i class="fas fa-credit-card"></i> Pay &amp; Register
                     </button>

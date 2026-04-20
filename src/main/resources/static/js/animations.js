@@ -55,5 +55,20 @@
   );
 
   items.forEach((el) => io.observe(el));
+  
+  // Navbar Scroll Logic
+  const nav = document.querySelector("header .navbar");
+  const topBar = document.querySelector("header .top-bar");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 50) {
+        nav.classList.add("scrolled");
+        if (topBar) topBar.classList.add("is-hidden");
+      } else {
+        nav.classList.remove("scrolled");
+        if (topBar) topBar.classList.remove("is-hidden");
+      }
+    });
+  }
 })();
 

@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByCategory(String category);
-    List<Event> findByStatus(String status);
+    List<Event> findByStatusOrderByCreatedAtDesc(String status);
+    List<Event> findAllByOrderByCreatedAtDesc();
     long countByStatus(String status);
 }

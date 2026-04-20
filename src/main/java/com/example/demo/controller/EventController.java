@@ -213,8 +213,8 @@ public class EventController {
         User user = getUserFromSession(session);
         boolean adminViewing = isAdmin(session);
 
-        // Allow access if either a student or admin is logged in
-        if (user == null && !adminViewing) return "redirect:/login";
+        // Allow guests to view event details
+        // if (user == null && !adminViewing) return "redirect:/login";
 
         if (user != null) {
             user = userRepository.findById(user.getId()).orElse(user);

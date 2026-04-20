@@ -9,7 +9,7 @@
 
     <script th:src="@{/js/tab-support.js}"></script>
 
-    <nav th:replace="~{fragments/template :: navbar('home')}"></nav>
+    <div th:replace="~{fragments/template :: navbar('home')}"></div>
 
     <!-- Hero Section (Mega Template) -->
     <section class="hero" aria-label="Zentrix hero slideshow">
@@ -23,8 +23,9 @@
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
             <div class="pill"><i class="fa-solid fa-sparkles"></i> Youth-first experiences, one place</div>
-            <h1 style="margin-top: 14px;">Build skills. Make friends. Have fun.</h1>
-            <p>Events, games, music rooms, and community — designed with your new color theme across the entire site.</p>
+            <h1 style="margin-top: 14px;">Your Time. Your Space. Your People.</h1>
+            <p>Find your vibe through events, games, music, and community.
+            </p>
             <div style="margin-top: 18px; display:flex; gap:10px; flex-wrap:wrap;">
                 <span class="pill"><i class="fa-solid fa-shield"></i> Safe community</span>
                 <span class="pill"><i class="fa-solid fa-bolt"></i> Fast sign-up</span>
@@ -87,39 +88,216 @@
 
     <!-- Quick Stats -->
     <section class="container">
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(147, 51, 234, 0.12);"><i class="fa-solid fa-calendar"></i> Events</div>
-                <h3 style="margin-top: 10px; font-size: 24px;">Discover</h3>
-                <p style="color: var(--text-secondary); margin-top: 6px;">Find workshops, clubs, talks, and meetups near you.</p>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+            <div class="surface hover-lift" style="padding: 30px; border-radius: 24px;">
+                <div class="pill pill-purple"><i class="fa-solid fa-calendar-days"></i> Discovery</div>
+                <h3 style="margin-top: 16px; font-size: 28px; font-weight: 800;">Find Events</h3>
+                <p style="color: var(--text-secondary); margin-top: 8px;">Explore workshops, cultural fests, and local
+                    meetups tailored for you.</p>
             </div>
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(6, 182, 212, 0.12);"><i class="fa-solid fa-gamepad"></i> Games</div>
-                <h3 style="margin-top: 10px; font-size: 24px;">Play</h3>
-                <p style="color: var(--text-secondary); margin-top: 6px;">Challenge friends with quick web games and leaderboards.</p>
+            <div class="surface hover-lift" style="padding: 30px; border-radius: 24px;">
+                <div class="pill pill-blue"><i class="fa-solid fa-gamepad-modern"></i> Gaming</div>
+                <h3 style="margin-top: 16px; font-size: 28px; font-weight: 800;">Play & Compete</h3>
+                <p style="color: var(--text-secondary); margin-top: 8px;">Jump into quick-play games and climb the
+                    global leaderboards with friends.</p>
             </div>
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(236, 72, 153, 0.10);"><i class="fa-solid fa-music"></i> Music</div>
-                <h3 style="margin-top: 10px; font-size: 24px;">Collaborate</h3>
-                <p style="color: var(--text-secondary); margin-top: 6px;">Join rooms, vote on tracks, and build a shared vibe.</p>
-            </div>
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(250, 204, 21, 0.18);"><i class="fa-solid fa-star"></i> Rewards</div>
-                <h3 style="margin-top: 10px; font-size: 24px;">Earn</h3>
-                <p style="color: var(--text-secondary); margin-top: 6px;">Get rewards for participation and community activity.</p>
+            <div class="surface hover-lift" style="padding: 30px; border-radius: 24px;">
+                <div class="pill pill-pink"><i class="fa-solid fa-headphones"></i> Music</div>
+                <h3 style="margin-top: 16px; font-size: 28px; font-weight: 800;">Share Vibes</h3>
+                <p style="color: var(--text-secondary); margin-top: 8px;">Join collaborative music rooms and discover
+                    new tracks with your squad.</p>
             </div>
         </div>
     </section>
 
-    <!-- Categories -->
-    <section class="container">
+    <!-- Features -->
+    <section class="container"
+        style="background: linear-gradient(180deg, transparent, rgba(6, 182, 212, 0.05), transparent);">
         <div class="section-header">
-            <h2>Browse by Category</h2>
+            <div>
+                <h2 style="font-size: 32px;">Platform Features</h2>
+                <p style="color: var(--text-secondary); margin-top: 4px;">Everything you need to thrive in the Zentrix
+                    community.</p>
+            </div>
+            <a href="/features" class="see-all">See All Features ›</a>
+        </div>
+        <div class="feature-grid">
+            <a class="feature-item reveal" href="/messages">
+                <div class="feature-media">
+                    <img src="https://images.openai.com/static-rsc-4/8f5hqzs1t1WYBdG1_Qh2J9hf4rpwZcjV-2dsnlHCqPRQ8CpeB9QCyGYLUWrlalbsvZBcMYNixaLW2VVWxtJtBy9FhP7UPyuxdYr8lb70QnGxC2oYVM9KjX7QKJIDyBzbjfWS4C5we5XcDwd78boKd75QItf8oIagKepnamSDpLQdxWlUGSeypNfPeksqQEMr?purpose=fullsize"
+                        alt="Real-time chat">
+                </div>
+                <div class="feature-text">
+                    <div class="pill pill-blue" style="margin-bottom: 16px;"><i class="fa-solid fa-comments"></i> Social
+                    </div>
+                    <h3 style="font-size: 32px; font-weight: 800;">Real-time Chat</h3>
+                    <p style="font-size: 17px; margin-top: 12px; color: var(--text-secondary);">Connect instantly with
+                        friends and groups. Pulse-synced, secure, and always active.</p>
+                    <span class="feature-link" style="margin-top: 24px; color: var(--neon-blue); font-weight: 700;"><i
+                            class="fa-solid fa-circle-arrow-right"></i> Open Messages</span>
+                </div>
+            </a>
+            <a class="feature-item reveal" href="/dashboard">
+                <div class="feature-media">
+                    <img src="https://images.openai.com/static-rsc-4/I2yVlMtcIKk4BAdQBKnkmCJA7yxYhCYrHQDtMyN4d_00YE_Y8iOpmV0e6U1R_OcMcj5LGKASruMRDgrU08RQosTJamwcjVFPlYTilt3HdW0DHphHwOtCqZkkrkJCgpjRpg6TM9utFk_FkM6t3k7stdwhXXQhEBGuINrrGCNF5igWAXCqv_2zAW3iOgK66lLC?purpose=fullsize"
+                        alt="Discovery Feed">
+                </div>
+                <div class="feature-text">
+                    <div class="pill pill-purple" style="margin-bottom: 16px;"><i class="fa-solid fa-rss"></i> Community
+                    </div>
+                    <h3 style="font-size: 32px; font-weight: 800;">Discovery Feed</h3>
+                    <p style="font-size: 17px; margin-top: 12px; color: var(--text-secondary);">Explore trending
+                        stories, campus news, and community milestones in a cinematic feed.</p>
+                    <span class="feature-link" style="margin-top: 24px; color: var(--purple); font-weight: 700;"><i
+                            class="fa-solid fa-circle-arrow-right"></i> Explore Feed</span>
+                </div>
+            </a>
+            <a class="feature-item reveal" href="/reels">
+                <div class="feature-media">
+                    <img src="https://images.openai.com/static-rsc-4/9AJw0q6urbrbCbdwHdnLA3z9FSezNyKiYI8Bn8e9y1pBjquKHxfTgILbCGcizmMG7mv3PenxlbZcLxOEeb0a655_E6DK_k39UGJiWNXjdUNgzkdKYQtVJao8kkbyuFFQ3QZoikkwwpMNT2_U35MCUPab9akPduI56kgPglW2t-PmlXf7Kv9D_t18fUxw67TH?purpose=fullsize"
+                        alt="Reels">
+                </div>
+                <div class="feature-text">
+                    <div class="pill pill-pink" style="margin-bottom: 16px;"><i class="fa-solid fa-clapperboard"></i>
+                        Entertainment</div>
+                    <h3 style="font-size: 32px; font-weight: 800;">Reels</h3>
+                    <p style="font-size: 17px; margin-top: 12px; color: var(--text-secondary);">Watch and capture
+                        short-form cinematic moments. Express yourself through movement and sound.</p>
+                    <span class="feature-link" style="margin-top: 24px; color: var(--pink); font-weight: 700;"><i
+                            class="fa-solid fa-circle-arrow-right"></i> Watch Now</span>
+                </div>
+            </a>
+            <a class="feature-item reveal" href="/events">
+                <div class="feature-media">
+                    <img src="https://images.openai.com/static-rsc-4/HOqgBWLRRLbZCig4wBt5a1cmHTovXHqkkC665h4a6O804b4vYiZIH0O38tx6spX_1h1hQk7rn3rSJ7_1-ah8ZOU-ndUWS0nu9BBcgwwHGHsXGqeeExRmdgYs2bz6roIle9zalkDc_xCY3tpuRTKxKgHkDtBUBU8R9wK1WggwShTfwwaNxWRyyUIb9-npXR9z?purpose=fullsize"
+                        alt="Local events">
+                </div>
+                <div class="feature-text">
+                    <div class="pill pill-accent" style="margin-bottom: 16px;"><i class="fa-solid fa-calendar-star"></i>
+                        Campus Life</div>
+                    <h3 style="font-size: 32px; font-weight: 800;">Local Events</h3>
+                    <p style="font-size: 17px; margin-top: 12px; color: var(--text-secondary);">Your calendar for campus
+                        life—from underground jam sessions to global tech summits.</p>
+                    <span class="feature-link"
+                        style="margin-top: 24px; color: var(--accent-hover); font-weight: 700;"><i
+                            class="fa-solid fa-circle-arrow-right"></i> View Calendar</span>
+                </div>
+            </a>
+            <!-- New Features -->
+            <a class="feature-item reveal" href="/achievements">
+                <div class="feature-media">
+                    <img src="https://images.openai.com/static-rsc-4/Tba901diyp0WM3Wg2kgGwyzRwgHfQ3kMp4NvdS1HyXG_MaggLsi7VEu5rJ0-AfNJWGJqkR_o60C-F4IAUbrItcQdkC2HiIHp-GCJ7TOFodjlO-hCoDBXlvm9FwCkrr_Y992uLa1O4jX8306mpl3CaUMScpaKbGiYBZOyn6b5wLr8qb2GMjOCBiP14c3pcQr0?purpose=fullsize"
+                        alt="Elite badges">
+                </div>
+                <div class="feature-text">
+                    <div class="pill pill-yellow"
+                        style="margin-bottom: 16px; background: rgba(250, 204, 21, 0.1); color: #eab308;"><i
+                            class="fa-solid fa-crown"></i> Recognition</div>
+                    <h3 style="font-size: 32px; font-weight: 800;">Elite Badges</h3>
+                    <p style="font-size: 17px; margin-top: 12px; color: var(--text-secondary);">Unlock exclusive
+                        identity badges and Zen Coins by dominating competitions and contributing.</p>
+                    <span class="feature-link" style="margin-top: 24px; color: #eab308; font-weight: 700;"><i
+                            class="fa-solid fa-circle-arrow-right"></i> My Achievements</span>
+                </div>
+            </a>
+            <a class="feature-item reveal" href="/games">
+                <div class="feature-media">
+                    <img src="https://images.openai.com/static-rsc-4/OFPJGQFNps-xfB2336F_aEY-VXXAEFs8fTZ2SpniKDuhhHUUMA5BIWHYVxXL1PiDpANA8Ro7WeTrvkHyoeNPtMbOjyzOzWqZ0_ySf6PPWEEKI-NddJw5euRuwfVx1RZmJn4HzUUEAr8IOkfVgY-sWWZriXRtC7O6_NGa9J1bjgzTJkLJZl2irr6WNwSznGLt?purpose=fullsize"
+                        alt="Global arenas">
+                </div>
+                <div class="feature-text">
+                    <div class="pill pill-blue"
+                        style="margin-bottom: 16px; background: rgba(37, 99, 235, 0.1); color: #2563eb;"><i
+                            class="fa-solid fa-gamepad"></i> Gaming</div>
+                    <h3 style="font-size: 32px; font-weight: 800;">Global Arenas</h3>
+                    <p style="font-size: 17px; margin-top: 12px; color: var(--text-secondary);">Compete in real-time
+                        tournaments. Rise through the ranks and represent your campus globally.</p>
+                    <span class="feature-link" style="margin-top: 24px; color: #2563eb; font-weight: 700;"><i
+                            class="fa-solid fa-circle-arrow-right"></i> Enter Arena</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Featured Events (New Section) -->
+    <section class="container" id="featured-events">
+        <div class="section-header">
+            <div>
+                <h2 style="font-size: 32px;">Featured Events</h2>
+                <p style="color: var(--text-secondary); margin-top: 4px;">Created by our community and administrators.
+                </p>
+            </div>
+            <a href="/events" class="see-all">Explore All Events ›</a>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px;">
+            <th:block th:each="event : ${events}" th:if="${eventStat.index < 3}">
+                <div class="card hover-lift reveal" style="border-radius: 24px; overflow: hidden; background: #fff; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 12px 40px rgba(0,0,0,0.04); height: 100%; display: flex; flex-direction: column;">
+                    <div class="card-img" style="height: 150px; position: relative;">
+                        <img th:src="${event.imageUrl != null ? event.imageUrl : 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=600'}"
+                            alt="Event" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="category-pill" style="position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 800; padding: 4px 10px; background: #fff; border-radius: 100px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;" th:text="${event.category}">Category
+                        </div>
+                    </div>
+                    <div class="card-content" style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column;">
+                        <h3 th:text="${event.title}" style="font-size: 19px; font-weight: 900; margin-bottom: 12px; color: #111; line-height: 1.2;">Event Title</h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #555; font-weight: 600;">
+                                <i class="fas fa-calendar-alt" style="color: var(--primary); font-size: 13px; width: 14px;"></i>
+                                <span th:text="${event.dateTime != null ? #temporals.format(event.dateTime, 'EEE, MMMM dd, yyyy') : 'Date TBA'}">Date</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #555; font-weight: 600;">
+                                <i class="far fa-clock" style="color: var(--primary); font-size: 13px; width: 14px;"></i>
+                                <span th:text="${event.dateTime != null ? #temporals.format(event.dateTime, 'hh:mm a') : 'Time TBA'}">Time</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #555; font-weight: 600;">
+                                <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 13px; width: 14px;"></i>
+                                <span th:text="${event.venue != null ? event.venue : 'Location TBA'}">Location</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #555; font-weight: 600;">
+                                <i class="fas fa-user-tie" style="color: var(--primary); font-size: 13px; width: 14px;"></i>
+                                <span th:text="${event.organizer != null ? 'By ' + event.organizer : 'By Community'}">By Admin</span>
+                            </div>
+                        </div>
+
+                        <p th:text="${#strings.abbreviate(event.description, 70)}" style="font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; opacity: 0.8;">Description</p>
+                        
+                        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 15px; font-weight: 900; color: #111;">
+                                <span th:text="${event.price != null ? event.price : 'Free'}">Free</span>
+                            </div>
+                            <a th:href="${session.user != null} ? '/events/' + ${event.id} : '/login'"
+                                class="btn btn-primary" style="padding: 10px 20px; font-size: 13px; border-radius: 12px; font-weight: 800; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);">
+                                <i class="fas fa-ticket-alt"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+            <!-- Fallback if no events -->
+            <th:block th:if="${#lists.isEmpty(events)}">
+                <div class="surface reveal" style="padding: 60px; text-align: center; grid-column: 1 / -1; border-radius: 24px;">
+                    <i class="fa-solid fa-calendar-xmark" style="font-size: 48px; color: var(--text-secondary); opacity: 0.2; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="font-weight: 800; color: var(--text-secondary);">No public events scheduled</h3>
+                    <p style="color: var(--text-secondary); opacity: 0.7;">Check back soon for new opportunities!</p>
+                </div>
+            </th:block>
+        </div>
+    </section>
+    <section class="container"
+        style="background: linear-gradient(0deg, transparent, rgba(59, 130, 246, 0.03), transparent);">
+        <div class="section-header">
+            <div>
+                <h2 style="font-size: 32px;">Browse by Category</h2>
+                <p style="color: var(--text-secondary); margin-top: 4px;">Find exactly what you're looking for with our
+                    curated interest groups.</p>
+            </div>
         </div>
         <div class="category-tiles">
             <a href="/events" class="category-card cat-pink">
                 <div class="category-icon">
-                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop" alt="Music category">
+                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop"
+                        alt="Music category">
                 </div>
                 <div class="category-info">
                     <h3>Music</h3>
@@ -129,7 +307,8 @@
             </a>
             <a href="/events" class="category-card cat-blue">
                 <div class="category-icon">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" alt="Tech category">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop"
+                        alt="Tech category">
                 </div>
                 <div class="category-info">
                     <h3>Tech</h3>
@@ -139,7 +318,8 @@
             </a>
             <a href="/events" class="category-card cat-yellow">
                 <div class="category-icon">
-                    <img src="https://images.unsplash.com/photo-1520975958221-79c67ddf61e5?q=80&w=800&auto=format&fit=crop" alt="Comedy category">
+                    <img src="https://images.openai.com/static-rsc-4/7vJOijI2a89kUbkkKGPE1civqgvqnF-D_w13F4AHwlfKmMTxi-A_i4ejlU66hYVhgT1juw-DIWDZ3X3xgaBx-iGqApFRFkBKauFlli5PpyHYPDuAJjbH2xIPkzbFki3iYukgMsVDBSE5RXf9I1SzoD39VDXjb20YPoYhQ4B0Fp_joULvx53arGpUO164Ft6e?purpose=fullsize"
+                        alt="Comedy category">
                 </div>
                 <div class="category-info">
                     <h3>Comedy</h3>
@@ -149,54 +329,13 @@
             </a>
             <a href="/events" class="category-card cat-purple">
                 <div class="category-icon">
-                    <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?q=80&w=800&auto=format&fit=crop" alt="Sports category">
+                    <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?q=80&w=800&auto=format&fit=crop"
+                        alt="Sports category">
                 </div>
                 <div class="category-info">
                     <h3>Sports</h3>
                     <p>Tournaments, watch parties, and friendly challenges.</p>
                     <div class="category-meta"><i class="fa-solid fa-trophy"></i> Compete • Team up</div>
-                </div>
-            </a>
-        </div>
-    </section>
-
-    <!-- Featured Games -->
-    <section class="container">
-        <div class="section-header">
-            <h2>Quick Games</h2>
-            <a href="/games" class="see-all">See All ›</a>
-        </div>
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
-            <a class="card" href="/games/rock-paper-scissors">
-                <img class="card-img" src="https://images.unsplash.com/photo-1611996575749-79a3a250f948?q=80&w=2070&auto=format&fit=crop" alt="Rock Paper Scissors">
-                <div class="card-content">
-                    <div class="event-date">2 MIN GAME</div>
-                    <div class="card-title">Rock Paper Scissors</div>
-                    <div class="card-subtitle"><i class="fas fa-bolt"></i> Instant fun</div>
-                </div>
-            </a>
-            <a class="card" href="/games/snake-and-ladder">
-                <img class="card-img" src="https://images.unsplash.com/photo-1612144962410-7f6f84c42f1a?q=80&w=2070&auto=format&fit=crop" alt="Snake and Ladder">
-                <div class="card-content">
-                    <div class="event-date">PARTY CLASSIC</div>
-                    <div class="card-title">Snake &amp; Ladder</div>
-                    <div class="card-subtitle"><i class="fas fa-users"></i> Play with friends</div>
-                </div>
-            </a>
-            <a class="card" href="/play-uno">
-                <img class="card-img" src="https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=2070&auto=format&fit=crop" alt="UNO">
-                <div class="card-content">
-                    <div class="event-date">FAST ROUNDS</div>
-                    <div class="card-title">UNO</div>
-                    <div class="card-subtitle"><i class="fas fa-crown"></i> Win streaks</div>
-                </div>
-            </a>
-            <a class="card" href="/play-chess">
-                <img class="card-img" src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=2070&auto=format&fit=crop" alt="Chess">
-                <div class="card-content">
-                    <div class="event-date">SKILL</div>
-                    <div class="card-title">Chess</div>
-                    <div class="card-subtitle"><i class="fas fa-brain"></i> Think ahead</div>
                 </div>
             </a>
         </div>
@@ -208,24 +347,29 @@
             <h2>What Students Say</h2>
             <a href="/register" class="see-all">Join Now ›</a>
         </div>
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(236, 72, 153, 0.12);"><i class="fa-solid fa-quote-left"></i> Community</div>
-                <p style="margin-top: 12px; color: var(--text-secondary);">“I met my project teammates here and now we attend events together.”</p>
-                <div style="margin-top: 14px; font-weight: 800;">Aanya</div>
-            </div>
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(6, 182, 212, 0.12);"><i class="fa-solid fa-quote-left"></i> Fun</div>
-                <p style="margin-top: 12px; color: var(--text-secondary);">“Games between classes are my favorite. The vibe is super chill.”</p>
-                <div style="margin-top: 14px; font-weight: 800;">Kabir</div>
-            </div>
-            <div class="surface" style="padding: 22px;">
-                <div class="pill" style="background: rgba(147, 51, 234, 0.12);"><i class="fa-solid fa-quote-left"></i> Growth</div>
-                <p style="margin-top: 12px; color: var(--text-secondary);">“Workshops helped me build confidence. Rewards make it motivating.”</p>
-                <div style="margin-top: 14px; font-weight: 800;">Neha</div>
-            </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+            <th:block th:each="thought : ${thoughts}" th:if="${thoughtStat.index < 3}">
+                <div class="surface reveal" style="padding: 22px;">
+                    <div class="pill pill-pink"><i class="fa-solid fa-quote-left"></i> <span
+                            th:text="${thought.category != null ? thought.category : 'Community'}">Category</span></div>
+                    <p style="margin-top: 12px; color: var(--text-secondary);" th:text="'“' + ${thought.content} + '”'">
+                        “Thoughts content”</p>
+                    <div style="margin-top: 14px; font-weight: 800;"
+                        th:text="${thought.user != null ? thought.user.username : 'Anonymous'}">Aanya</div>
+                </div>
+            </th:block>
+            <!-- Fallback -->
+            <th:block th:if="${#lists.isEmpty(thoughts)}">
+                <div class="surface" style="padding: 22px;">
+                    <div class="pill pill-pink"><i class="fa-solid fa-quote-left"></i> Community</div>
+                    <p style="margin-top: 12px; color: var(--text-secondary);">“I met my project teammates here and now
+                        we attend events together.”</p>
+                    <div style="margin-top: 14px; font-weight: 800;">Aanya</div>
+                </div>
+            </th:block>
         </div>
-        <div class="surface" style="margin-top: 18px; padding: 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div class="surface"
+            style="margin-top: 18px; padding: 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
             <div>
                 <h3 style="font-size: 22px;">Ready to start?</h3>
                 <p style="color: var(--text-secondary);">Create an account and personalize your feed.</p>

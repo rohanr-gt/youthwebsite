@@ -10,8 +10,8 @@
     <style>
         /* Voting Poll Styles for Dashboard */
         .dashboard-vote-section {
-            background: linear-gradient(135deg, rgba(248, 68, 100, 0.08) 0%, rgba(20, 20, 35, 0) 100%);
-            border: 1px solid rgba(248, 68, 100, 0.15);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(20, 20, 35, 0) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.15);
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 25px;
@@ -41,13 +41,13 @@
         }
 
         .dashboard-vote-card:hover {
-            border-color: #f84464;
+            border-color: var(--primary);
             transform: translateY(-3px);
         }
 
         .vote-card-icon {
             font-size: 20px;
-            color: #f84464;
+            color: var(--primary);
             margin-bottom: 10px;
         }
 
@@ -57,7 +57,7 @@
             padding: 8px;
             background: rgba(248, 68, 100, 0.1);
             border: 1px solid rgba(248, 68, 100, 0.2);
-            color: #f84464;
+            color: var(--primary);
             border-radius: 10px;
             font-size: 12px;
             font-weight: 700;
@@ -66,7 +66,7 @@
         }
 
         .btn-dashboard-vote:hover {
-            background: #f84464;
+            background: var(--primary);
             color: white;
         }
 
@@ -92,9 +92,9 @@
             gap: 8px;
             padding: 8px 12px;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            color: white;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            color: var(--text-primary);
             cursor: pointer;
             font-size: 13px;
             font-weight: 700;
@@ -102,7 +102,7 @@
         }
 
         .filter-btn:hover {
-            border-color: rgba(248, 68, 100, 0.5);
+            border-color: rgba(59, 130, 246, 0.55);
             transform: translateY(-1px);
         }
 
@@ -111,7 +111,7 @@
             border-radius: 999px;
             background: rgba(248, 68, 100, 0.12);
             border: 1px solid rgba(248, 68, 100, 0.25);
-            color: #f84464;
+            color: var(--primary);
             font-size: 12px;
             font-weight: 800;
             display: inline-flex;
@@ -163,8 +163,8 @@
         }
 
         .filter-menu a.active {
-            background: rgba(248, 68, 100, 0.12);
-            border: 1px solid rgba(248, 68, 100, 0.25);
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
         }
 
         /* Double-tap like animation */
@@ -192,7 +192,7 @@
 
         .like-burst i {
             font-size: 90px;
-            color: rgba(248, 68, 100, 0.95);
+            color: rgba(59, 130, 246, 0.95);
             text-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
         }
     </style>
@@ -202,14 +202,14 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix</div>
+    <nav class="dashboard-navbar">
+        <a class="dashboard-logo" href="/home">Zentrix</a>
         <!-- Search Bar -->
-        <div style="flex-grow: 1; max-width: 400px; margin: 0 20px;">
+        <div class="dashboard-search">
             <input type="text" placeholder="Search for talents, events..." class="form-input"
                 style="background: var(--card-bg); border-radius: 20px; padding: 8px 15px;">
         </div>
-        <div class="nav-links">
+        <div class="dashboard-nav-links">
             <!-- Zen Coin System -->
             <a href="/shop" class="coin-nav"
                 style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 5px 12px; height: auto; display: flex; align-items: center; gap: 8px; text-decoration: none; color: #ffd700; font-weight: 800; font-size: 13px;">
@@ -319,9 +319,9 @@
             <!-- 🗳️ Voting Polls -->
             <div th:if="${not #lists.isEmpty(votingPolls)}" class="dashboard-vote-section">
                 <div style="margin-bottom: 15px;">
-                    <h3 style="font-size: 14px; font-weight: 800; color: white;">Vote for Next Event! 🗳️
+                    <h3 style="font-size: 14px; font-weight: 800; color: #111;">Vote for Next Event! 🗳️
                     </h3>
-                    <p style="font-size: 11px; color: rgba(255,255,255,0.4);">Your vote shapes our platform.
+                    <p style="font-size: 11px; color: rgba(0,0,0,0.5);">Your vote shapes our platform.
                     </p>
                 </div>
                 <div class="dashboard-vote-grid">
@@ -332,7 +332,7 @@
                                           (poll.category == 'Sports' ? 'fas fa-trophy' : 'fas fa-star'))}"></i>
                         </div>
                         <h4 th:text="${poll.title}"
-                            style="font-size: 13px; font-weight: 700; margin-bottom: 5px; color: white;">
+                            style="font-size: 13px; font-weight: 700; margin-bottom: 5px; color: #111;">
                             Event</h4>
                         <form th:action="@{'/events/' + ${poll.id} + '/poll-vote'}" method="POST">
                             <button type="submit" class="btn-dashboard-vote">Vote Now</button>
@@ -680,6 +680,13 @@
                 <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
                     <input name="hashtags" placeholder="#hashtags"
                         style="flex:1; min-width:120px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px solid var(--glass-border); color:var(--text-primary); font-size:13px; outline:none;">
+                    <select name="postType"
+                        style="flex:1; min-width:120px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px solid var(--glass-border); color:var(--text-primary); font-size:13px; outline:none;">
+                        <option value="POST">Normal Post</option>
+                        <option value="REEL">Reel (Video)</option>
+                        <option value="THOUGHT">Thought (Testimonial)</option>
+                        <option value="STORY">Story (24h)</option>
+                    </select>
                     <select name="category"
                         style="flex:1; min-width:120px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px solid var(--glass-border); color:var(--text-primary); font-size:13px; outline:none;">
                         <option value="">Category (optional)</option>
@@ -706,7 +713,6 @@
                     <span id="selectedFileName"
                         style="font-size:12px; color:var(--text-secondary); margin-top:6px; display:block;"></span>
                 </div>
-                <input type="hidden" name="postType" value="POST">
                 <button type="submit"
                     style="margin-top:16px; width:100%; padding:12px; background:var(--accent); color:white; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer;">
                     <i class="fas fa-paper-plane"></i> Post

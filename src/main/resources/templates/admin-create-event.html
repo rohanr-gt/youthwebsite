@@ -16,10 +16,18 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-gradient: linear-gradient(180deg, #050508 0%, #0a0a0f 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
         body {
-            background: #0a0a0f;
+            background: #050508 !important;
+            color: #ffffff !important;
             min-height: 100vh;
-            color: #fff;
         }
 
         .admin-navbar {
@@ -194,6 +202,17 @@
             font-family: 'Inter', sans-serif;
             transition: all 0.2s;
             outline: none;
+        }
+
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
 
         input:focus,
@@ -582,17 +601,7 @@
 
 <body>
     <!-- Admin Navbar -->
-    <nav class="admin-navbar">
-        <div class="brand">⚡ Zentrix Admin</div>
-        <div class="nav-right">
-            <a href="/events/admin/manage" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Manage Events
-            </a>
-            <a href="/admin" class="btn-back">
-                <i class="fas fa-home"></i> Dashboard
-            </a>
-        </div>
-    </nav>
+    <header th:replace="~{fragments/template :: adminNavbar('create')}"></header>
 
     <div class="page-wrapper">
         <!-- Page Header -->

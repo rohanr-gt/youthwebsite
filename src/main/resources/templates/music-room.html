@@ -18,9 +18,9 @@
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="logo">Zentrix</div>
-    <div class="nav-links">
+<nav class="dashboard-navbar">
+    <a class="dashboard-logo" th:href="@{/music(auth=${auth})}">Zentrix</a>
+    <div class="dashboard-nav-links">
         <a th:href="@{/music(auth=${auth})}"><i class="fas fa-music"></i> Music</a>
         <a th:href="@{/music/rooms(auth=${auth})}"><i class="fas fa-users"></i> Rooms</a>
         <a href="/shop" title="Coins" style="display:flex; align-items:center; gap:8px;">

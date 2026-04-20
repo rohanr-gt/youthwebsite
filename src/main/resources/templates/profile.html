@@ -143,12 +143,13 @@
         }
 
         .talent-score-card {
-            background: linear-gradient(135deg, rgba(248, 68, 100, 0.08), rgba(255, 107, 157, 0.02));
-            border: 1px solid rgba(248, 68, 100, 0.2);
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.95), rgba(190, 18, 60, 0.92));
+            border: 1px solid rgba(190, 18, 60, 0.35);
             border-radius: 16px;
             padding: 20px;
             margin-top: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 22px 60px rgba(236, 72, 153, 0.18);
         }
 
         .talent-score-card h4 {
@@ -169,8 +170,8 @@
         }
 
         .ts-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 12px;
             padding: 12px 8px;
             display: flex;
@@ -186,7 +187,7 @@
 
         .ts-l {
             font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.72);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
@@ -446,14 +447,14 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix</div>
+    <nav class="dashboard-navbar">
+        <a class="dashboard-logo" href="/home">Zentrix</a>
         <!-- Search Bar -->
-        <div style="flex-grow: 1; max-width: 400px; margin: 0 20px;">
+        <div class="dashboard-search">
             <input type="text" placeholder="Search for talents, events..." class="form-input"
                 style="background: var(--card-bg); border-radius: 20px; padding: 8px 15px;">
         </div>
-        <div class="nav-links">
+        <div class="dashboard-nav-links">
             <a href="/dashboard"><i class="fas fa-home"></i></a>
             <a href="/messages" style="position: relative;">
                 <i class="fas fa-comment-dots"></i>
@@ -586,7 +587,7 @@
                                 class="ts-l">Wins</span></div>
                         <div class="ts-item"><span class="ts-v" th:text="${'#' + userRank}">#1</span><span
                                 class="ts-l">Rank</span></div>
-                        <div class="ts-item"><span class="ts-v" style="color:#f84464; font-size:14px;"
+                        <div class="ts-item"><span class="ts-v" style="color:#fff; font-size:14px;"
                                 th:text="${user.premium ? '👑 Premium' : userBadge}">Novice</span><span
                                 class="ts-l">Badge</span></div>
                     </div>

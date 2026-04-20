@@ -8,20 +8,75 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar" th:fragment="navbar(active)">
-        <div class="logo">Zentrix</div>
-        <div class="nav-links">
-            <a href="/home" th:classappend="${active} == 'home' ? ' active' : ''">Home</a>
-            <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
-            <a href="/games" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
-            <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
-            <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
+    <header th:fragment="navbar(active)" th:style="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' ? '--nav-height: 86px;' : '--nav-height: 56px;'">
+        <div class="top-bar" th:if="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support'">
+            <div class="nav-shell top-bar-inner">
+                <div class="top-bar-message">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>Join the Spring Tech Fest 2026 — Registrations now open!</span>
+                </div>
+                <div class="top-links">
+                    <a href="/support">Support</a>
+                    <a href="/about">Help Center</a>
+                </div>
+            </div>
         </div>
-        <div style="display: flex; gap: 15px;">
-            <a href="/login" class="btn btn-outline">Login</a>
-            <a href="/register" class="btn btn-primary">Register</a>
-        </div>
-    </nav>
+        <nav class="navbar" th:classappend="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' ? ' has-topbar' : ''">
+            <!-- Games page: minimal header (Home button only) -->
+            <th:block th:if="${active} == 'games'">
+                <div class="nav-links" style="justify-content:flex-start;">
+                    <a href="/home" class="btn btn-outline">Home</a>
+                </div>
+            </th:block>
+
+            <!-- All other public pages -->
+            <th:block th:if="${active} != 'games'">
+                <a class="logo" href="/home">Zentrix</a>
+                <div class="nav-links">
+                    <a href="/home" th:classappend="${active} == 'home' ? ' active' : ''">Home</a>
+                    <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
+                    <a href="/games" th:if="${active} != 'home'" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
+                    <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
+                    <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
+                </div>
+                <div class="nav-actions">
+                    <th:block th:if="${session.user == null}">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </th:block>
+                    <th:block th:if="${session.user != null}">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <a href="/logout" class="btn btn-primary">Logout</a>
+                    </th:block>
+                </div>
+            </th:block>
+        </nav>
+    </header>
+
+    <header th:fragment="adminNavbar(active)" class="admin-header">
+        <nav class="navbar" style="background: rgba(5, 5, 8, 0.95) !important; border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;">
+            <a class="logo" href="/admin/dashboard" style="color: #fff !important;">Zentrix<span>Admin</span></a>
+            
+            <div class="nav-links">
+                <a href="/events/admin/manage" th:classappend="${active} == 'manage' ? ' active' : ''">
+                    <i class="fas fa-calendar-alt"></i> Manage Events
+                </a>
+                <a href="/admin/music" th:classappend="${active} == 'music' ? ' active' : ''">
+                    <i class="fas fa-music"></i> Music
+                </a>
+                <a href="/events/admin/create" th:classappend="${active} == 'create' ? ' active' : ''">
+                    <i class="fas fa-plus"></i> Create
+                </a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/dashboard" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: #fff !important;">
+                    <i class="fas fa-arrow-left"></i> App
+                </a>
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
+        </nav>
+    </header>
 
     <footer th:fragment="footer">
         <div class="footer-content">

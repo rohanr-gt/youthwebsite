@@ -83,13 +83,22 @@ public class MainController {
     @Autowired
     private MusicRoomRepository musicRoomRepository;
 
+    @Autowired
+    private com.example.demo.repository.GameRepository gameRepository;
+
     @GetMapping("/")
     public String root() {
         return "home";
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(Model model) {
+        // Fetch real student thoughts
+        model.addAttribute("thoughts", postRepository.findByPostTypeOrderByCreatedAtDesc("THOUGHT"));
+        // Fetch all games
+        model.addAttribute("games", gameRepository.findAll());
+        // Fetch upcoming events from admin/community
+        model.addAttribute("events", eventRepository.findByStatusOrderByCreatedAtDesc("UPCOMING"));
         return "home";
     }
 

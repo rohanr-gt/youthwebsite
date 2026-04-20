@@ -14,9 +14,9 @@
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="logo">Zentrix</div>
-    <div class="nav-links">
+<nav class="dashboard-navbar">
+    <a class="dashboard-logo" th:href="@{/dashboard(auth=${auth})}">Zentrix</a>
+    <div class="dashboard-nav-links">
         <a th:href="@{/dashboard(auth=${auth})}"><i class="fas fa-home"></i> Dashboard</a>
         <a th:href="@{/music(auth=${auth})}"><i class="fas fa-music"></i> Music</a>
         <a th:href="@{/music/rooms(auth=${auth})}" class="active"><i class="fas fa-users"></i> Rooms</a>

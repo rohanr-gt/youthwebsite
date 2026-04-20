@@ -7,21 +7,27 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --bg-gradient: linear-gradient(180deg, #050508 0%, #0a0a0f 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: #050508 !important;
+            color: #ffffff !important;
+            min-height: 100vh;
+        }
         .card { background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 18px; padding: 16px; }
         .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="logo">Zentrix<span>Admin</span></div>
-    <div class="nav-links">
-        <a href="/admin">Dashboard</a>
-        <a href="/admin/music" class="active"><i class="fas fa-music"></i> Music Approvals</a>
-        <a href="/logout">Logout</a>
-    </div>
-</nav>
+<header th:replace="~{fragments/template :: adminNavbar('music')}"></header>
 
-<div class="container" style="margin-top: 20px;">
+<div class="container" style="margin-top: 80px;">
     <h1 style="margin-bottom: 10px;">Pending track approvals</h1>
     <div style="color: rgba(255,255,255,0.55); font-size: 13px; margin-bottom: 18px;">
         Approve only if the uploader owns rights / uses a valid license.

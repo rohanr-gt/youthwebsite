@@ -16,48 +16,13 @@
         }
 
         body {
-            background: #0a0a0f;
-            color: #fff;
+            background: var(--bg-gradient) !important;
+            color: var(--text-primary) !important;
             min-height: 100vh;
             margin: 0;
         }
 
-        /* ── Navbar ── */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-            height: 62px;
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar .logo {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #f84464;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            font-size: 15px;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: #fff;
-        }
+        /* Header is handled by shared .dashboard-navbar styles in style.css */
 
         /* ── Main Layout ── */
         .dashboard-container {
@@ -67,40 +32,41 @@
 
         .sidebar {
             width: 250px;
-            background: rgba(255, 255, 255, 0.02);
-            border-right: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.72);
+            border-right: 1px solid var(--glass-border);
             padding: 24px 0;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 15px;
         }
 
         .sidebar-link {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px 28px;
-            color: rgba(255, 255, 255, 0.6);
+            gap: 0;
+            padding: 12px 20px;
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
 
         .sidebar-link:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background: var(--card-bg);
+            color: var(--accent);
         }
 
         .sidebar-link i {
-            width: 20px;
+            width: 25px;
             font-size: 18px;
         }
 
         .sidebar-link.active {
-            background: rgba(248, 68, 100, 0.1);
-            color: #f84464;
-            border-left: 3px solid #f84464;
+            background: var(--card-bg);
+            color: var(--accent);
+            border-left: none;
         }
 
         .content-area {
@@ -108,6 +74,17 @@
             padding: 32px 42px;
             max-width: 1100px;
             margin: 0 auto;
+        }
+
+        .content-area p {
+            color: var(--text-secondary);
+        }
+
+        .content-area h1,
+        .content-area h2,
+        .content-area h3,
+        .content-area h4 {
+            color: var(--text-primary);
         }
 
         /* ── Leaderboard Core ── */
@@ -131,8 +108,8 @@
         }
 
         .my-stats-card {
-            background: linear-gradient(135deg, rgba(248, 68, 100, 0.15), rgba(255, 107, 157, 0.05));
-            border: 1px solid rgba(248, 68, 100, 0.2);
+            background: rgba(255, 255, 255, 0.80);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 24px;
             display: flex;
@@ -157,13 +134,14 @@
 
         .my-stats-info p {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--text-muted);
         }
 
         .xp-pill {
             margin-left: auto;
-            background: rgba(248, 68, 100, 0.2);
-            color: #f84464;
+            background: rgba(59, 130, 246, 0.10);
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            color: var(--primary);
             padding: 8px 16px;
             border-radius: 30px;
             font-weight: 800;
@@ -174,8 +152,8 @@
         }
 
         .mystery-card {
-            background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(139, 92, 246, 0.05));
-            border: 1px solid rgba(167, 139, 250, 0.3);
+            background: rgba(255, 255, 255, 0.80);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 24px;
             display: flex;
@@ -188,8 +166,9 @@
             width: 60px;
             height: 60px;
             border-radius: 14px;
-            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(139, 92, 246, 0.2));
-            color: #a78bfa;
+            background: rgba(139, 92, 246, 0.14);
+            border: 1px solid rgba(139, 92, 246, 0.28);
+            color: #7c3aed;
             font-size: 26px;
             display: flex;
             align-items: center;
@@ -203,7 +182,7 @@
         .mystery-info h3 {
             font-size: 1.1rem;
             font-weight: 800;
-            color: #c4b5fd;
+            color: var(--text-primary);
             margin-bottom: 6px;
             display: flex;
             align-items: center;
@@ -212,40 +191,40 @@
 
         .mystery-info p {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-secondary);
             margin-bottom: 12px;
         }
 
         .mystery-bar {
             width: 100%;
             height: 6px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(15, 23, 42, 0.06);
             border-radius: 6px;
             overflow: hidden;
         }
 
         .mystery-fill {
             height: 100%;
-            background: #a78bfa;
+            background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 55%, #c4b5fd 100%);
             transition: width 0.5s;
         }
 
         .mystery-coupon {
-            background: rgba(167, 139, 250, 0.15);
-            border: 1px dashed #a78bfa;
+            background: rgba(255, 255, 255, 0.90);
+            border: 1px dashed rgba(59, 130, 246, 0.45);
             padding: 10px 16px;
             border-radius: 8px;
             font-family: monospace;
             font-size: 15px;
             font-weight: 800;
-            color: #ddd6fe;
+            color: var(--text-primary);
             display: inline-block;
             letter-spacing: 1px;
         }
 
         .badge-system {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.80);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 30px;
@@ -253,7 +232,7 @@
 
         .badge-system h4 {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
             text-transform: uppercase;
             margin-bottom: 14px;
         }
@@ -326,7 +305,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #fff;
+            color: var(--text-primary);
         }
 
         .achievements-grid {
@@ -548,9 +527,10 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix</div>
-        <div class="nav-links">
+    <nav class="dashboard-navbar">
+        <a class="dashboard-logo" href="/home">Zentrix</a>
+        <div class="dashboard-spacer"></div>
+        <div class="dashboard-nav-links">
             <a th:href="${isAdmin} ? '/admin' : '/dashboard'"><i class="fas fa-home"></i></a>
             <a th:if="${!isAdmin}" href="/messages" style="position: relative;">
                 <i class="fas fa-comment-dots"></i>
@@ -635,7 +615,7 @@
 
                     <div style="margin-top:15px;" th:if="${attendedCount >= 3}">
                         <div class="mystery-coupon">ZENTRIX-ELITE-2025</div>
-                        <p style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:8px;">
+                        <p style="font-size:11px; color:var(--text-muted); margin-top:8px;">
                             <i class="fas fa-info-circle"></i> Screenshot this coupon and DM it to admin to claim your
                             gift!
                         </p>

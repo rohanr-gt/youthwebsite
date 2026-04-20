@@ -24,6 +24,7 @@ public class Event {
     private String price;
     private String category;
     private String organizer;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     // New fields for admin create event flow
     private String status = "UPCOMING";  // UPCOMING, ONGOING, COMPLETED
@@ -213,4 +214,7 @@ public class Event {
 
     public List<EventRegistration> getRegistrations() { return registrations; }
     public void setRegistrations(List<EventRegistration> registrations) { this.registrations = registrations; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
