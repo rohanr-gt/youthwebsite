@@ -981,6 +981,299 @@ input[type="file"].form-input::file-selector-button:hover {
     border: 2px solid var(--accent);
 }
 
+/* Events Page (match home theme) */
+.events-page .events-hero {
+    margin-top: var(--nav-height);
+    position: relative;
+    padding: 92px 40px 56px;
+    border-bottom: 1px solid var(--glass-border);
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(6, 182, 212, 0.08) 55%, rgba(236, 72, 153, 0.06) 100%);
+    overflow: hidden;
+    text-align: center;
+}
+
+.events-page .events-hero .hero-bg-art {
+    position: absolute;
+    inset: 0;
+    opacity: 0.14;
+    filter: blur(18px) saturate(1.2);
+    pointer-events: none;
+}
+
+.events-page .events-hero .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.events-page .events-hero h1 {
+    font-size: clamp(34px, 4vw, 56px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.events-page .events-hero-subtitle {
+    margin: 14px auto 0;
+    max-width: 780px;
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+.events-page .events-hero-pills {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.events-page .dashboard-container {
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 34px 40px 0;
+}
+
+.events-page .content-main {
+    width: 100%;
+}
+
+.events-page .badge {
+    font-size: 10px;
+    background: var(--pink);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.events-page .poll-section {
+    padding: 28px;
+    border-radius: 18px;
+    margin-bottom: 32px;
+    background: rgba(6, 182, 212, 0.06);
+}
+
+.events-page .poll-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+}
+
+.events-page .poll-card {
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.events-page .poll-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 12px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(6, 182, 212, 0.12);
+    color: var(--neon-blue);
+    border: 1px solid rgba(6, 182, 212, 0.18);
+    font-size: 20px;
+}
+
+.events-page .poll-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.events-page .poll-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.events-page .trending-strip {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding: 8px 0 20px;
+    scrollbar-width: none;
+}
+
+.events-page .trending-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.events-page .trend-card {
+    flex-shrink: 0;
+    width: 300px;
+    height: 170px;
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.events-page .trend-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.events-page .trend-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent, rgba(17, 24, 39, 0.88));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 14px;
+    color: #fff;
+}
+
+.events-page .trend-overlay h3 {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.events-page .trend-overlay span {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.events-page .events-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    margin-bottom: 36px;
+}
+
+.events-page .event-card {
+    display: block;
+    border-radius: 18px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+}
+
+.events-page .event-card:hover {
+    border-color: rgba(147, 51, 234, 0.25);
+}
+
+.events-page .event-card-media {
+    height: 190px;
+    position: relative;
+    overflow: hidden;
+}
+
+.events-page .event-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 420ms ease;
+}
+
+.events-page .event-card:hover .event-card-media img {
+    transform: scale(1.06);
+}
+
+.events-page .event-card-top,
+.events-page .event-card-bottom {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.events-page .event-card-top {
+    top: 12px;
+}
+
+.events-page .event-card-bottom {
+    bottom: 12px;
+}
+
+.events-page .event-pill {
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.events-page .event-pill-price {
+    background: rgba(147, 51, 234, 0.14);
+    border-color: rgba(147, 51, 234, 0.18);
+}
+
+.events-page .event-card-body {
+    padding: 16px 16px 14px;
+}
+
+.events-page .event-title {
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.events-page .event-venue {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 14px;
+}
+
+.events-page .event-venue i {
+    color: var(--purple);
+}
+
+.events-page .event-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(55, 65, 81, 0.08);
+}
+
+.events-page .attendees {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+    .events-page .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+
+    .events-page .sidebar {
+        display: none;
+    }
+
+    .events-page .events-hero {
+        padding: 84px 20px 46px;
+    }
+}
+
 /* User Dropdown */
 .profile-dropdown {
     position: relative;

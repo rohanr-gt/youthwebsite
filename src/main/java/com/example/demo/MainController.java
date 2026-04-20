@@ -89,7 +89,8 @@ public class MainController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "home";
     }
 
@@ -99,17 +100,20 @@ public class MainController {
     }
 
     @GetMapping("/support")
-    public String support() {
+    public String support(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "support";
     }
 
     @GetMapping("/about")
-    public String about() {
+    public String about(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "about";
     }
 
     @GetMapping("/games")
-    public String games() {
+    public String games(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "games";
     }
 

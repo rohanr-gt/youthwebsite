@@ -18,8 +18,14 @@
             <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
         </div>
         <div style="display: flex; gap: 15px;">
-            <a href="/login" class="btn btn-outline">Login</a>
-            <a href="/register" class="btn btn-primary">Register</a>
+            <th:block th:if="${user == null}">
+                <a href="/login" class="btn btn-outline">Login</a>
+                <a href="/register" class="btn btn-primary">Register</a>
+            </th:block>
+            <th:block th:if="${user != null}">
+                <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </th:block>
         </div>
     </nav>
 

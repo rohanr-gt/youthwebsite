@@ -59,11 +59,13 @@ public class EventController {
         if (authUser instanceof User) {
             return (User) authUser;
         }
+        if ("admin".equals(authUser)) return null; // Admin string handled separately
         
         Object sessionUser = session.getAttribute("user");
         if (sessionUser instanceof User) {
             return (User) sessionUser;
         }
+        if ("admin".equals(sessionUser)) return null; // Admin string handled separately
         Object userIdObj = session.getAttribute("userId");
         if (userIdObj != null) {
             try {
@@ -115,12 +117,15 @@ public class EventController {
                 .collect(Collectors.toList());
         
         List<Event> regularEvents = allItems.stream()
-                .filter(e -> !"VOTING".equals(e.getStatus()) && !"REJECTED".equals(e.getStatus()))
+                .filter(e -> {
+                    String status = e.getStatus();
+                    return status == null || (!"VOTING".equals(status) && !"REJECTED".equals(status));
+                })
                 .collect(Collectors.toList());
 
         // Trending = first 3 UPCOMING regular events
         List<Event> trending = regularEvents.stream()
-                .filter(e -> "UPCOMING".equals(e.getStatus()))
+                .filter(e -> "UPCOMING".equals(e.getStatus()) || e.getStatus() == null)
                 .limit(3).collect(Collectors.toList());
 
         model.addAttribute("events", regularEvents);
