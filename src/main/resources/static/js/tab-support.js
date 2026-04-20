@@ -49,12 +49,23 @@
             }
         }
         
-        // Initial run
-        syncTabState();
-        
-        // Handle dynamic content (like loading more posts)
-        const observer = new MutationObserver(syncTabState);
-        observer.observe(document.body, { childList: true, subtree: true });
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSync);
+        } else {
+            initSync();
+        }
+
+        function initSync() {
+            // Initial run
+            syncTabState();
+            
+            // Handle dynamic content (like loading more posts)
+            const observer = new MutationObserver(syncTabState);
+            if (document.body) {
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
+        }
     }
 
     // Handle logout link specifically

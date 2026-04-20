@@ -92,7 +92,8 @@ public class MainController {
     }
 
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         // Fetch real student thoughts
         model.addAttribute("thoughts", postRepository.findByPostTypeOrderByCreatedAtDesc("THOUGHT"));
         // Fetch all games
@@ -108,22 +109,27 @@ public class MainController {
     }
 
     @GetMapping("/support")
-    public String support() {
+    public String support(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "support";
     }
 
     @GetMapping("/about")
-    public String about() {
+    public String about(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "about";
     }
 
     @GetMapping("/games")
-    public String games() {
+    public String games(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "games";
     }
 
     @GetMapping("/games/rock-paper-scissors")
-    public String rockPaperScissors() {
+    public String rockPaperScissors(Model model, HttpSession session) {
+        User user = getUserFromSession(session);
+        model.addAttribute("user", user);
         return "rock-paper-scissors";
     }
 
@@ -138,12 +144,16 @@ public class MainController {
     }
 
     @GetMapping("/play-uno")
-    public String playUno() {
+    public String playUno(Model model, HttpSession session) {
+        User user = getUserFromSession(session);
+        model.addAttribute("user", user);
         return "uno";
     }
 
     @GetMapping("/play-ludo")
-    public String playLudo() {
+    public String playLudo(Model model, HttpSession session) {
+        User user = getUserFromSession(session);
+        model.addAttribute("user", user);
         return "ludo";
     }
 
