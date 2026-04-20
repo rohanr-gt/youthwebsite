@@ -7,96 +7,101 @@
     <title>Ludo King | Zentrix</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SockJS + STOMP (WebSocket) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
-
-        :root {
-            --red: #e63946;
-            --blue: #1d7bcf;
-            --green: #2dc653;
-            --yellow: #f7b731;
-            --bg: #0d0d1a;
-            --accent: #F84464;
-            --gold: #ffd700;
-            --board-size: min(520px, 92vw);
-            --cell: calc(var(--board-size) / 15);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: var(--bg);
-            min-height: 100vh;
+        /* ... existing styles ... */
+        .lobby-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 13, 26, 0.95);
+            z-index: 2000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            font-family: 'Nunito', sans-serif;
-            background-image:
-                radial-gradient(ellipse at 15% 40%, rgba(29, 123, 207, 0.18) 0%, transparent 55%),
-                radial-gradient(ellipse at 85% 20%, rgba(45, 198, 83, 0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 90%, rgba(231, 57, 70, 0.1) 0%, transparent 55%);
-            padding: 14px 12px 30px;
-            gap: 12px;
-            overflow-x: hidden;
-        }
-
-        /* Stars bg */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                radial-gradient(circle, rgba(255, 255, 255, 0.7) 1px, transparent 1px),
-                radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
-            background-size: 120px 120px, 80px 80px;
-            background-position: 0 0, 40px 40px;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.25;
-        }
-
-        h1 {
-            font-family: 'Fredoka One', cursive;
-            font-size: clamp(1.6rem, 5vw, 2.8rem);
-            background: linear-gradient(135deg, #f7b731 0%, #e63946 35%, #1d7bcf 65%, #2dc653 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 3px;
-            position: relative;
-            z-index: 1;
-            filter: drop-shadow(0 2px 20px rgba(248, 68, 100, 0.4));
-            animation: titleFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes titleFloat {
-
-            0%,
-            100% {
-                transform: translateY(0)
-            }
-
-            50% {
-                transform: translateY(-5px)
-            }
-        }
-
-        .game-layout {
-            display: flex;
-            align-items: flex-start;
-            gap: 18px;
-            flex-wrap: wrap;
             justify-content: center;
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 900px;
+            padding: 40px;
         }
+
+        .lobby-card {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .lobby-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+        }
+
+        .btn-lobby {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--red) 0%, #ff5c8a 100%);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-lobby:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+        }
+
+        .room-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #fff;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="lobbyOverlay" class="lobby-overlay">
+        <h1>LUDO MULTIPLAYER</h1>
+        <div class="lobby-card">
+            <input type="text" id="playerNameInput" th:value="${user != null ? user.username : ''}" 
+                   placeholder="Your Name" class="lobby-input">
+            <button class="btn-lobby" onclick="createRoom()">Create New Table</button>
+            <div style="margin: 10px 0; font-size: 14px; font-weight: 600; color: #666; text-align: center;">OR</div>
+            <input type="text" id="roomCodeInput" placeholder="Enter Table Code" class="lobby-input">
+            <button class="btn-lobby" style="background: linear-gradient(135deg, var(--blue) 0%, #4ea8de 100%);" onclick="joinRoom()">Join Table</button>
+        </div>
+        <a href="/games" class="back-btn" style="color: #666; margin-top: 20px; text-decoration: none;"><i class="fas fa-arrow-left"></i> Back to Games</a>
+    </div>
+
+    <div id="roomInfo" class="room-info" style="display: none;">
+        Table: <span id="displayRoomId" style="color: var(--yellow); font-weight: 800;"></span>
+    </div>
 
         /* ---- BOARD ---- */
         #board {
@@ -735,11 +740,123 @@
             diceValue: 0, diceRolled: false,
             pieces: [], playerTypes: [],
             isGameOver: false,
-            moveableIndices: []
+            moveableIndices: [],
+            roomId: null,
+            playerIndex: -1 // -1 = local, 0-3 = network player
         };
 
         let diceDisabled = true;
         let animating = false;
+        let stompClient = null;
+
+        // ---- MULTIPLAYER ----
+        async function createRoom() {
+            const playerName = document.getElementById('playerNameInput').value.trim();
+            if (!playerName) return alert("Enter your name");
+            const res = await fetch('/api/ludo/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerName })
+            });
+            const data = await res.json();
+            state.roomId = data.roomId;
+            state.playerIndex = data.playerIndex;
+            initMultiplayer();
+        }
+
+        async function joinRoom() {
+            const playerName = document.getElementById('playerNameInput').value.trim();
+            const rId = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!playerName || !rId) return alert("Enter name and code");
+            const res = await fetch('/api/ludo/join', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerName, roomId: rId })
+            });
+            const data = await res.json();
+            if (data.error) return alert(data.error);
+            state.roomId = data.roomId;
+            state.playerIndex = data.playerIndex;
+            initMultiplayer();
+        }
+
+        function initMultiplayer() {
+            document.getElementById('lobbyOverlay').style.display = 'none';
+            document.getElementById('roomInfo').style.display = 'block';
+            document.getElementById('displayRoomId').innerText = state.roomId;
+            connectWebSocket();
+        }
+
+        function connectWebSocket() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/ludo/' + state.roomId, function (msg) {
+                    const roomState = JSON.parse(msg.body);
+                    syncState(roomState);
+                });
+                stompClient.subscribe('/topic/ludo/' + state.roomId + '/roll', function (msg) {
+                    const payload = JSON.parse(msg.body);
+                    if (payload.playerIndex !== state.playerIndex) {
+                        animateExternalRoll(payload.val);
+                    }
+                });
+                stompClient.send("/app/ludo/" + state.roomId + "/subscribe", {}, "{}");
+            });
+        }
+
+        function syncState(roomState) {
+            console.log("Syncing State:", roomState);
+            // Map backend players to frontend pieces
+            roomState.players.forEach((p, pi) => {
+                if (p.name) {
+                    NAMES[pi] = p.name;
+                    state.playerTypes[pi] = 'human';
+                } else {
+                    state.playerTypes[pi] = 'inactive';
+                }
+                p.pieces.forEach((pos, i) => {
+                    state.pieces[pi][i].pos = pos;
+                });
+            });
+
+            state.currentPlayer = roomState.currentPlayer;
+            state.diceValue = roomState.diceValue;
+            state.diceRolled = roomState.diceRolled;
+            
+            // Only show slots with players
+            state.activeSlots = roomState.players.filter(p => !p.name == "").map(p => p.index);
+            if (state.activeSlots.length === 0) state.activeSlots = [0];
+
+            if (state.status === 'waiting' && roomState.status === 'active') {
+                // Game just started
+                if (rafId) cancelAnimationFrame(rafId);
+                render();
+            }
+            state.status = roomState.status;
+
+            buildPlayerCards();
+            updateTurnUI();
+            
+            // If it's my turn and dice not rolled, enable dice
+            diceDisabled = (state.currentPlayer !== state.playerIndex) || state.diceRolled;
+            document.getElementById('rollBtn').disabled = diceDisabled;
+        }
+
+        function animateExternalRoll(val) {
+            const diceEl = document.getElementById('dice');
+            diceEl.classList.add('rolling');
+            let frame = 0;
+            const interval = setInterval(() => {
+                diceEl.textContent = FACES[Math.floor(Math.random() * 6)];
+                frame++;
+                if (frame > 8) {
+                    clearInterval(interval);
+                    diceEl.textContent = FACES[val - 1];
+                    diceEl.classList.remove('rolling');
+                }
+            }, 60);
+        }
 
         // ---- BOARD DRAWING ----
         function drawBoard() {
@@ -1114,7 +1231,24 @@
 
         function rollDice() {
             if (state.diceRolled || state.isGameOver || animating) return;
+            
+            // If multiplayer, check if it's my turn
+            if (state.playerIndex !== -1 && state.currentPlayer !== state.playerIndex) {
+                 return showToast("Not your turn!");
+            }
+
             const val = Math.floor(Math.random() * 6) + 1;
+            
+            if (state.playerIndex !== -1) {
+                // Send to server
+                stompClient.send("/app/ludo/" + state.roomId + "/roll", {}, JSON.stringify({ playerIndex: state.playerIndex, val: val }));
+            } else {
+                // Local logic
+                executeRoll(val);
+            }
+        }
+
+        function executeRoll(val) {
             state.diceValue = val;
             state.diceRolled = true;
             diceDisabled = true;
@@ -1163,10 +1297,31 @@
             if (animating) return;
             const piece = state.pieces[pi][idx];
             const val = state.diceValue;
+            
+            const oldPos = piece.pos;
+            let newPos;
+            if (piece.pos === -1) newPos = 0;
+            else newPos = piece.pos + val;
+
+            if (state.playerIndex !== -1) {
+                // Send to server
+                stompClient.send("/app/ludo/" + state.roomId + "/move", {}, JSON.stringify({ 
+                    playerIndex: pi, 
+                    pieceIndex: idx,
+                    newPos: newPos 
+                }));
+            } else {
+                // Local logic
+                executeMove(pi, idx);
+            }
+        }
+
+        function executeMove(pi, idx) {
+            const piece = state.pieces[pi][idx];
+            const val = state.diceValue;
             animating = true;
             state.moveableIndices = [];
 
-            const oldPos = piece.pos;
             if (piece.pos === -1) piece.pos = 0;
             else piece.pos += val;
 

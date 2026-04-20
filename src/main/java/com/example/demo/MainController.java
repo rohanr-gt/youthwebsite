@@ -114,7 +114,9 @@ public class MainController {
     }
 
     @GetMapping("/games/rock-paper-scissors")
-    public String rockPaperScissors() {
+    public String rockPaperScissors(Model model, HttpSession session) {
+        User user = getUserFromSession(session);
+        model.addAttribute("user", user);
         return "rock-paper-scissors";
     }
 
@@ -129,12 +131,16 @@ public class MainController {
     }
 
     @GetMapping("/play-uno")
-    public String playUno() {
+    public String playUno(Model model, HttpSession session) {
+        User user = getUserFromSession(session);
+        model.addAttribute("user", user);
         return "uno";
     }
 
     @GetMapping("/play-ludo")
-    public String playLudo() {
+    public String playLudo(Model model, HttpSession session) {
+        User user = getUserFromSession(session);
+        model.addAttribute("user", user);
         return "ludo";
     }
 

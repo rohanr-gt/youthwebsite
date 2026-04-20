@@ -30,6 +30,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addInterceptors(new HttpSessionHandshakeInterceptor())
                 .setHandshakeHandler(new UserHandshakeHandler())
                 .withSockJS();
+        
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*")
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .setHandshakeHandler(new UserHandshakeHandler())
+                .withSockJS();
     }
 
     private class UserHandshakeHandler extends DefaultHandshakeHandler {
