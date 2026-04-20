@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Zentrix</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar" th:fragment="navbar(active)">
+        <div class="logo">Zentrix</div>
+        <div class="nav-links">
+            <a href="/home" th:classappend="${active} == 'home' ? ' active' : ''">Home</a>
+            <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
+            <a href="/games" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
+            <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
+            <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
+        </div>
+        <div style="display: flex; gap: 15px;">
+            <a href="/login" class="btn btn-outline">Login</a>
+            <a href="/register" class="btn btn-primary">Register</a>
+        </div>
+    </nav>
+
+    <footer th:fragment="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>Zentrix</h3>
+                <a href="/about">About Us</a>
+                <a href="/events">Events</a>
+                <a href="/support">Contact</a>
+                <a href="#">Organizers</a>
+            </div>
+            <div class="footer-col">
+                <h3>Help</h3>
+                <a href="/support">Contact Us</a>
+                <a href="#">FAQs</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/animations.js}"></script>
+</body>
+</html>

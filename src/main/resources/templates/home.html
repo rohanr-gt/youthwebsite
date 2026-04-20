@@ -1,99 +1,112 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head th:replace="~{fragments/template :: head('Zentrix | Youth Website')}">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix | Discover Experiences</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script th:src="@{/js/tab-support.js}"></script>
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix</div>
-        <div class="nav-links">
-            <a href="/home" class="active">Home</a>
-            <a href="/events">Events</a>
-            <a href="/games">Games</a>
-            <a href="/about">About Us</a>
-            <a href="/support">Contact</a>
-        </div>
-        <div style="display: flex; gap: 15px;">
-            <a href="/login" class="nav-btn" style="background: transparent; border: 1px solid var(--accent);">Login</a>
-            <a href="/register" class="nav-btn">Register</a>
-        </div>
-    </nav>
+    <script th:src="@{/js/tab-support.js}"></script>
 
-    <!-- Hero Section -->
-    <section class="hero"
-        style="background-image: linear-gradient(to right, rgba(15, 16, 20, 0.9), rgba(15, 16, 20, 0.4)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop');">
+    <nav th:replace="~{fragments/template :: navbar('home')}"></nav>
+
+    <!-- Hero Section (Mega Template) -->
+    <section class="hero" aria-label="Zentrix hero slideshow">
+        <div class="hero-slideshow" id="heroSlideshow" aria-hidden="true">
+            <div class="hero-slide is-active"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+            <div class="hero-slide"></div>
+        </div>
+        <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
-            <h1>Discover Unforgettable Experiences</h1>
-            <p>From electric concerts to inspiring conferences, find the events that move you.</p>
-            <a href="/events" class="cta-btn">Explore Events</a>
+            <div class="pill"><i class="fa-solid fa-sparkles"></i> Youth-first experiences, one place</div>
+            <h1 style="margin-top: 14px;">Build skills. Make friends. Have fun.</h1>
+            <p>Events, games, music rooms, and community — designed with your new color theme across the entire site.</p>
+            <div style="margin-top: 18px; display:flex; gap:10px; flex-wrap:wrap;">
+                <span class="pill"><i class="fa-solid fa-shield"></i> Safe community</span>
+                <span class="pill"><i class="fa-solid fa-bolt"></i> Fast sign-up</span>
+                <span class="pill"><i class="fa-solid fa-heart"></i> Personalized feed</span>
+            </div>
+        </div>
+        <div class="hero-dots" id="heroDots" aria-hidden="true">
+            <span class="hero-dot is-active"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
         </div>
     </section>
 
-    <!-- Trending Events -->
+    <script>
+        (() => {
+            const urls = [
+                "https://images.openai.com/static-rsc-4/rL5f5uy-W_tMoArfvLaTwSgSWy1EWmA5lm5MLA5O9r4_z8uhOO-BqwFw2TxyzA-cpXnVhh0Zzj-mKj8ToCV5wuch5X7PMUCV6HyJdvlDpELo_SX2cB5TDZIMj36Vn-D8JmX7QFkXNDdSsY0LEWVkoBer_g0Y8hGzIS9lE1qCLR3F_wjyXc0Tdg8lUd-W4CHm?purpose=fullsize",
+                "https://images.openai.com/static-rsc-4/PYRyip9qphv3Eo4ZEak-a4RgjBOSDmmhdujjM6qZTwCgNb1uFwAsitxiCaxWRTnuuZWwvvXR3jnywIbZmwRAKOJeTBV2yJ7kdQQxVI3VL8Ximol6cdMMgrHfPx-u9hHw8ek56gXWy-yQHiVNe5siOvqcOu47cysEQ9ryecA2vveleDB8CSqnwMymnm0Ce1U-?purpose=fullsize",
+                "https://images.openai.com/static-rsc-4/zMLVR4BFIsd7aTBhUW6qFSVVV0whPO0-euicqrbUc5XryenkqwtIKE3vhpgsyTKV3M-JnliJGBxLN9NnMms3Rnfi0bOOp9AMHUwFVOKBeiHAdPo7XbgZcw8n5kvQSAq5zVn2X-XsV_5lMlGxQedWpLM-PsA0DJ84hK7oX-vMSzib4iITMNHDkP8ht2sLoCvZ?purpose=fullsize",
+                "https://images.openai.com/static-rsc-4/0NSRQAuMt5ZcwHCgzrSocLLShFdnSKgWFMw9ejK0Qh_hnBgyOXzQU4I1GDQ0qrupJGEyxYNTybDnBFBSUoHR7fpV2FKUCIxS0a7b0cH523t9myhOH_TLGz1lW0_dS0VywsKK6J2vgr-yWOpbJj2Cf-yIYlmQCCEzxSMZjSOxMnrzHbjtQHw4Poxm9TVJDJmk?purpose=fullsize",
+                "https://images.openai.com/static-rsc-4/RcXkr1zDk7oZ_bZKDklwfcG1-tUbhj-WxvSLLdqD1QbJt3LVrKtkT-StC7MtzjART745YBsMV0ymmNKSAvU7iSDXGk_b1Sx3C5kbDojyaPbEYTwg858IOi2Q_kB3cyrjM8x3-MUVUHOOhw1dsmPkIh5pOg-WJyaQx1X7Artfj96rnP7n4MAnRV17NzW6CK3V?purpose=fullsize"
+            ];
+
+            const root = document.getElementById("heroSlideshow");
+            const dotsRoot = document.getElementById("heroDots");
+            if (!root) return;
+
+            const slides = Array.from(root.querySelectorAll(".hero-slide"));
+            const dots = dotsRoot ? Array.from(dotsRoot.querySelectorAll(".hero-dot")) : [];
+
+            // Fill slide backgrounds
+            slides.forEach((el, idx) => {
+                const url = urls[idx % urls.length];
+                el.style.backgroundImage = `url('${url}')`;
+            });
+
+            // Preload
+            urls.forEach((u) => {
+                const img = new Image();
+                img.src = u;
+            });
+
+            let active = 0;
+            const intervalMs = 4500;
+
+            const setActive = (next) => {
+                slides[active]?.classList.remove("is-active");
+                dots[active]?.classList.remove("is-active");
+                active = next;
+                slides[active]?.classList.add("is-active");
+                dots[active]?.classList.add("is-active");
+            };
+
+            // Auto-play
+            setInterval(() => setActive((active + 1) % slides.length), intervalMs);
+        })();
+    </script>
+
+    <!-- Quick Stats -->
     <section class="container">
-        <div class="section-header">
-            <h2>Trending Events</h2>
-            <a href="/events" class="see-all">See All ›</a>
-        </div>
-        <div class="events-grid">
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1974&auto=format&fit=crop"
-                    class="card-img" alt="Concert">
-                <div class="card-content">
-                    <div class="event-date">AUG 24 | 7:00 PM</div>
-                    <div class="card-title">Neon Lights Music Fest</div>
-                    <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> Austin, TX</div>
-                    <div class="event-price">$120 onwards</div>
-                </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(147, 51, 234, 0.12);"><i class="fa-solid fa-calendar"></i> Events</div>
+                <h3 style="margin-top: 10px; font-size: 24px;">Discover</h3>
+                <p style="color: var(--text-secondary); margin-top: 6px;">Find workshops, clubs, talks, and meetups near you.</p>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop"
-                    class="card-img" alt="Conference">
-                <div class="card-content">
-                    <div class="event-date">SEP 10 | 9:00 AM</div>
-                    <div class="card-title">Future Tech Summit</div>
-                    <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> San Francisco, CA</div>
-                    <div class="event-price">$499 onwards</div>
-                </div>
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(6, 182, 212, 0.12);"><i class="fa-solid fa-gamepad"></i> Games</div>
+                <h3 style="margin-top: 10px; font-size: 24px;">Play</h3>
+                <p style="color: var(--text-secondary); margin-top: 6px;">Challenge friends with quick web games and leaderboards.</p>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=2072&auto=format&fit=crop"
-                    class="card-img" alt="Workshop">
-                <div class="card-content">
-                    <div class="event-date">OCT 05 | 10:00 AM</div>
-                    <div class="card-title">Creative Design Workshop</div>
-                    <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> New York, NY</div>
-                    <div class="event-price">$50 onwards</div>
-                </div>
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(236, 72, 153, 0.10);"><i class="fa-solid fa-music"></i> Music</div>
+                <h3 style="margin-top: 10px; font-size: 24px;">Collaborate</h3>
+                <p style="color: var(--text-secondary); margin-top: 6px;">Join rooms, vote on tracks, and build a shared vibe.</p>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1514525253440-b393452e3383?q=80&w=1974&auto=format&fit=crop"
-                    class="card-img" alt="Standup">
-                <div class="card-content">
-                    <div class="event-date">NOV 12 | 8:00 PM</div>
-                    <div class="card-title">Laugh Out Loud Comedy</div>
-                    <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> Chicago, IL</div>
-                    <div class="event-price">$35 onwards</div>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=1973&auto=format&fit=crop"
-                    class="card-img" alt="Startup">
-                <div class="card-content">
-                    <div class="event-date">DEC 01 | 6:00 PM</div>
-                    <div class="card-title">Startup Networking Night</div>
-                    <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> Seattle, WA</div>
-                    <div class="event-price">Free Entry</div>
-                </div>
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(250, 204, 21, 0.18);"><i class="fa-solid fa-star"></i> Rewards</div>
+                <h3 style="margin-top: 10px; font-size: 24px;">Earn</h3>
+                <p style="color: var(--text-secondary); margin-top: 6px;">Get rewards for participation and community activity.</p>
             </div>
         </div>
     </section>
@@ -103,46 +116,129 @@
         <div class="section-header">
             <h2>Browse by Category</h2>
         </div>
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-            <a href="/events" class="card"
-                style="height: 150px; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%); color: #333;">
-                <h3 style="font-size: 24px;">Music</h3>
+        <div class="category-tiles">
+            <a href="/events" class="category-card cat-pink">
+                <div class="category-icon">
+                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop" alt="Music category">
+                </div>
+                <div class="category-info">
+                    <h3>Music</h3>
+                    <p>Concerts, jam sessions, open mics, and music battles.</p>
+                    <div class="category-meta"><i class="fa-solid fa-music"></i> Live • Rooms • Playlists</div>
+                </div>
             </a>
-            <a href="/events" class="card"
-                style="height: 150px; display: flex; align-items: center; justify-content: center; background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); color: #333;">
-                <h3 style="font-size: 24px;">Tech</h3>
+            <a href="/events" class="category-card cat-blue">
+                <div class="category-icon">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" alt="Tech category">
+                </div>
+                <div class="category-info">
+                    <h3>Tech</h3>
+                    <p>Hack nights, workshops, talks, and creator meetups.</p>
+                    <div class="category-meta"><i class="fa-solid fa-microchip"></i> Build • Learn • Ship</div>
+                </div>
             </a>
-            <a href="/events" class="card"
-                style="height: 150px; display: flex; align-items: center; justify-content: center; background: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%); color: #333;">
-                <h3 style="font-size: 24px;">Comedy</h3>
+            <a href="/events" class="category-card cat-yellow">
+                <div class="category-icon">
+                    <img src="https://images.unsplash.com/photo-1520975958221-79c67ddf61e5?q=80&w=800&auto=format&fit=crop" alt="Comedy category">
+                </div>
+                <div class="category-info">
+                    <h3>Comedy</h3>
+                    <p>Standup shows, improv nights, and fun community gigs.</p>
+                    <div class="category-meta"><i class="fa-solid fa-face-laugh"></i> Laugh • Meet • Chill</div>
+                </div>
             </a>
-            <a href="/events" class="card"
-                style="height: 150px; display: flex; align-items: center; justify-content: center; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); color: white;">
-                <h3 style="font-size: 24px;">Sports</h3>
+            <a href="/events" class="category-card cat-purple">
+                <div class="category-icon">
+                    <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?q=80&w=800&auto=format&fit=crop" alt="Sports category">
+                </div>
+                <div class="category-info">
+                    <h3>Sports</h3>
+                    <p>Tournaments, watch parties, and friendly challenges.</p>
+                    <div class="category-meta"><i class="fa-solid fa-trophy"></i> Compete • Team up</div>
+                </div>
             </a>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-col">
-                <h3>Zentrix</h3>
-                <a href="/about">About Us</a>
-                <a href="/events">Events</a>
-                <a href="/support">Contact</a>
-                <a href="#">Organizers</a>
-            </div>
-            <div class="footer-col">
-                <h3>Help</h3>
-                <a href="/support">Contact Us</a>
-                <a href="#">FAQs</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Privacy Policy</a>
-            </div>
-
+    <!-- Featured Games -->
+    <section class="container">
+        <div class="section-header">
+            <h2>Quick Games</h2>
+            <a href="/games" class="see-all">See All ›</a>
         </div>
-    </footer>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
+            <a class="card" href="/games/rock-paper-scissors">
+                <img class="card-img" src="https://images.unsplash.com/photo-1611996575749-79a3a250f948?q=80&w=2070&auto=format&fit=crop" alt="Rock Paper Scissors">
+                <div class="card-content">
+                    <div class="event-date">2 MIN GAME</div>
+                    <div class="card-title">Rock Paper Scissors</div>
+                    <div class="card-subtitle"><i class="fas fa-bolt"></i> Instant fun</div>
+                </div>
+            </a>
+            <a class="card" href="/games/snake-and-ladder">
+                <img class="card-img" src="https://images.unsplash.com/photo-1612144962410-7f6f84c42f1a?q=80&w=2070&auto=format&fit=crop" alt="Snake and Ladder">
+                <div class="card-content">
+                    <div class="event-date">PARTY CLASSIC</div>
+                    <div class="card-title">Snake &amp; Ladder</div>
+                    <div class="card-subtitle"><i class="fas fa-users"></i> Play with friends</div>
+                </div>
+            </a>
+            <a class="card" href="/play-uno">
+                <img class="card-img" src="https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=2070&auto=format&fit=crop" alt="UNO">
+                <div class="card-content">
+                    <div class="event-date">FAST ROUNDS</div>
+                    <div class="card-title">UNO</div>
+                    <div class="card-subtitle"><i class="fas fa-crown"></i> Win streaks</div>
+                </div>
+            </a>
+            <a class="card" href="/play-chess">
+                <img class="card-img" src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=2070&auto=format&fit=crop" alt="Chess">
+                <div class="card-content">
+                    <div class="event-date">SKILL</div>
+                    <div class="card-title">Chess</div>
+                    <div class="card-subtitle"><i class="fas fa-brain"></i> Think ahead</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Testimonials + CTA -->
+    <section class="container section-muted" style="border-radius: 18px;">
+        <div class="section-header">
+            <h2>What Students Say</h2>
+            <a href="/register" class="see-all">Join Now ›</a>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(236, 72, 153, 0.12);"><i class="fa-solid fa-quote-left"></i> Community</div>
+                <p style="margin-top: 12px; color: var(--text-secondary);">“I met my project teammates here and now we attend events together.”</p>
+                <div style="margin-top: 14px; font-weight: 800;">Aanya</div>
+            </div>
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(6, 182, 212, 0.12);"><i class="fa-solid fa-quote-left"></i> Fun</div>
+                <p style="margin-top: 12px; color: var(--text-secondary);">“Games between classes are my favorite. The vibe is super chill.”</p>
+                <div style="margin-top: 14px; font-weight: 800;">Kabir</div>
+            </div>
+            <div class="surface" style="padding: 22px;">
+                <div class="pill" style="background: rgba(147, 51, 234, 0.12);"><i class="fa-solid fa-quote-left"></i> Growth</div>
+                <p style="margin-top: 12px; color: var(--text-secondary);">“Workshops helped me build confidence. Rewards make it motivating.”</p>
+                <div style="margin-top: 14px; font-weight: 800;">Neha</div>
+            </div>
+        </div>
+        <div class="surface" style="margin-top: 18px; padding: 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+            <div>
+                <h3 style="font-size: 22px;">Ready to start?</h3>
+                <p style="color: var(--text-secondary);">Create an account and personalize your feed.</p>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <a href="/register" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Create account</a>
+                <a href="/login" class="btn btn-outline"><i class="fa-solid fa-right-to-bracket"></i> Sign in</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/template :: footer}"></footer>
 
 </body>
 
