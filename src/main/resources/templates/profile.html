@@ -485,11 +485,7 @@
     <!-- Navbar -->
     <nav class="dashboard-navbar">
         <a class="dashboard-logo" href="/home">Zentrix</a>
-        <!-- Search Bar -->
-        <div class="dashboard-search">
-            <input type="text" placeholder="Search for talents, events..." class="form-input"
-                style="background: var(--card-bg); border-radius: 20px; padding: 8px 15px;">
-        </div>
+        <div class="dashboard-spacer"></div>
         <div class="dashboard-nav-links">
             <a href="/dashboard"><i class="fas fa-home"></i></a>
             <a href="/messages" style="position: relative;">
@@ -503,10 +499,18 @@
                 <span th:if="${unreadNotifCount != null && unreadNotifCount > 0}" id="notif-badge" class="badge"
                     th:text="${unreadNotifCount}"></span>
             </a>
-            <a href="/profile" class="active">
-                <img th:src="${session.user.profilePhotoUrl != null and !session.user.profilePhotoUrl.isEmpty()} ? ${session.user.profilePhotoUrl} : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop'"
-                    class="user-avatar" style="width: 32px; height: 32px; border: none;">
-            </a>
+            <div class="profile-dropdown">
+                <a href="/profile" class="active">
+                    <img th:src="${session.user.profilePhotoUrl != null and !session.user.profilePhotoUrl.isEmpty()} ? ${session.user.profilePhotoUrl} : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop'"
+                        class="user-avatar" style="width: 32px; height: 32px; border: none;">
+                </a>
+                <div class="dropdown-menu">
+                    <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> View Profile</a>
+                    <a href="/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout" class="dropdown-item" style="color: #ff4444;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -519,10 +523,11 @@
             <a href="/events" class="sidebar-link"><i class="fas fa-calendar-alt"></i> Events</a>
             <a href="/achievements" class="sidebar-link"><i class="fas fa-trophy"></i> Achievements</a>
             <a href="/messages" class="sidebar-link"><i class="fas fa-comment-dots"></i> Chat</a>
+            <a href="/reels" class="sidebar-link"><i class="fas fa-film"></i> Reels</a>
             <a href="/profile" class="sidebar-link active"><i class="fas fa-user"></i> Profile</a>
             <a href="/games" class="sidebar-link"><i class="fas fa-gamepad"></i> Games</a>
-            <a href="#" class="sidebar-link" onclick="openM('createPostModal')"><i class="fas fa-plus-circle"
-                    style="color: var(--accent);"></i> Create Post</a>
+            <a href="/music" class="sidebar-link"><i class="fas fa-music"></i> Music</a>
+            <a href="javascript:void(0)" class="sidebar-link" onclick="openCreateModal()"><i class="fas fa-plus-circle" style="color: var(--accent);"></i> Create Post</a>
             <a href="/logout" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </aside>
 

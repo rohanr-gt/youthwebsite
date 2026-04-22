@@ -1387,8 +1387,11 @@ input[type="file"].form-input::file-selector-button:hover {
     overflow-y: auto;
 }
 .sidebar::-webkit-scrollbar {
-    width: 0;
-    display: none;
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
 .sidebar-link {
