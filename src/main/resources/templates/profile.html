@@ -1116,7 +1116,7 @@
             </div>
             <div style="padding: 15px;">
                 <div style="margin-bottom: 12px;">
-                    <input type="text" id="shareSearchInput" placeholder="Search followers..."
+                    <input type="text" id="shareSearchInput" placeholder="Search users to share with..."
                         onkeyup="filterShareList()"
                         style="width:100%; padding:10px 14px; border-radius:12px; background:var(--card-bg); border:1px solid var(--glass-border); color:white; outline:none; font-size:14px;">
                 </div>
@@ -1537,7 +1537,7 @@
         function renderShareList(list) {
             const container = document.getElementById('shareConvList');
             if (!list || list.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:10px; color:var(--text-secondary); font-size:13px;">No followers found.</p>';
+                container.innerHTML = '<p style="text-align:center; padding:10px; color:var(--text-secondary); font-size:13px;">No users found.</p>';
                 return;
             }
             container.innerHTML = list.map(u => `
@@ -1552,10 +1552,23 @@
                 </div>
             `).join('');
         }
-        function filterShareList() {
-            const q = document.getElementById('shareSearchInput').value.toLowerCase();
-            const filtered = allFollowers.filter(u => u.username.toLowerCase().includes(q));
-            renderShareList(filtered);
+        async function filterShareList() {
+            const q = document.getElementById('shareSearchInput').value.trim();
+            if (!q) {
+                renderShareList(allFollowers);
+                return;
+            }
+            try {
+                const res = await fetch('/api/chat/search-users?query=' + encodeURIComponent(q));
+                if (res.ok) {
+                    const users = await res.json();
+                    renderShareList(users);
+                } else {
+                    renderShareList([]);
+                }
+            } catch (e) {
+                console.error('Search failed', e);
+            }
         }
         async function shareToUser(userId) {
             const res = await fetch('/api/chat/share-post-to-user', {
