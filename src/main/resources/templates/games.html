@@ -3,6 +3,186 @@
 
 <head th:replace="~{fragments/template :: head('Games & Sports | Zentrix')}">
     <meta charset="UTF-8">
+    <style>
+        /* Override / ensure grid layout for game cards */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 40px 0;
+        }
+
+        .game-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 14px 40px rgba(55, 65, 81, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 60px rgba(55, 65, 81, 0.16);
+        }
+
+        .game-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .game-content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 8px;
+        }
+
+        .game-content h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .game-content p {
+            margin: 0;
+            font-size: 14px;
+            flex: 1;
+            opacity: 0.8;
+        }
+
+        .game-content .game-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-game {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 18px;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            height: 38px;
+            border: none;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            overflow: hidden;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, var(--accent) 0%, #00b18f 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-play:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .btn-invite {
+            background: rgba(0, 212, 170, 0.05);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-invite:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.4);
+        }
+
+        /* Shine effect */
+        .btn-game::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-25deg);
+            transition: 0.5s;
+        }
+
+        .btn-game:hover::before {
+            left: 150%;
+        }
+
+        .btn-invite svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-invite:hover svg {
+            transform: translateY(-2px) rotate(-10deg);
+        }
+
+
+
+        /* Toast styles for feedback */
+        #invite-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #313131;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            animation: fadeInOut 2.5s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+
+            85% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -26,8 +206,18 @@
                     <h3>Rock Paper Scissors</h3>
                     <p>The classic game of strategy and luck. Battle your friends in this local 2-player showdown.</p>
                     <div class="game-footer">
-                        <span class="game-cat">2-Player Battle</span>
-                        <a href="/games/rock-paper-scissors" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">2-Player Battle</span>
+                        <div class="game-actions">
+                            <button class="btn-game btn-invite" onclick="inviteFriend('/games/rock-paper-scissors', 'Rock Paper Scissors')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                    <polyline points="16 6 12 2 8 6"></polyline>
+                                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                                </svg>
+                                Invite
+                            </button>
+                            <a href="/games/rock-paper-scissors" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -41,8 +231,18 @@
                     <h3>Snake & Ladder Legends</h3>
                     <p>Experience the classic board game with a modern neon twist. Roll the dice and reach the top!</p>
                     <div class="game-footer">
-                        <span class="game-cat">Modern Twist</span>
-                        <a href="/games/snake-and-ladder" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Modern Twist</span>
+                        <div class="game-actions">
+                            <button class="btn-game btn-invite" onclick="inviteFriend('/games/snake-and-ladder', 'Snake & Ladder Legends')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                    <polyline points="16 6 12 2 8 6"></polyline>
+                                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                                </svg>
+                                Invite
+                            </button>
+                            <a href="/games/snake-and-ladder" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,8 +256,18 @@
                     <h3>Chess Grandmaster</h3>
                     <p>The ultimate game of skill and patience. Challenge your mind in this strategic battle.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Strategy Classic</span>
-                        <a href="/play-chess" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Strategy Classic</span>
+                        <div class="game-actions">
+                            <button class="btn-game btn-invite" onclick="inviteFriend('/play-chess', 'Chess Grandmaster')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                    <polyline points="16 6 12 2 8 6"></polyline>
+                                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                                </svg>
+                                Invite
+                            </button>
+                            <a href="/play-chess" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,8 +281,18 @@
                     <h3>Uno Realistic</h3>
                     <p>The ultimate card showdown. Play against the AI in this high-stakes realistic version.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Card Battle</span>
-                        <a href="/play-uno" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Card Battle</span>
+                        <div class="game-actions">
+                            <button class="btn-game btn-invite" onclick="inviteFriend('/play-uno', 'Uno Realistic')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                    <polyline points="16 6 12 2 8 6"></polyline>
+                                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                                </svg>
+                                Invite
+                            </button>
+                            <a href="/play-uno" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,8 +306,18 @@
                     <h3>Ludo King</h3>
                     <p>The king of board games is here. Challenge your friends to a game of Ludo.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Board Classic</span>
-                        <a href="/play-ludo" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Board Classic</span>
+                        <div class="game-actions">
+                            <button class="btn-game btn-invite" onclick="inviteFriend('/play-ludo', 'Ludo King')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                    <polyline points="16 6 12 2 8 6"></polyline>
+                                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                                </svg>
+                                Invite
+                            </button>
+                            <a href="/play-ludo" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,8 +331,10 @@
                     <h3>Super Mario</h3>
                     <p>Relive the platforming legend. Journey through World 1-1 and defeat Goombas.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Retro Adventure</span>
-                        <a href="/play-mario" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Retro Adventure</span>
+                        <div class="game-actions">
+                            <a href="/play-mario" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,8 +348,10 @@
                     <h3>Bubble Shooter</h3>
                     <p>Arcade-style bubble popping. Aim carefully and clear the grid to win.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Arcade Fun</span>
-                        <a href="/play-bubble-shooter" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Arcade Fun</span>
+                        <div class="game-actions">
+                            <a href="/play-bubble-shooter" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,8 +365,10 @@
                     <h3>Candy Crush</h3>
                     <p>Sweet matching puzzle fun. Swap candies and clear levels in this classic game.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Sugar Rush</span>
-                        <a href="/play-candy-crush" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Sugar Rush</span>
+                        <div class="game-actions">
+                            <a href="/play-candy-crush" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -146,8 +382,10 @@
                     <h3>Zentrix Runner</h3>
                     <p>3D Endless Adventure. Dodge obstacles, jump barriers, and run forever in this 3D challenge.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Speed Run</span>
-                        <a href="/play-runner" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Speed Run</span>
+                        <div class="game-actions">
+                            <a href="/play-runner" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -161,8 +399,10 @@
                     <h3>Zentrix Racing</h3>
                     <p>High-Octane 3D Racing. Experience high-speed adrenaline and precision driving in our new 3D engine.</p>
                     <div class="game-footer">
-                        <span class="game-cat">Turbo Drive</span>
-                        <a href="/play-car-game" class="btn-play">Play Now</a>
+                        <span style="color: var(--accent); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Turbo Drive</span>
+                        <div class="game-actions">
+                            <a href="/play-car-game" class="btn-game btn-play">Play Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,8 +410,41 @@
         </div>
     </section>
 
+    <div id="invite-toast">Link copied to clipboard!</div>
+
     <footer th:replace="~{fragments/template :: footer}"></footer>
 
+    <script>
+        function inviteFriend(url, gameName) {
+            const fullUrl = window.location.origin + url;
+            const shareData = {
+                title: 'Play ' + gameName + ' on Zentrix!',
+                text: 'Hey! Come and play ' + gameName + ' with me on Zentrix.',
+                url: fullUrl
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData)
+                    .then(() => console.log('Shared successfully'))
+                    .catch((err) => console.log('Error sharing:', err));
+            } else {
+                // Fallback: Copy to clipboard
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = fullUrl;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+
+                // Show toast
+                const toast = document.getElementById('invite-toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2500);
+            }
+        }
+    </script>
 </body>
 
 </html>
