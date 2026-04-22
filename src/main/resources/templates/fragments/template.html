@@ -23,10 +23,10 @@
         </div>
         <nav class="navbar" th:classappend="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' and ${active} != 'events' and ${active} != 'event-details' ? ' has-topbar' : ''">
             <div class="nav-shell navbar-inner" style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0;">
-                <!-- Games page: minimal header (Home button only) -->
+                <!-- Games page: minimal header (Dashboard button only) -->
                 <th:block th:if="${active} == 'games'">
                     <div class="nav-links" style="justify-content:flex-start;">
-                        <a href="/home" class="btn btn-outline">Home</a>
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
                     </div>
                 </th:block>
 
@@ -34,7 +34,6 @@
                 <th:block th:if="${active} != 'games'">
                     <a class="logo" href="/home">Zentrix</a>
                     <div class="nav-links">
-                        <a href="/home" th:classappend="${active} == 'home' ? ' active' : ''">Home</a>
                         <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
                         <a href="/games" th:if="${active} != 'home'" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
                         <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
