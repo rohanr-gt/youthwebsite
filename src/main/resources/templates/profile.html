@@ -720,7 +720,7 @@
     </div>
 
     <!-- Followers Tab -->
-    <div class="tab-panel" id="tab-followers" style="display:none;">
+    <div class="tab-panel" id="tab-followers">
         <div class="follow-list-container">
             <div th:if="${followers == null or followers.isEmpty()}" class="empty-state">
                 <i class="fas fa-users"></i>
@@ -740,7 +740,7 @@
     </div>
 
     <!-- Following Tab -->
-    <div class="tab-panel" id="tab-following" style="display:none;">
+    <div class="tab-panel" id="tab-following">
         <div class="follow-list-container">
             <div th:if="${following == null or following.isEmpty()}" class="empty-state">
                 <i class="fas fa-user-friends"></i>
@@ -760,7 +760,7 @@
     </div>
 
     <!-- Settings -->
-    <div class="tab-panel" id="tab-settings" th:if="${isOwnProfile}" style="display:none;">
+    <div class="tab-panel" id="tab-settings" th:if="${isOwnProfile}">
         <div style="max-width:500px; margin:0 auto;">
             <div class="feature-card" style="margin-bottom:20px;">
                 <h3 style="margin-bottom:15px;"><i class="fas fa-lock" style="color:var(--accent);"></i> Reset
