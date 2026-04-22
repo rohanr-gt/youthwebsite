@@ -26,6 +26,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<PostComment> comments = new java.util.ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<UserActivity> userActivities = new java.util.ArrayList<>();
+
     private LocalDateTime createdAt;
 
     private String mediaUrl;
@@ -172,6 +175,14 @@ public class Post {
 
     public void setComments(java.util.List<PostComment> comments) {
         this.comments = comments;
+    }
+
+    public java.util.List<UserActivity> getUserActivities() {
+        return userActivities;
+    }
+
+    public void setUserActivities(java.util.List<UserActivity> userActivities) {
+        this.userActivities = userActivities;
     }
 
     public boolean isLikedByUser(User user) {

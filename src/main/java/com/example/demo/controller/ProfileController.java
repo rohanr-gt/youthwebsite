@@ -23,6 +23,9 @@ import java.util.HashSet;
 public class ProfileController {
 
     @Autowired
+    private com.example.demo.service.FeedAlgorithmService feedAlgorithmService;
+
+    @Autowired
     private jakarta.servlet.http.HttpServletRequest httpServletRequest;
 
     private User getUserFromSession(HttpSession session) {
@@ -281,7 +284,7 @@ public class ProfileController {
         }
 
         Post post = new Post(content, user, mediaUrl, mediaType, hashtags, postType, category);
-        postRepository.save(post);
+        feedAlgorithmService.savePost(post);
 
         // Handle collaborators (both mentions and explicit tags)
         Set<User> collaboratorSet = new HashSet<>();
@@ -337,7 +340,7 @@ public class ProfileController {
                     .build();
         }
 
-        postRepository.delete(post);
+        feedAlgorithmService.deletePost(post);
         return org.springframework.http.ResponseEntity.ok().build();
     }
 

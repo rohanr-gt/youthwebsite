@@ -6,6 +6,7 @@ import com.example.demo.repository.UserActivityRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -121,6 +122,19 @@ public class FeedAlgorithmService {
                 .sorted(Comparator.comparingDouble((Post p) -> calcEngagement(p)).reversed())
                 .limit(limit)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes a post and clears all feed caches to ensure it disappears everywhere.
+     */
+    @CacheEvict(value = {"feed", "trending", "recommended"}, allEntries = true)
+    public void deletePost(Post post) {
+        postRepository.delete(post);
+    }
+
+    @CacheEvict(value = {"feed", "trending", "recommended"}, allEntries = true)
+    public void savePost(Post post) {
+        postRepository.save(post);
     }
 
     // ── Internal Scoring ────────────────────────────────────────────────────

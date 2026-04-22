@@ -202,7 +202,7 @@ public class MainController {
         user = userRepository.findById(user.getId()).orElse(user);
         com.example.demo.model.Post post = new com.example.demo.model.Post(
                 content, user, null, null, null, "THOUGHT", category);
-        postRepository.save(post);
+        feedAlgorithmService.savePost(post);
         return "redirect:/home?thoughtShared=true";
     }
 
