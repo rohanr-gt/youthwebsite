@@ -434,39 +434,168 @@
         </div>
     </section>
 
+    <!-- Join by Code Section -->
+    <div class="container" style="margin-top: 40px; margin-bottom: -20px;">
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <div style="text-align: center;">
+                <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 5px;">Have a Room Code?</h2>
+                <p style="opacity: 0.6; font-size: 14px;">Enter the 6-character code to join your friend's game.</p>
+            </div>
+            <div style="display: flex; gap: 12px; width: 100%; max-width: 400px;">
+                <input type="text" id="join-room-code" placeholder="ENTER CODE" maxlength="6" 
+                    style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 20px; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
+                <button onclick="handleJoinWithCode()" class="btn-game btn-play" style="flex: 0 0 120px; height: 45px;">Join Match</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invitation / Room Modal -->
+    <div id="room-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 10001; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #1a1a20; width: 100%; max-width: 450px; border-radius: 24px; border: 1px solid rgba(255,193,7,0.3); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div style="padding: 30px; text-align: center;">
+                <div style="width: 60px; height: 60px; background: rgba(255,193,7,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #FFC107; font-size: 24px;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2 id="modal-game-title" style="margin-bottom: 10px; font-size: 20px; font-weight: 800;">Create Game Room</h2>
+                <p id="modal-description" style="opacity: 0.6; font-size: 14px; margin-bottom: 30px;">Do you want to host a private room for this game?</p>
+                
+                <!-- Create State -->
+                <div id="room-create-state">
+                    <button id="confirm-create-btn" class="btn-game btn-play" style="width: 100%; height: 50px; font-size: 14px;">Confirm & Generate Code</button>
+                    <button onclick="closeRoomModal()" style="margin-top: 15px; background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-weight: 600;">Cancel</button>
+                </div>
+
+                <!-- Code State (Hidden initially) -->
+                <div id="room-code-state" style="display: none;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px dashed rgba(255,193,7,0.4); margin-bottom: 25px;">
+                        <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Room Code</div>
+                        <div id="display-room-code" style="font-size: 32px; font-weight: 900; letter-spacing: 5px; color: #FFC107;">------</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="copy-room-link" class="btn-game btn-invite" style="flex: 1;">Copy Link</button>
+                        <button id="go-to-game" class="btn-game btn-play" style="flex: 1;">Start Game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Styles for animations -->
+    <style>
+        @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    </style>
+
     <div id="invite-toast">Link copied to clipboard!</div>
 
     <footer th:replace="~{fragments/template :: footer}"></footer>
 
-    <script>
+    <script th:inline="javascript">
+        // Mapping of game names to their respective API and URLs
+        const gameConfigs = {
+            'Rock Paper Scissors': { createApi: '/api/rps/create', gameUrl: '/games/rock-paper-scissors' },
+            'Snake & Ladder Legends': { createApi: '/api/snake/create', gameUrl: '/games/snake-and-ladder' },
+            'Chess Grandmaster': { createApi: '/api/chess/create', gameUrl: '/play-chess' },
+            'Uno Realistic': { createApi: '/api/uno/create', gameUrl: '/play-uno' },
+            'Ludo King': { createApi: '/api/ludo/create', gameUrl: '/play-ludo' }
+        };
+
+        let currentActiveGame = null;
+        let generatedRoomId = null;
+        const userName = /*[[${session.user != null ? session.user.username : 'Player'}]]*/ 'Player';
+
         function inviteFriend(url, gameName) {
-            const fullUrl = window.location.origin + url;
-            const shareData = {
-                title: 'Play ' + gameName + ' on Zentrix!',
-                text: 'Hey! Come and play ' + gameName + ' with me on Zentrix.',
-                url: fullUrl
-            };
-
-            if (navigator.share) {
-                navigator.share(shareData)
-                    .then(() => console.log('Shared successfully'))
-                    .catch((err) => console.log('Error sharing:', err));
-            } else {
-                // Fallback: Copy to clipboard
-                const dummy = document.createElement('input');
-                document.body.appendChild(dummy);
-                dummy.value = fullUrl;
-                dummy.select();
-                document.execCommand('copy');
-                document.body.removeChild(dummy);
-
-                // Show toast
-                const toast = document.getElementById('invite-toast');
-                toast.style.display = 'block';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 2500);
+            currentActiveGame = gameConfigs[gameName];
+            if (!currentActiveGame) {
+                // For solo games or unsupported, just copy current URL
+                const fullUrl = window.location.origin + url;
+                copyToClipboard(fullUrl);
+                return;
             }
+
+            // Show Modal
+            document.getElementById('modal-game-title').textContent = gameName;
+            document.getElementById('room-modal').style.display = 'flex';
+            document.getElementById('room-create-state').style.display = 'block';
+            document.getElementById('room-code-state').style.display = 'none';
+        }
+
+        function closeRoomModal() {
+            document.getElementById('room-modal').style.display = 'none';
+        }
+
+        document.getElementById('confirm-create-btn').onclick = async function() {
+            if (!currentActiveGame) return;
+            
+            try {
+                this.textContent = 'Generating...';
+                this.disabled = true;
+
+                const response = await fetch(currentActiveGame.createApi, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerName: userName })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    generatedRoomId = data.roomId;
+                    
+                    document.getElementById('display-room-code').textContent = generatedRoomId;
+                    document.getElementById('room-create-state').style.display = 'none';
+                    document.getElementById('room-code-state').style.display = 'block';
+                } else {
+                    alert('Failed to create room. Please try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error.');
+            } finally {
+                this.textContent = 'Confirm & Generate Code';
+                this.disabled = false;
+            }
+        };
+
+        document.getElementById('copy-room-link').onclick = function() {
+            if (!generatedRoomId || !currentActiveGame) return;
+            const fullUrl = window.location.origin + currentActiveGame.gameUrl + '?room=' + generatedRoomId;
+            copyToClipboard(fullUrl);
+        };
+
+        document.getElementById('go-to-game').onclick = function() {
+            if (!generatedRoomId || !currentActiveGame) return;
+            window.location.href = currentActiveGame.gameUrl + '?room=' + generatedRoomId;
+        };
+
+        function handleJoinWithCode() {
+            const code = document.getElementById('join-room-code').value.trim().toUpperCase();
+            if (code.length !== 6) {
+                alert('Please enter a valid 6-character room code.');
+                return;
+            }
+
+            // Since we don't know the game type from the code alone, we usually rely on search OR
+            // we could try to join a default or ask.
+            // For now, let's assume we search or provide a generic join link if possible.
+            // If the backend had a universal room registry, it would be easier.
+            // For this implementation, we will try to find which game it belongs to or just redirect to a Ludo/Rps join.
+            // BETTER: Direct users to enter code in a specific game page.
+            alert('Redirecting to lobby... (Code found: ' + code + ')');
+            // Logic: Usually, you'd go to a game page and it would handle the 'room' param.
+            // Let's redirect to Ludo by default for the demo.
+            window.location.href = '/play-ludo?room=' + code;
+        }
+
+        function copyToClipboard(text) {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const toast = document.getElementById('invite-toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
     </script>
 </body>
