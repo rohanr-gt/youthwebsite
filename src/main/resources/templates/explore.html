@@ -398,6 +398,10 @@
             wrapper.innerHTML = `<button class="person-follow-btn requested" disabled>...</button>`;
             try {
                 const res  = await fetch(endpoint, { method: 'POST' });
+                if (res.status === 401) {
+                    window.location.href = '/login?expired=true';
+                    return;
+                }
                 if (!res.ok) throw new Error(await res.text() || 'Failed');
                 const data = await res.json();
                 if (data.status === 'FOLLOWING') {

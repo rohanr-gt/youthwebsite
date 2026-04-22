@@ -63,7 +63,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (token != null) {
             // ── Reject blacklisted (logged-out) tokens immediately ──
             if (tokenBlacklist.isBlacklisted(token)) {
-                response.sendRedirect("/login?expired=true");
+                if (isAjaxRequest(request)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                } else {
+                    response.sendRedirect("/login?expired=true");
+                }
                 return false;
             }
 
@@ -92,8 +96,24 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         // Not authenticated
+        if (isAjaxRequest(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
+
         response.sendRedirect("/login?error=timeout");
         return false;
+    }
+
+    /**
+     * Determines if a request is an AJAX or API request.
+     */
+    private boolean isAjaxRequest(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        String requestedWith = request.getHeader("X-Requested-With");
+        return "XMLHttpRequest".equals(requestedWith) || 
+               path.startsWith("/api/") || 
+               path.endsWith("/ajax");
     }
 
     @Override

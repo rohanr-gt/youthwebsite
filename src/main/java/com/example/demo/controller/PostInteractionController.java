@@ -21,6 +21,8 @@ public class PostInteractionController {
     private PostCommentRepository postCommentRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     private User getUserFromSession(HttpSession session) {
         Object sessionUser = session.getAttribute("user");
@@ -67,6 +69,13 @@ public class PostInteractionController {
         } else {
             postLikeRepository.save(new PostLike(post, user));
             liked = true;
+
+            // Trigger Notification for the owner (if not liking own post)
+            if (!post.getUser().getId().equals(user.getId())) {
+                String typeStr = post.getPostType() != null ? post.getPostType().toLowerCase() : "post";
+                String msg = "@" + user.getUsername() + " liked your " + typeStr + "!";
+                notificationRepository.save(new Notification(post.getUser(), user, msg, "LIKE"));
+            }
         }
 
         long count = postLikeRepository.countByPost(post);
@@ -96,6 +105,14 @@ public class PostInteractionController {
             return ResponseEntity.badRequest().build();
 
         PostComment comment = postCommentRepository.save(new PostComment(post, user, content.trim()));
+
+        // Trigger Notification for the owner (if not commenting on own post)
+        if (!post.getUser().getId().equals(user.getId())) {
+            String typeStr = post.getPostType() != null ? post.getPostType().toLowerCase() : "post";
+            String msg = "@" + user.getUsername() + " commented on your " + typeStr + ": \"" + 
+                         (content.length() > 20 ? content.substring(0, 17) + "..." : content.trim()) + "\"";
+            notificationRepository.save(new Notification(post.getUser(), user, msg, "COMMENT"));
+        }
 
         Map<String, Object> resp = new HashMap<>();
         resp.put("id", comment.getId());
