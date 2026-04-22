@@ -3841,6 +3841,9 @@
                     if (idx !== -1) conversationsData[idx] = updatedConv;
                     // Re-select to refresh UI
                     selectConversation(updatedConv, getConvPartner(updatedConv));
+                    // Refresh the sidebar list to move the chat from 'Requests' to 'All Chats'
+                    switchTab('all');
+                    updateRequestBadge();
                 }
             } catch (e) {
                 console.error("Failed to accept request:", e);
