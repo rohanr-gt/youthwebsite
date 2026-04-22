@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header th:fragment="navbar(active)" th:style="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' ? '--nav-height: 86px;' : '--nav-height: 56px;'">
-        <div class="top-bar" th:if="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support'">
+    <header th:fragment="navbar(active)" th:style="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' and ${active} != 'events' and ${active} != 'event-details' ? '--nav-height: 86px;' : '--nav-height: 56px;'">
+        <div class="top-bar" th:if="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' and ${active} != 'events' and ${active} != 'event-details'">
             <div class="nav-shell top-bar-inner">
                 <div class="top-bar-message">
                     <i class="fa-solid fa-bullhorn"></i>
@@ -21,36 +21,56 @@
                 </div>
             </div>
         </div>
-        <nav class="navbar" th:classappend="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' ? ' has-topbar' : ''">
-            <!-- Games page: minimal header (Home button only) -->
-            <th:block th:if="${active} == 'games'">
-                <div class="nav-links" style="justify-content:flex-start;">
-                    <a href="/home" class="btn btn-outline">Home</a>
-                </div>
-            </th:block>
+        <nav class="navbar" th:classappend="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' and ${active} != 'events' and ${active} != 'event-details' ? ' has-topbar' : ''">
+            <div class="nav-shell navbar-inner" style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0;">
+                <!-- Games page: minimal header (Home button only) -->
+                <th:block th:if="${active} == 'games'">
+                    <div class="nav-links" style="justify-content:flex-start;">
+                        <a href="/home" class="btn btn-outline">Home</a>
+                    </div>
+                </th:block>
 
-            <!-- All other public pages -->
-            <th:block th:if="${active} != 'games'">
-                <a class="logo" href="/home">Zentrix</a>
-                <div class="nav-links">
-                    <a href="/home" th:classappend="${active} == 'home' ? ' active' : ''">Home</a>
-                    <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
-                    <a href="/games" th:if="${active} != 'home'" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
-                    <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
-                    <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
-                </div>
-                <div class="nav-actions">
-                    <th:block th:if="${session.user == null}">
-                        <a href="/login" class="btn btn-outline">Login</a>
-                        <a href="/register" class="btn btn-primary">Register</a>
-                    </th:block>
-                    <th:block th:if="${session.user != null}">
-                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
-                        <a href="/logout" class="btn btn-primary">Logout</a>
-                    </th:block>
-                </div>
-            </th:block>
+                <!-- All other public pages -->
+                <th:block th:if="${active} != 'games'">
+                    <a class="logo" href="/home">Zentrix</a>
+                    <div class="nav-links">
+                        <a href="/home" th:classappend="${active} == 'home' ? ' active' : ''">Home</a>
+                        <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
+                        <a href="/games" th:if="${active} != 'home'" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
+                        <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
+                        <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
+                    </div>
+                    <div class="nav-actions">
+                        <th:block th:if="${session.user == null}">
+                            <a href="/login" class="btn btn-outline">Login</a>
+                            <a href="/register" class="btn btn-primary">Register</a>
+                        </th:block>
+                        <th:block th:if="${session.user != null}">
+                            <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                            <a href="/logout" class="btn btn-primary">Logout</a>
+                        </th:block>
+                    </div>
+                </th:block>
+            </div>
         </nav>
+    </header>
+
+    <header th:fragment="musicNavbar(active, auth, coins)" class="navbar music-navbar">
+        <div class="nav-shell navbar-inner" style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0;">
+            <a class="logo" th:href="@{/dashboard(auth=${auth})}">Zentrix</a>
+            <div class="nav-links">
+                <a th:href="@{/home}"><i class="fas fa-house"></i> Home</a>
+                <a th:href="@{/music(auth=${auth})}" th:classappend="${active} == 'music' ? ' active' : ''"><i class="fas fa-music"></i> Music</a>
+                <a th:href="@{/music/rooms(auth=${auth})}" th:classappend="${active} == 'rooms' ? ' active' : ''"><i class="fas fa-users"></i> Rooms</a>
+                <a th:href="@{/music/leaderboard(auth=${auth})}" th:classappend="${active} == 'leaderboard' ? ' active' : ''"><i class="fas fa-trophy"></i> Leaderboard</a>
+            </div>
+            <div class="nav-actions">
+                <a href="/shop" class="btn btn-outline" style="gap:8px;">
+                    <i class="fas fa-coins" style="color: #f59e0b;"></i> <span th:text="${coins}">0</span>
+                </a>
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
+        </div>
     </header>
 
     <header th:fragment="adminNavbar(active)" class="admin-header">
@@ -95,8 +115,7 @@
                 <a href="#">Privacy Policy</a>
             </div>
         </div>
+        <script th:src="@{/js/animations.js}"></script>
     </footer>
-
-    <script th:src="@{/js/animations.js}"></script>
 </body>
 </html>

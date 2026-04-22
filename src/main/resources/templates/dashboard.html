@@ -341,6 +341,22 @@
                 </div>
             </div>
 
+            <!-- 💬 Share Your Thought Banner -->
+            <div style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border: 1.5px solid rgba(59,130,246,0.20); border-radius: 20px; padding: 18px 22px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #3B82F6, #22D3EE); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-quote-left" style="color: #fff; font-size: 18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 15px; color: #0F172A;">Share Your Thought</div>
+                        <div style="font-size: 12px; color: #475569; margin-top: 2px;">Your words will appear on the public home page for everyone to see!</div>
+                    </div>
+                </div>
+                <button onclick="openThoughtModal()" style="background: #3B82F6; color: #fff; border: none; border-radius: 12px; padding: 10px 20px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: all 0.2s;">
+                    <i class="fas fa-paper-plane"></i> Share Thought
+                </button>
+            </div>
+
             <!-- Feed toolbar (Filter) -->
             <div class="feed-toolbar">
                 <div class="feed-filter">
@@ -761,6 +777,15 @@
         function openCreateModal() {
             document.getElementById('createPostModal').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
+        }
+        function openThoughtModal() {
+            // Pre-select THOUGHT type in the dropdown
+            const sel = document.querySelector('select[name="postType"]');
+            if (sel) sel.value = 'THOUGHT';
+            // Update placeholder to be more relevant
+            const ta = document.querySelector('textarea[name="content"]');
+            if (ta) ta.placeholder = 'Share your experience with Zentrix... (this will appear on the public home page!)';
+            openCreateModal();
         }
         function closeCreateModal() {
             document.getElementById('createPostModal').style.display = 'none';

@@ -36,6 +36,7 @@ public class User implements Serializable {
     @Column(length = 1000)
     private String aboutMe;
     private String skills;
+    private String collegeName;
 
     // Gamification & Ranking
     private Integer xp = 0;
@@ -178,6 +179,14 @@ public class User implements Serializable {
 
     public void setSkills(String skills) {
         this.skills = skills;
+    }
+
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
     }
 
     @JsonIgnore

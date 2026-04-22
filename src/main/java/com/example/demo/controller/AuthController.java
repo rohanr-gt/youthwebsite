@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RewardService;
+import com.example.demo.config.TokenBlacklist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,9 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private TokenBlacklist tokenBlacklist;
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -77,12 +81,37 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public String logout(jakarta.servlet.http.HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
+    public String logout(
+            jakarta.servlet.http.HttpSession session,
+            jakarta.servlet.http.HttpServletRequest request,
+            jakarta.servlet.http.HttpServletResponse response) {
+
+        // ── 1. Blacklist the JWT from cookie (most common path) ──
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie c : request.getCookies()) {
+                if ("jwtToken".equals(c.getName())) {
+                    tokenBlacklist.blacklist(c.getValue());
+                    break;
+                }
+            }
+        }
+
+        // ── 2. Also blacklist any ?auth= token in the URL ──
+        String queryToken = request.getParameter("auth");
+        if (queryToken != null && !queryToken.isBlank()) {
+            tokenBlacklist.blacklist(queryToken);
+        }
+
+        // ── 3. Destroy server-side session ──
         session.invalidate();
-        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwtToken", null);
+
+        // ── 4. Expire the jwtToken cookie in the browser ──
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwtToken", "");
         cookie.setPath("/");
-        cookie.setMaxAge(0);
+        cookie.setMaxAge(0);   // Delete immediately
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
-        return "redirect:/login";
+
+        return "redirect:/login?loggedOut=true";
     }
 }

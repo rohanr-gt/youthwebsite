@@ -46,7 +46,7 @@
             const urls = [
                 "https://images.openai.com/static-rsc-4/rL5f5uy-W_tMoArfvLaTwSgSWy1EWmA5lm5MLA5O9r4_z8uhOO-BqwFw2TxyzA-cpXnVhh0Zzj-mKj8ToCV5wuch5X7PMUCV6HyJdvlDpELo_SX2cB5TDZIMj36Vn-D8JmX7QFkXNDdSsY0LEWVkoBer_g0Y8hGzIS9lE1qCLR3F_wjyXc0Tdg8lUd-W4CHm?purpose=fullsize",
                 "https://images.openai.com/static-rsc-4/PYRyip9qphv3Eo4ZEak-a4RgjBOSDmmhdujjM6qZTwCgNb1uFwAsitxiCaxWRTnuuZWwvvXR3jnywIbZmwRAKOJeTBV2yJ7kdQQxVI3VL8Ximol6cdMMgrHfPx-u9hHw8ek56gXWy-yQHiVNe5siOvqcOu47cysEQ9ryecA2vveleDB8CSqnwMymnm0Ce1U-?purpose=fullsize",
-                "https://images.openai.com/static-rsc-4/zMLVR4BFIsd7aTBhUW6qFSVVV0whPO0-euicqrbUc5XryenkqwtIKE3vhpgsyTKV3M-JnliJGBxLN9NnMms3Rnfi0bOOp9AMHUwFVOKBeiHAdPo7XbgZcw8n5kvQSAq5zVn2X-XsV_5lMlGxQedWpLM-PsA0DJ84hK7oX-vMSzib4iITMNHDkP8ht2sLoCvZ?purpose=fullsize",
+                "https://images.openai.com/static-rsc-4/DKD69QC9gd6bGTmnzOqV-obmu0Ipm7AIyATNy2c3zNTTy4w0-KF-jvSWvdSEutT3ZKDm2sbJfdNCzAIc2hjdo7hNjz5XhwT6hM4ecQvo9bLLZgyvpKTjrjsYRvanTzPoE2Y10Y6unhx2ptacO4elIe7KweKk6ndu9_qC0HRmDgwL-uyeXSwnSVSYgsW-fjLM?purpose=fullsize",
                 "https://images.openai.com/static-rsc-4/0NSRQAuMt5ZcwHCgzrSocLLShFdnSKgWFMw9ejK0Qh_hnBgyOXzQU4I1GDQ0qrupJGEyxYNTybDnBFBSUoHR7fpV2FKUCIxS0a7b0cH523t9myhOH_TLGz1lW0_dS0VywsKK6J2vgr-yWOpbJj2Cf-yIYlmQCCEzxSMZjSOxMnrzHbjtQHw4Poxm9TVJDJmk?purpose=fullsize",
                 "https://images.openai.com/static-rsc-4/RcXkr1zDk7oZ_bZKDklwfcG1-tUbhj-WxvSLLdqD1QbJt3LVrKtkT-StC7MtzjART745YBsMV0ymmNKSAvU7iSDXGk_b1Sx3C5kbDojyaPbEYTwg858IOi2Q_kB3cyrjM8x3-MUVUHOOhw1dsmPkIh5pOg-WJyaQx1X7Artfj96rnP7n4MAnRV17NzW6CK3V?purpose=fullsize"
             ];
@@ -347,6 +347,47 @@
             <h2>What Students Say</h2>
             <a href="/register" class="see-all">Join Now ›</a>
         </div>
+
+        <!-- Success toast -->
+        <div th:if="${param.thoughtShared}" id="thoughtToast"
+             style="background: #DCFCE7; border: 1px solid #86EFAC; color: #15803D; padding: 14px 20px; border-radius: 14px; margin-bottom: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-check-circle"></i> Your thought was shared and is now live on this page!
+        </div>
+
+        <!-- Inline Share Form (logged-in students only) -->
+        <div th:if="${session.user != null and session.user != 'admin'}"
+             style="background: #FFFFFF; border: 1.5px solid rgba(59,130,246,0.15); border-radius: 20px; padding: 22px; margin-bottom: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
+            <form th:action="@{/home/thought}" method="POST">
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+                    <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #3B82F6, #22D3EE); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-quote-left" style="color: #fff; font-size: 16px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 15px; color: #0F172A;">Share Your Thought</div>
+                        <div style="font-size: 12px; color: #64748B;">Your testimonial will appear here for all visitors to see</div>
+                    </div>
+                </div>
+                <textarea name="content" required rows="3"
+                    placeholder="Share your experience with Zentrix — what do you love most? What have you achieved here?..."
+                    style="width: 100%; border: 1.5px solid rgba(59,130,246,0.2); border-radius: 14px; padding: 14px 16px; font-size: 14px; color: #0F172A; background: #F8FAFC; outline: none; resize: vertical; font-family: inherit; box-sizing: border-box; line-height: 1.6;"></textarea>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap;">
+                    <select name="category"
+                        style="padding: 9px 14px; border-radius: 10px; border: 1.5px solid rgba(59,130,246,0.18); background: #F8FAFC; color: #334155; font-size: 13px; font-weight: 600; outline: none;">
+                        <option value="Community">💬 Community</option>
+                        <option value="Events">🎉 Events</option>
+                        <option value="Gaming">🎮 Gaming</option>
+                        <option value="Music">🎵 Music</option>
+                        <option value="Achievements">🏆 Achievements</option>
+                        <option value="General">✨ General</option>
+                    </select>
+                    <button type="submit"
+                        style="background: linear-gradient(135deg, #3B82F6, #22D3EE); color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-paper-plane"></i> Post to Home Page
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
             <th:block th:each="thought : ${thoughts}" th:if="${thoughtStat.index < 3}">
                 <div class="surface reveal" style="padding: 22px;">

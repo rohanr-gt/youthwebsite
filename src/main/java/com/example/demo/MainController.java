@@ -2,6 +2,8 @@ package com.example.demo;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
+import com.example.demo.config.JwtUtil;
+import com.example.demo.config.TokenBlacklist;
 import com.example.demo.music.room.MusicRoom;
 import com.example.demo.music.room.MusicRoomRepository;
 import com.example.demo.service.FeedAlgorithmService;
@@ -11,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +25,62 @@ import java.util.stream.Collectors;
 public class MainController {
 
     @Autowired
-    private jakarta.servlet.http.HttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private TokenBlacklist tokenBlacklist;
+
+    /**
+     * Validates the jwtToken cookie on PUBLIC pages (which bypass the AuthInterceptor).
+     * If the token is missing, blacklisted, expired, or invalid — the session user
+     * is cleared so the navbar shows Login/Register instead of Dashboard/Logout.
+     */
+    private void validateSessionOnPublicPage(HttpSession session, HttpServletRequest request) {
+        // Only matters if a session user is set
+        Object sessionUser = session.getAttribute("user");
+        if (sessionUser == null) return;
+
+        // Find the JWT cookie
+        String token = null;
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if ("jwtToken".equals(c.getName())) {
+                    token = c.getValue();
+                    break;
+                }
+            }
+        }
+
+        // No cookie at all → browser session ended / user never logged in properly
+        if (token == null || token.isBlank()) {
+            session.removeAttribute("user");
+            session.removeAttribute("userId");
+            return;
+        }
+
+        // Token was explicitly revoked (logged out from another tab/window)
+        if (tokenBlacklist.isBlacklisted(token)) {
+            session.removeAttribute("user");
+            session.removeAttribute("userId");
+            return;
+        }
+
+        // Token is structurally invalid or expired
+        try {
+            String username = jwtUtil.extractUsername(token);
+            if (username == null) {
+                session.removeAttribute("user");
+                session.removeAttribute("userId");
+            }
+        } catch (Exception e) {
+            // Malformed / expired token
+            session.removeAttribute("user");
+            session.removeAttribute("userId");
+        }
+    }
 
     private User getUserFromSession(HttpSession session) {
         // First check the request attribute (set by Interceptor)
@@ -87,20 +146,39 @@ public class MainController {
     private com.example.demo.repository.GameRepository gameRepository;
 
     @GetMapping("/")
-    public String root() {
+    public String root(HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
         return "home";
     }
 
     @GetMapping("/home")
-    public String home(Model model, HttpSession session) {
+    public String home(Model model, HttpSession session, HttpServletRequest request) {
+        // Validate JWT on this public page — clears session if token is gone/blacklisted
+        validateSessionOnPublicPage(session, request);
         model.addAttribute("user", getUserFromSession(session));
         // Fetch real student thoughts
         model.addAttribute("thoughts", postRepository.findByPostTypeOrderByCreatedAtDesc("THOUGHT"));
         // Fetch all games
         model.addAttribute("games", gameRepository.findAll());
-        // Fetch upcoming events from admin/community
-        model.addAttribute("events", eventRepository.findByStatusOrderByCreatedAtDesc("UPCOMING"));
+        // Fetch all public events (UPCOMING, ONGOING, VOTING)
+        model.addAttribute("events", eventRepository.findByStatusInOrderByCreatedAtDesc(
+                java.util.List.of("UPCOMING", "ONGOING", "VOTING")));
         return "home";
+    }
+
+    @org.springframework.web.bind.annotation.PostMapping("/home/thought")
+    public String shareThought(
+            @org.springframework.web.bind.annotation.RequestParam String content,
+            @org.springframework.web.bind.annotation.RequestParam(required = false, defaultValue = "Community") String category,
+            HttpSession session) {
+        User user = getUserFromSession(session);
+        if (user == null) return "redirect:/login";
+        // Refresh user from DB
+        user = userRepository.findById(user.getId()).orElse(user);
+        com.example.demo.model.Post post = new com.example.demo.model.Post(
+                content, user, null, null, null, "THOUGHT", category);
+        postRepository.save(post);
+        return "redirect:/home?thoughtShared=true";
     }
 
     @GetMapping("/features")
@@ -109,19 +187,22 @@ public class MainController {
     }
 
     @GetMapping("/support")
-    public String support(Model model, HttpSession session) {
+    public String support(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
         model.addAttribute("user", getUserFromSession(session));
         return "support";
     }
 
     @GetMapping("/about")
-    public String about(Model model, HttpSession session) {
+    public String about(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
         model.addAttribute("user", getUserFromSession(session));
         return "about";
     }
 
     @GetMapping("/games")
-    public String games(Model model, HttpSession session) {
+    public String games(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
         model.addAttribute("user", getUserFromSession(session));
         return "games";
     }

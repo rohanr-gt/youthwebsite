@@ -16,8 +16,8 @@
         }
 
         body {
-            background: #0a0a0f;
-            color: #fff;
+            background: var(--bg-gradient) !important;
+            color: var(--text-primary) !important;
         }
 
         /* ── Hero ── */
@@ -102,9 +102,10 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 14px;
             flex-wrap: wrap;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
         }
 
         .hero-meta span {
@@ -114,7 +115,7 @@
         }
 
         .hero-meta i {
-            color: #f84464;
+            color: #fff;
         }
 
         /* ── Status Badge ── */
@@ -168,22 +169,23 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 12px;
             padding: 10px 16px;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.65);
+            color: var(--text-secondary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
         .pill i {
-            color: #f84464;
+            color: var(--primary);
             width: 14px;
             text-align: center;
         }
 
         .pill strong {
-            color: #fff;
+            color: var(--text-primary);
         }
 
         /* ── About ── */
@@ -194,10 +196,11 @@
         }
 
         .about-text {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--text-secondary);
             line-height: 1.85;
             font-size: 15px;
             white-space: pre-line;
+            opacity: 0.9;
         }
 
         /* ── Organizer ── */
@@ -233,7 +236,7 @@
 
         .org-info p {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
         }
 
         /* ── Related ── */
@@ -290,18 +293,19 @@
 
         .related-info p {
             font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
         }
 
         /* ── RIGHT STICKY CARD ── */
         .register-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 22px;
             padding: 28px;
             position: sticky;
             top: 85px;
             height: fit-content;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
         }
 
         .price-display {
@@ -312,7 +316,7 @@
 
         .price-label {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
             margin-bottom: 4px;
         }
 
@@ -338,13 +342,13 @@
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.45);
+            color: var(--text-muted);
             margin-bottom: 8px;
         }
 
         .seats-bar {
             height: 6px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -381,7 +385,7 @@
 
         .att-label {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -404,7 +408,7 @@
         .tier-preview-label {
             font-size: 11px;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
             letter-spacing: 0.5px;
             margin-bottom: 10px;
             font-weight: 700;
@@ -425,7 +429,7 @@
         .tier-name-pill {
             font-size: 13px;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-secondary);
         }
 
         .tier-price-pill {
@@ -465,16 +469,16 @@
         .screen-display {
             width: 80%;
             height: 6px;
-            background: linear-gradient(90deg, transparent, #f84464, transparent);
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
             margin: 0 auto 60px;
             border-radius: 100px;
-            box-shadow: 0 10px 30px rgba(248, 68, 100, 0.4);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
             position: relative;
         }
 
         .screen-display::after {
             content: "SCREEN THIS WAY";
-            color: rgba(255, 255, 255, 0.2);
+            color: var(--text-muted);
             font-size: 10px;
             letter-spacing: 8px;
             position: absolute;
@@ -482,6 +486,7 @@
             left: 50%;
             transform: translateX(-50%);
             font-weight: 800;
+            opacity: 0.4;
         }
 
         .rows-container {
@@ -500,7 +505,7 @@
         .row-label {
             width: 30px;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.3);
+            color: var(--text-muted);
             font-weight: 800;
         }
 
@@ -578,7 +583,7 @@
             gap: 8px;
             font-size: 13px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text-secondary);
         }
 
         .legend-box {
@@ -706,7 +711,7 @@
 
         .registered-box p {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
         }
 
         .full-box {
@@ -990,16 +995,7 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">Zentrix</div>
-        <div class="nav-links">
-            <a th:href="${isAdmin} ? '/admin' : '/dashboard'"><i class="fas fa-home"></i></a>
-            <a href="/events" class="active" style="color:var(--accent);">Events</a>
-            <a th:if="${isAdmin}" href="/events/admin/manage"><i class="fas fa-cog"></i></a>
-            <a th:if="${!isAdmin}" href="/profile"><i class="fas fa-user"></i></a>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/template :: navbar('event-details')}"></div>
 
     <!-- ═══════════ HERO ═══════════ -->
     <div class="event-hero">

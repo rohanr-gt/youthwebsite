@@ -10,7 +10,7 @@
 
 <body class="events-page">
     <!-- Navbar -->
-    <nav th:replace="~{fragments/template :: navbar('events')}"></nav>
+    <div th:replace="~{fragments/template :: navbar('events')}"></div>
 
     <!-- Hero Section -->
     <header class="events-hero">
@@ -42,6 +42,99 @@
 
         <!-- Main Content -->
         <main class="content-main">
+
+            <!-- ═══════════════════════════════════════════════════════
+                 SEARCH + CATEGORY FILTER BAR
+            ═══════════════════════════════════════════════════════ -->
+            <div class="events-search-wrap">
+                <form id="eventsFilterForm" method="GET" action="/events" class="events-search-form">
+
+                    <!-- Location / Keyword Search -->
+                    <div class="search-input-group">
+                        <i class="fas fa-map-marker-alt search-icon"></i>
+                        <input
+                            type="text"
+                            id="searchInput"
+                            name="search"
+                            class="search-input"
+                            placeholder="Search by location, venue or event name..."
+                            th:value="${activeSearch}"
+                            autocomplete="off">
+                        <button type="submit" class="search-btn" aria-label="Search">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <button type="button"
+                                id="clearSearch"
+                                class="clear-search-btn"
+                                th:classappend="${activeSearch != null and !activeSearch.isEmpty()} ? ' visible' : ''"
+                                onclick="clearSearchInput()"
+                                aria-label="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Category Filter Pills -->
+                    <div class="category-filter-pills">
+                        <span class="filter-label"><i class="fas fa-sliders-h"></i> Category:</span>
+
+                        <!-- Hidden input carries the selected category on submit -->
+                        <input type="hidden" id="categoryInput" name="category" th:value="${activeCategory}">
+
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'All' or activeCategory == ''} ? ' active' : ''"
+                                onclick="setCategory('All')">
+                            <i class="fas fa-th"></i> All
+                        </button>
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'Tech'} ? ' active' : ''"
+                                onclick="setCategory('Tech')">
+                            <i class="fas fa-code"></i> Tech
+                        </button>
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'Gaming'} ? ' active' : ''"
+                                onclick="setCategory('Gaming')">
+                            <i class="fas fa-gamepad"></i> Gaming
+                        </button>
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'Cultural'} ? ' active' : ''"
+                                onclick="setCategory('Cultural')">
+                            <i class="fas fa-palette"></i> Cultural
+                        </button>
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'Sports'} ? ' active' : ''"
+                                onclick="setCategory('Sports')">
+                            <i class="fas fa-running"></i> Sports
+                        </button>
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'Music'} ? ' active' : ''"
+                                onclick="setCategory('Music')">
+                            <i class="fas fa-music"></i> Music
+                        </button>
+                        <button type="button" class="cat-pill"
+                                th:classappend="${activeCategory == 'Art'} ? ' active' : ''"
+                                onclick="setCategory('Art')">
+                            <i class="fas fa-paint-brush"></i> Art
+                        </button>
+                    </div>
+
+                </form>
+
+                <!-- Active filter summary banner -->
+                <div class="filter-summary"
+                     th:if="${(activeSearch != null and !activeSearch.isEmpty()) or (activeCategory != null and activeCategory != 'All' and activeCategory != '')}">
+                    <i class="fas fa-filter"></i>
+                    Showing <strong th:text="${events.size()}">0</strong> result(s)
+                    <span th:if="${activeSearch != null and !activeSearch.isEmpty()}">
+                        for location &ldquo;<strong th:text="${activeSearch}">query</strong>&rdquo;
+                    </span>
+                    <span th:if="${activeCategory != null and activeCategory != 'All' and activeCategory != ''}">
+                        in category &ldquo;<strong th:text="${activeCategory}">cat</strong>&rdquo;
+                    </span>
+                    &nbsp;&middot;&nbsp;
+                    <a href="/events" class="filter-reset-link">Clear all filters</a>
+                </div>
+            </div>
+
             <!-- 🗳️ Polls Section -->
             <section th:if="${!#lists.isEmpty(votingPolls)}" class="poll-section surface">
                 <div class="section-header">
@@ -50,8 +143,8 @@
                 <div class="poll-grid">
                     <div th:each="poll : ${votingPolls}" class="poll-card surface hover-lift">
                         <div class="poll-icon">
-                            <i th:class="${poll.category == 'Gaming' ? 'fas fa-gamepad' : 
-                                          (poll.category == 'Tech' ? 'fas fa-code' : 
+                            <i th:class="${poll.category == 'Gaming' ? 'fas fa-gamepad' :
+                                          (poll.category == 'Tech' ? 'fas fa-code' :
                                           (poll.category == 'Sports' ? 'fas fa-trophy' : 'fas fa-star'))}"></i>
                         </div>
                         <h3 th:text="${poll.title}" class="poll-title">Event</h3>
@@ -117,10 +210,17 @@
 
                 <!-- Empty State -->
                 <div th:if="${#lists.isEmpty(events)}" style="text-align:center; padding:80px 20px;">
-                    <i class="fas fa-calendar-times" style="font-size:48px; color:#D1D5DB; margin-bottom:16px;"></i>
-                    <h3 style="color:#6B7280;">No events found in this category</h3>
-                    <p style="color:#9CA3AF;">Try exploring other categories or check back later!</p>
-                    <a href="/events" style="display:inline-block; margin-top:20px; color:var(--purple); font-weight:700;">Reset Filter</a>
+                    <i class="fas fa-search" style="font-size:48px; color:#D1D5DB; margin-bottom:16px;"></i>
+                    <h3 style="color:#6B7280;">No events found</h3>
+                    <p style="color:#9CA3AF;">
+                        <span th:if="${activeSearch != null and !activeSearch.isEmpty()}">
+                            No events match the location &ldquo;<strong th:text="${activeSearch}">query</strong>&rdquo;.
+                        </span>
+                        Try a different location, category, or check back later!
+                    </p>
+                    <a href="/events" style="display:inline-block; margin-top:20px; color:var(--purple); font-weight:700;">
+                        <i class="fas fa-times-circle"></i> Reset All Filters
+                    </a>
                 </div>
             </section>
         </main>
@@ -128,6 +228,30 @@
 
     <!-- Footer Fragment -->
     <footer th:replace="~{fragments/template :: footer}"></footer>
+
+    <script>
+        // Submit form with selected category pill value
+        function setCategory(cat) {
+            document.getElementById('categoryInput').value = cat;
+            document.getElementById('eventsFilterForm').submit();
+        }
+
+        // Show/hide clear button based on input content
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn    = document.getElementById('clearSearch');
+
+        if (searchInput && clearBtn) {
+            searchInput.addEventListener('input', function () {
+                clearBtn.classList.toggle('visible', this.value.trim().length > 0);
+            });
+        }
+
+        function clearSearchInput() {
+            if (searchInput) searchInput.value = '';
+            if (clearBtn)    clearBtn.classList.remove('visible');
+            if (searchInput) searchInput.focus();
+        }
+    </script>
 
 </body>
 </html>

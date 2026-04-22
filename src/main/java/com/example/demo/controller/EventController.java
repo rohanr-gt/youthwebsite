@@ -88,9 +88,12 @@ public class EventController {
     //  PUBLIC: List Events  (Student View)
     // ─────────────────────────────────────────────────────────
     @GetMapping
-    public String listEvents(@RequestParam(required = false) String category, Model model, HttpSession session) {
+    public String listEvents(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search,
+            Model model, HttpSession session) {
         resolveExpiredPolls(); // Maintenance: Auto-pick winners
-        
+
         User user = getUserFromSession(session);
         boolean adminViewing = isAdmin(session);
         if (user != null) {
@@ -102,12 +105,22 @@ public class EventController {
         // Redirect only if neither student nor admin
         if (user == null && !adminViewing) return "redirect:/login";
 
-        // All events (filtered by category if given)
+        // ── Step 1: Base query — search by location/venue/title keyword ──
         List<Event> allItems;
-        if (category != null && !category.isEmpty() && !category.equalsIgnoreCase("All")) {
-            allItems = eventRepository.findByCategory(category);
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+        if (hasSearch) {
+            allItems = eventRepository.searchByVenueOrTitle(search.trim());
         } else {
             allItems = eventRepository.findAll();
+        }
+
+        // ── Step 2: Further filter by category (both filters work together) ──
+        boolean hasCategory = category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("All");
+        if (hasCategory) {
+            final String cat = category.trim();
+            allItems = allItems.stream()
+                    .filter(e -> cat.equalsIgnoreCase(e.getCategory()))
+                    .collect(Collectors.toList());
         }
 
         // Separate Polls from Registered Events
@@ -115,7 +128,7 @@ public class EventController {
                 .filter(e -> "VOTING".equals(e.getStatus()))
                 .filter(e -> e.getVotingEndDate() == null || e.getVotingEndDate().isAfter(LocalDateTime.now()))
                 .collect(Collectors.toList());
-        
+
         List<Event> regularEvents = allItems.stream()
                 .filter(e -> {
                     String status = e.getStatus();
@@ -123,15 +136,17 @@ public class EventController {
                 })
                 .collect(Collectors.toList());
 
-        // Trending = first 3 UPCOMING regular events
-        List<Event> trending = regularEvents.stream()
+        // Trending = first 3 UPCOMING regular events (always from full list, unaffected by search)
+        List<Event> trending = eventRepository.findAll().stream()
                 .filter(e -> "UPCOMING".equals(e.getStatus()) || e.getStatus() == null)
+                .filter(e -> { String s = e.getStatus(); return s == null || (!"VOTING".equals(s) && !"REJECTED".equals(s)); })
                 .limit(3).collect(Collectors.toList());
 
         model.addAttribute("events", regularEvents);
         model.addAttribute("votingPolls", votingPolls);
         model.addAttribute("trending", trending);
         model.addAttribute("activeCategory", category != null ? category : "All");
+        model.addAttribute("activeSearch", search != null ? search : "");
         model.addAttribute("user", user);
         model.addAttribute("isAdmin", adminViewing);
         return "events";

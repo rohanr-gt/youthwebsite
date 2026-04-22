@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import com.example.demo.config.JwtUtil;
+import com.example.demo.config.TokenBlacklist;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
@@ -18,6 +19,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TokenBlacklist tokenBlacklist;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -57,18 +61,28 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         if (token != null) {
+            // ── Reject blacklisted (logged-out) tokens immediately ──
+            if (tokenBlacklist.isBlacklisted(token)) {
+                response.sendRedirect("/login?expired=true");
+                return false;
+            }
+
             request.setAttribute("urlToken", token); // Store for postHandle
             try {
                 String username = jwtUtil.extractUsername(token);
                 if (username != null) {
                     if ("admin".equals(username)) {
                         request.setAttribute("authenticatedUser", "admin");
+                        // Prevent browser from caching protected pages
+                        setNoCacheHeaders(response);
                         return true;
                     }
                     User user = userRepository.findByUsername(username);
                     if (user != null && jwtUtil.validateToken(token, username)) {
                         // Store user in request for controllers to use
                         request.setAttribute("authenticatedUser", user);
+                        // Prevent browser from caching protected pages
+                        setNoCacheHeaders(response);
                         return true;
                     }
                 }
@@ -95,4 +109,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
         }
     }
+
+    /** Set HTTP headers that prevent the browser from caching protected pages.
+     *  After logout, hitting Back-button will trigger a fresh request
+     *  (which the blacklist check will immediately reject). */
+    private void setNoCacheHeaders(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+    }
 }
+
