@@ -41,6 +41,15 @@ public class ChessWebSocketController {
         ChessRoom room = rooms.get(roomId);
         if (room == null)
             return Map.of("error", "Room not found");
+
+        // Allow Re-join
+        if (playerName.equals(room.whitePlayer)) {
+            return Map.of("roomId", roomId, "color", "w");
+        }
+        if (playerName.equals(room.blackPlayer)) {
+            return Map.of("roomId", roomId, "color", "b");
+        }
+
         if (room.blackPlayer != null)
             return Map.of("error", "Room is full");
 

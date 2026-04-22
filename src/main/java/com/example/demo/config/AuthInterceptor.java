@@ -27,10 +27,11 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getRequestURI();
         
-        // Skip public paths
+        // Skip public paths and game/socket endpoints
         if (path.equals("/") || path.equals("/home") || path.equals("/login") || 
             path.equals("/register") || path.equals("/about") || path.equals("/support") ||
-            path.equals("/games") ||
+            path.equals("/games") || path.startsWith("/games/") || 
+            path.startsWith("/api/") || path.startsWith("/ws") ||
             path.startsWith("/css/") || 
             path.startsWith("/js/") || path.startsWith("/images/") || path.startsWith("/uploads/")) {
             return true;

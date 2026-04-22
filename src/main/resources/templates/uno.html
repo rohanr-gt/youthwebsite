@@ -16,6 +16,7 @@
     <!-- SockJS + STOMP (WebSocket) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <meta name="context-path" th:content="@{/}">
 
     <style>
         body {
@@ -31,11 +32,23 @@
     </style>
 </head>
 
-<body>
+    <body th:data-username="${user != null ? user.username : 'Player'}">
     <div id="root"></div>
 
     <script type="text/babel" th:inline="none">
-        /*<![CDATA[*/
+        // <![CDATA[
+        const getUniqueGuestName = () => {
+            const baseName = document.body.dataset.username || 'Player';
+            if (baseName !== 'Player') return baseName;
+            let guestName = sessionStorage.getItem('unoGuestName');
+            if (!guestName) {
+                guestName = 'Guest_' + Math.floor(1000 + Math.random() * 9000);
+                sessionStorage.setItem('unoGuestName', guestName);
+            }
+            return guestName;
+        };
+        const userName = getUniqueGuestName();
+        const cp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
         const { useState, useEffect, useCallback, useRef } = React;
 
         /* --- Constants & Helpers --- */
@@ -114,7 +127,7 @@
 
         /* --- Lobby Component --- */
         function UnoLobby({ onStart }) {
-            const [name, setName] = useState(window.initialUsername || "");
+            const [name, setName] = useState(userName);
             const [roomCode, setRoomCode] = useState("");
 
             return (
@@ -134,14 +147,26 @@
 
         /* --- Main Game Component --- */
         function UnoGame() {
+            const roomParam = new URLSearchParams(window.location.search).get('room');
             const [roomState, setRoomState] = useState(null);
-            const [roomId, setRoomId] = useState(null);
+            const [roomId, setRoomId] = useState(null); // Keep null to trigger useEffect join
+            const [initializing, setInitializing] = useState(!!roomParam);
             const [playerIndex, setPlayerIndex] = useState(-1);
             const [pickingColor, setPickingColor] = useState(null);
             const stompClient = useRef(null);
 
+            useEffect(() => {
+                if (roomParam && roomId === null) {
+                    handleStart("join", { name: userName, roomCode: roomParam });
+                }
+            }, []);
+
             const connectWebSocket = useCallback((rId, pIdx) => {
-                const socket = new SockJS('/ws');
+                const auth = new URLSearchParams(window.location.search).get('auth');
+                const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+                const wsPath = auth ? `${configCp}/ws?auth=${auth}` : `${configCp}/ws`;
+                const finalWsPath = wsPath.startsWith('/') ? wsPath : '/' + wsPath;
+                const socket = new SockJS(finalWsPath);
                 stompClient.current = Stomp.over(socket);
                 stompClient.current.connect({}, () => {
                     stompClient.current.subscribe(`/topic/uno/${rId}/player/${pIdx}`, (msg) => {
@@ -152,10 +177,13 @@
             }, []);
 
             const handleStart = async (type, data) => {
-                const endpoint = type === 'create' ? '/api/uno/create' : '/api/uno/join';
+                const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+                const path = type === 'create' ? `${configCp}/api/uno/create` : `${configCp}/api/uno/join`;
+                const finalPath = path.startsWith('/') ? path : '/' + path;
                 const body = type === 'create' ? { playerName: data.name } : { playerName: data.name, roomId: data.roomCode };
-                const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const res = await fetch(finalPath, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                 const json = await res.json();
+                setInitializing(false);
                 if (json.error) return alert(json.error);
                 setRoomId(json.roomId);
                 setPlayerIndex(json.playerIndex);
@@ -184,6 +212,7 @@
                 stompClient.current.send(`/app/uno/${roomId}/draw`, {}, JSON.stringify({ playerIndex }));
             };
 
+            if (initializing) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background:"#060e0a" }}>Initializing Match...</div>;
             if (!roomId) return <UnoLobby onStart={handleStart} />;
             if (!roomState) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Connecting to Table...</div>;
 
@@ -242,7 +271,7 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<UnoGame />);
-        /*]]>*/
+        // ]]>
     </script>
 </body>
 

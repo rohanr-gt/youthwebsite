@@ -10,6 +10,7 @@
     <!-- SockJS + STOMP (WebSocket) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <meta name="context-path" th:content="@{/}">
 
     <style>
         /* ... existing styles ... */
@@ -84,7 +85,7 @@
     </style>
 </head>
 
-<body>
+    <body th:data-username="${user != null ? user.username : 'Player'}" th:data-context-path="@{/}">
 
     <div id="lobbyOverlay" class="lobby-overlay">
         <h1>LUDO MULTIPLAYER</h1>
@@ -103,6 +104,7 @@
         Table: <span id="displayRoomId" style="color: var(--yellow); font-weight: 800;"></span>
     </div>
 
+    <style>
         /* ---- BOARD ---- */
         #board {
             position: relative;
@@ -604,10 +606,6 @@
                 opacity: 0
             }
         }
-    </style>
-</head>
-
-<body>
     <h1>🎲 LUDO KING</h1>
 
     <!-- Toast -->
@@ -665,8 +663,26 @@
         </div>
     </div>
 
-    <script th:inline="none">
-        /*<![CDATA[*/
+    <script type="text/javascript" th:inline="none">
+        // <![CDATA[
+        const getUniqueGuestName = () => {
+            const baseName = document.body.dataset.username || 'Player';
+            if (baseName !== 'Player') return baseName;
+            let guestName = sessionStorage.getItem('ludoGuestName');
+            if (!guestName) {
+                guestName = 'Guest_' + Math.floor(1000 + Math.random() * 9000);
+                sessionStorage.setItem('ludoGuestName', guestName);
+            }
+            return guestName;
+        };
+        const userName = getUniqueGuestName();
+        const cp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+        // Set initial value
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('playerNameInput');
+            if (input && !input.value) input.value = userName;
+        });
+
         const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
         const C = BOARD_SIZE / 15;
         const canvas = document.getElementById('boardCanvas');
@@ -753,7 +769,12 @@
         async function createRoom() {
             const playerName = document.getElementById('playerNameInput').value.trim();
             if (!playerName) return alert("Enter your name");
-            const res = await fetch('/api/ludo/create', {
+            const auth = new URLSearchParams(window.location.search).get('auth');
+            const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+            const path = auth ? `${configCp}/api/ludo/create?auth=${auth}` : `${configCp}/api/ludo/create`;
+            const finalPath = path.startsWith('/') ? path : '/' + path;
+            
+            const res = await fetch(finalPath, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ playerName })
@@ -768,7 +789,12 @@
             const playerName = document.getElementById('playerNameInput').value.trim();
             const rId = document.getElementById('roomCodeInput').value.trim().toUpperCase();
             if (!playerName || !rId) return alert("Enter name and code");
-            const res = await fetch('/api/ludo/join', {
+            const auth = new URLSearchParams(window.location.search).get('auth');
+            const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+            const path = auth ? `${configCp}/api/ludo/join?auth=${auth}` : `${configCp}/api/ludo/join`;
+            const finalPath = path.startsWith('/') ? path : '/' + path;
+
+            const res = await fetch(finalPath, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ playerName, roomId: rId })
@@ -782,13 +808,18 @@
 
         function initMultiplayer() {
             document.getElementById('lobbyOverlay').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
             document.getElementById('roomInfo').style.display = 'block';
             document.getElementById('displayRoomId').innerText = state.roomId;
             connectWebSocket();
         }
 
         function connectWebSocket() {
-            const socket = new SockJS('/ws');
+            const auth = new URLSearchParams(window.location.search).get('auth');
+            const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+            const wsPath = auth ? `${configCp}/ws?auth=${auth}` : `${configCp}/ws`;
+            const finalWsPath = wsPath.startsWith('/') ? wsPath : '/' + wsPath;
+            const socket = new SockJS(finalWsPath);
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
                 stompClient.subscribe('/topic/ludo/' + state.roomId, function (msg) {
@@ -1507,7 +1538,19 @@
 
         // Initial board draw
         drawBoard();
-        /*]]>*/
+        initLocalIfNoRoom();
+        
+        // Auto-join if room in URL
+        document.addEventListener('DOMContentLoaded', () => {
+             const roomParam = new URLSearchParams(window.location.search).get('room');
+             if (roomParam) {
+                 const input = document.getElementById('roomCodeInput');
+                 if (input) input.value = roomParam;
+                 joinRoom();
+             }
+        });
+
+        // ]]>
     </script>
 </body>
 

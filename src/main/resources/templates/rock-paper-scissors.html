@@ -4,344 +4,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS Battle | Zentrix</title>
+    <title>RPS Arena | Zentrix</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- SockJS + STOMP (WebSocket) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <meta name="context-path" th:content="@{/}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:src="@{/js/game-rewards.js}"></script>
 
     <style>
-        /* ... existing styles ... */
-        .game-container {
-            max-width: 800px;
-            margin: 120px auto 60px;
-            padding: 40px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        .lobby-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.95);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            border-radius: 20px;
-        }
-
-        .lobby-card {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .lobby-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--glass-border);
-            background: #fff;
-            color: var(--text-primary);
-            font-size: 16px;
-            outline: none;
-            text-align: center;
-        }
-
-        .lobby-input:focus {
-            border-color: var(--accent);
-        }
-
-        .btn-lobby {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-lobby:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
-        }
-
-        .room-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        /* ... existing choice-card etc ... */
-        .choice-card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(1);
-        }
-        
-        .waiting-msg {
-            margin-top: 20px;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
+        body { background: #0f172a; color: #fff; font-family: 'Inter', sans-serif; }
+        .game-status { font-size: 24px; font-weight: 800; color: #fbcc15; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 4px; }
+        .choices-card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); }
+        .choice-btn { width: 120px; height: 120px; border-radius: 50%; border: 4px solid transparent; background: #1e293b; color: #fff; font-size: 40px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .choice-btn:hover { transform: scale(1.1); border-color: #fbcc15; box-shadow: 0 0 20px rgba(250,204,21,0.3); }
+        .choice-btn:disabled { opacity: 0.5; filter: grayscale(1); }
     </style>
 </head>
 
-<body>
-
-    <!-- Navbar -->
+    <body th:data-username="${user != null ? user.username : 'Player'}">
     <nav class="navbar" th:replace="~{fragments/template :: navbar('games')}"></nav>
 
-    <div class="container" style="padding-top: 0;">
-        <div class="game-container">
-            <div id="lobbyOverlay" class="lobby-overlay">
-                <h1 class="game-title">RPS Multiplayer</h1>
-                <div class="lobby-card">
-                    <input type="text" id="playerNameInput" th:value="${user != null ? user.username : ''}" 
-                           placeholder="Your Name" class="lobby-input">
-                    <button class="btn-lobby" onclick="createRoom()">Create New Game</button>
-                    <div style="margin: 10px 0; font-size: 14px; font-weight: 600; color: #999;">OR</div>
-                    <input type="text" id="roomCodeInput" placeholder="Enter Room Code (e.g. AB1234)" class="lobby-input">
-                    <button class="btn-lobby" style="background: var(--brand2);" onclick="joinRoom()">Join Game</button>
-                </div>
-                <a href="/games" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Games</a>
+    <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+        <div id="status" class="game-status">INITIALIZING...</div>
+        
+        <div id="waitArea" style="display: none; text-align: center;">
+            <div style="background: #1e293b; padding: 30px; border-radius: 20px; border: 1px solid #334155;">
+                <h2 style={{ color: "#fbcc15" }}>WAITING FOR OPPONENT</h2>
+                <div id="roomCode" style="font-size: 48px; letter-spacing: 12px; margin: 20px 0; color: #fbcc15; font-family: monospace;"></div>
+                <p style="color: #94a3b8;">Share this code to start the battle.</p>
             </div>
+        </div>
 
-            <div id="roomInfo" class="room-info" style="display: none;">
-                Room Code: <span id="displayRoomId" style="color: var(--accent);"></span>
-            </div>
-
-            <h1 class="game-title">RPS Online Battle</h1>
-
-            <div class="score-board">
-                <div class="score-item">
-                    <span id="p1Label" class="score-label">Player 1</span>
-                    <span id="p1Score" class="score-val">0</span>
+        <div id="gameArea" style="display: none; width: 100%; max-width: 600px;">
+            <div class="choices-card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+                    <div style="text-align: left;"><span id="p1Name" style="font-weight: 700;">Player 1</span><div style="font-size: 32px; font-weight: 900;" id="p1Score">0</div></div>
+                    <div style="font-size: 24px; align-self: center; opacity: 0.5;">VS</div>
+                    <div style="text-align: right;"><span id="p2Name" style="font-weight: 700;">Player 2</span><div style="font-size: 32px; font-weight: 900;" id="p2Score">0</div></div>
                 </div>
-                <div class="score-val">:</div>
-                <div class="score-item">
-                    <span id="p2Label" class="score-label">Player 2</span>
-                    <span id="p2Score" class="score-val">0</span>
-                </div>
-            </div>
 
-            <div id="turnIndicator" class="turn-box">
-                Waiting for players...
-            </div>
-
-            <div id="choicesGrid" class="choices-grid">
-                <div class="choice-card" id="choiceRock" onclick="sendChoice('Rock')">
-                    <i class="fas fa-hand-rock"></i>
-                    <span>Rock</span>
+                <div id="choiceGrid" style="display: flex; justify-content: center; gap: 20px;">
+                    <button class="choice-btn" onclick="makeChoice('Rock')"><i class="fas fa-hand-rock"></i></button>
+                    <button class="choice-btn" onclick="makeChoice('Paper')"><i class="fas fa-hand-paper"></i></button>
+                    <button class="choice-btn" onclick="makeChoice('Scissors')"><i class="fas fa-hand-scissors"></i></button>
                 </div>
-                <div class="choice-card" id="choicePaper" onclick="sendChoice('Paper')">
-                    <i class="fas fa-hand-paper"></i>
-                    <span>Paper</span>
-                </div>
-                <div class="choice-card" id="choiceScissors" onclick="sendChoice('Scissors')">
-                    <i class="fas fa-hand-scissors"></i>
-                    <span>Scissors</span>
-                </div>
-            </div>
 
-            <div id="waitingForOpponent" class="waiting-msg" style="display: none;">
-                Choice sent! Waiting for opponent...
-            </div>
+                <div id="waitingMsg" style="display: none; margin-top: 20px; font-style: italic; opacity: 0.7; text-align: center;">Choice Locked. Waiting for opponent...</div>
 
-            <div id="resultSection" class="result-section">
-                <div class="choice-display">
-                    <div class="display-item">
-                        <span id="p1ChoiceLabel">P1 Chose</span>
-                        <div id="p1Display" class="display-choice">—</div>
+                <div id="resultBlock" style="display: none; text-align: center; margin-top: 30px;">
+                    <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; font-size: 14px;">
+                        <div>RESULT: <span id="p1Choice" style="color: #fbcc15;"></span></div>
+                        <div>RESULT: <span id="p2Choice" style="color: #fbcc15;"></span></div>
                     </div>
-                    <div class="display-item">
-                        <span id="p2ChoiceLabel">P2 Chose</span>
-                        <div id="p2Display" class="display-choice">—</div>
-                    </div>
+                    <div id="roundResult" style="font-size: 28px; font-weight: 900; margin-bottom: 20px;"></div>
+                    <button id="nextBtn" class="btn" onclick="nextRound()" style="display: none; max-width: 200px; margin: 0 auto;">Next Round</button>
                 </div>
-                <div id="result" class="final-result"></div>
-                <button id="nextRoundBtn" class="btn-action" onclick="sendNextRound()" style="display: none;">Next Round</button>
             </div>
-
-            <a href="/games" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Games</a>
         </div>
     </div>
 
-    <script th:inline="javascript">
-        let stompClient = null;
-        let roomId = null;
-        let playerNum = null; // 1 or 2
-        let playerName = null;
-        let choiceLocked = false;
+    <script type="text/javascript" th:inline="none">
+        // <![CDATA[
+        const getUniqueGuestName = () => {
+            const baseName = document.body.dataset.username || 'Player';
+            if (baseName !== 'Player') return baseName;
+            let guestName = sessionStorage.getItem('rpsGuestName');
+            if (!guestName) {
+                guestName = 'Guest_' + Math.floor(1000 + Math.random() * 9000);
+                sessionStorage.setItem('rpsGuestName', guestName);
+            }
+            return guestName;
+        };
+        const userName = getUniqueGuestName();
+        const cp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+        let stomp = null, rId = null, pNum = null;
 
-        async function createRoom() {
-            playerName = document.getElementById('playerNameInput').value.trim();
-            if (!playerName) return alert("Enter your name");
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            rId = params.get('room');
+            if (!rId) { document.getElementById('status').innerText = "Join via Lobby"; return; }
 
-            const res = await fetch('/api/rps/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ playerName })
-            });
-            const data = await res.json();
-            roomId = data.roomId;
-            playerNum = parseInt(data.playerNum);
-            initGame();
-        }
+            try {
+                const auth = new URLSearchParams(window.location.search).get('auth');
+                const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+                const joinUrl = auth ? `${configCp}/api/rps/join?auth=${auth}` : `${configCp}/api/rps/join`;
+                const finalJoinUrl = joinUrl.startsWith('/') ? joinUrl : '/' + joinUrl;
 
-        async function joinRoom() {
-            playerName = document.getElementById('playerNameInput').value.trim();
-            const rId = document.getElementById('roomCodeInput').value.trim().toUpperCase();
-            if (!playerName || !rId) return alert("Enter name and room code");
-
-            const res = await fetch('/api/rps/join', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ playerName, roomId: rId })
-            });
-            const data = await res.json();
-            if (data.error) return alert(data.error);
-
-            roomId = data.roomId;
-            playerNum = parseInt(data.playerNum);
-            initGame();
-        }
-
-        function initGame() {
-            document.getElementById('lobbyOverlay').style.display = 'none';
-            document.getElementById('roomInfo').style.display = 'block';
-            document.getElementById('displayRoomId').innerText = roomId;
-            connectWebSocket();
-        }
-
-        function connectWebSocket() {
-            const socket = new SockJS('/ws');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-                console.log('Connected: ' + frame);
-                
-                stompClient.subscribe('/topic/rps/' + roomId, function (msg) {
-                    const state = JSON.parse(msg.body);
-                    updateGameState(state);
+                const res = await fetch(finalJoinUrl, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerName: userName, roomId: rId.toUpperCase() })
                 });
+                const data = await res.json();
+                if (data.error) throw data.error;
+                pNum = data.playerNum;
+                connect();
+            } catch (e) { document.getElementById('status').innerText = e; }
+        }
 
-                // Request initial state
-                stompClient.send("/app/rps/" + roomId + "/subscribe", {}, "{}");
+        function connect() {
+            const auth = new URLSearchParams(window.location.search).get('auth');
+            const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
+            const wsPath = auth ? `${configCp}/ws?auth=${auth}` : `${configCp}/ws`;
+            const finalWsPath = wsPath.startsWith('/') ? wsPath : '/' + wsPath;
+            const socket = new SockJS(finalWsPath);
+            stomp = Stomp.over(socket);
+            stomp.debug = null;
+            stomp.connect({}, () => {
+                stomp.subscribe('/topic/rps/' + rId, (m) => update(JSON.parse(m.body)));
+                stomp.send("/app/rps/" + rId + "/subscribe", {}, "{}");
             });
         }
 
-        function updateGameState(state) {
-            console.log("Game state update:", state);
-            
-            // Update labels
-            document.getElementById('p1Label').innerText = state.player1 || "Waiting...";
-            document.getElementById('p2Label').innerText = state.player2 || "Waiting...";
-            document.getElementById('p1Score').innerText = state.p1Score;
-            document.getElementById('p2Score').innerText = state.p2Score;
-
-            if (state.status === 'waiting') {
-                document.getElementById('turnIndicator').innerText = "Waiting for Player 2 to join...";
-                document.getElementById('choicesGrid').style.opacity = '0.3';
-                document.getElementById('choicesGrid').style.pointerEvents = 'none';
+        function update(s) {
+            document.getElementById('status').innerText = "ARENA ACTIVE";
+            if (s.status === 'waiting') {
+                document.getElementById('waitArea').style.display = 'block';
+                document.getElementById('roomCode').innerText = rId;
+                document.getElementById('gameArea').style.display = 'none';
             } else {
-                document.getElementById('choicesGrid').style.opacity = '1';
-                document.getElementById('choicesGrid').style.pointerEvents = 'auto';
+                document.getElementById('waitArea').style.display = 'none';
+                document.getElementById('gameArea').style.display = 'block';
+                document.getElementById('p1Name').innerText = s.player1;
+                document.getElementById('p2Name').innerText = s.player2;
+                document.getElementById('p1Score').innerText = s.p1Score;
+                document.getElementById('p2Score').innerText = s.p2Score;
 
-                // Check choices
-                const iChosen = (playerNum === 1 ? state.p1Chosen : state.p2Chosen);
-                const oppChosen = (playerNum === 1 ? state.p2Chosen : state.p1Chosen);
-
-                if (state.lastResult) {
-                    // Round Finished
-                    showResult(state);
-                } else if (iChosen) {
-                    // I have chosen, waiting for opponent
-                    document.getElementById('choicesGrid').style.display = 'none';
-                    document.getElementById('waitingForOpponent').style.display = 'block';
-                    document.getElementById('turnIndicator').innerText = "Waiting for opponent...";
+                const myChosen = pNum === 1 ? s.p1Chosen : s.p2Chosen;
+                if (s.lastResult) {
+                    document.getElementById('choiceGrid').style.display = 'none';
+                    document.getElementById('waitingMsg').style.display = 'none';
+                    document.getElementById('resultBlock').style.display = 'block';
+                    document.getElementById('p1Choice').innerText = s.p1Choice;
+                    document.getElementById('p2Choice').innerText = s.p2Choice;
+                    document.getElementById('roundResult').innerText = s.lastResult === 'draw' ? "DRAW!" : (s.lastResult === 'p1' ? s.player1 : s.player2) + " WINS!";
+                    
+                    if (pNum === 1) document.getElementById('nextBtn').style.display = 'block';
+                    
+                    // Reward
+                    if (s.lastResult === 'draw') GameRewards.award('Rock Paper Scissors', 'PLAY');
+                    else if ((s.lastResult === 'p1' && pNum === 1) || (s.lastResult === 'p2' && pNum === 2)) GameRewards.award('Rock Paper Scissors', 'WIN');
+                    else GameRewards.award('Rock Paper Scissors', 'PLAY');
+                } else if (myChosen) {
+                    document.getElementById('choiceGrid').style.display = 'none';
+                    document.getElementById('waitingMsg').style.display = 'block';
+                    document.getElementById('resultBlock').style.display = 'none';
                 } else {
-                    // Waiting for my choice
-                    resetRoundView();
-                    document.getElementById('turnIndicator').innerText = "Make your move!";
+                    document.getElementById('choiceGrid').style.display = 'flex';
+                    document.getElementById('waitingMsg').style.display = 'none';
+                    document.getElementById('resultBlock').style.display = 'none';
                 }
             }
         }
 
-        function sendChoice(choice) {
-            if (choiceLocked) return;
-            stompClient.send("/app/rps/" + roomId + "/choice", {}, JSON.stringify({ playerNum, choice }));
-            document.getElementById('waitingForOpponent').style.display = 'block';
-            document.getElementById('choicesGrid').style.opacity = '0.3';
-            document.getElementById('choicesGrid').style.pointerEvents = 'none';
-        }
+        function makeChoice(c) { stomp.send("/app/rps/" + rId + "/choice", {}, JSON.stringify({ playerNum: pNum, choice: c })); }
+        function nextRound() { stomp.send("/app/rps/" + rId + "/nextRound", {}, "{}"); }
 
-        function showResult(state) {
-            document.getElementById('choicesGrid').style.display = 'none';
-            document.getElementById('waitingForOpponent').style.display = 'none';
-            document.getElementById('turnIndicator').style.display = 'none';
-            document.getElementById('resultSection').style.display = 'block';
-
-            document.getElementById('p1Display').innerText = state.p1Choice;
-            document.getElementById('p2Display').innerText = state.p2Choice;
-
-            const resEl = document.getElementById('result');
-            if (state.lastResult === 'draw') {
-                resEl.innerText = "It's a Draw! 🤝";
-                resEl.style.color = "var(--text-secondary)";
-            } else if (state.lastResult === 'p1') {
-                resEl.innerText = (state.player1 || "P1") + " Wins! 🏆";
-                resEl.style.color = "var(--accent)";
-            } else {
-                resEl.innerText = (state.player2 || "P2") + " Wins! 🏆";
-                resEl.style.color = "#00f3ff";
-            }
-
-            // Award coins based on result
-            if (state.lastResult === 'draw') {
-                GameRewards.award('Rock Paper Scissors', 'PLAY');
-            } else if ((state.lastResult === 'p1' && playerNum === 1) || (state.lastResult === 'p2' && playerNum === 2)) {
-                GameRewards.award('Rock Paper Scissors', 'WIN');
-            } else {
-                GameRewards.award('Rock Paper Scissors', 'PLAY');
-            }
-
-            // Only P1 shows the next round button to avoid double triggers
-            if (playerNum === 1) {
-                document.getElementById('nextRoundBtn').style.display = 'inline-block';
-            }
-        }
-
-        function sendNextRound() {
-            stompClient.send("/app/rps/" + roomId + "/nextRound", {}, "{}");
-        }
-
-        function resetRoundView() {
-            document.getElementById('choicesGrid').style.display = 'grid';
-            document.getElementById('choicesGrid').style.opacity = '1';
-            document.getElementById('choicesGrid').style.pointerEvents = 'auto';
-            document.getElementById('waitingForOpponent').style.display = 'none';
-            document.getElementById('turnIndicator').style.display = 'block';
-            document.getElementById('resultSection').style.display = 'none';
-            document.getElementById('nextRoundBtn').style.display = 'none';
-        }
+        init();
+        // ]]>
     </script>
 </body>
-
 </html>

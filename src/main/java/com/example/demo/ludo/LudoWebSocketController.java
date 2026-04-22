@@ -37,6 +37,13 @@ public class LudoWebSocketController {
 
         LudoRoom room = rooms.get(roomId);
         if (room == null) return Map.of("error", "Room not found");
+
+        // Allow Re-join
+        for (int i = 0; i < 4; i++) {
+            if (room.players.get(i).name.equals(playerName)) {
+                return Map.of("roomId", roomId, "playerIndex", i);
+            }
+        }
         
         // Find first empty slot
         int slot = -1;

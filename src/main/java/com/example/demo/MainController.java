@@ -240,12 +240,14 @@ public class MainController {
     }
 
     @GetMapping("/games/snake-and-ladder")
-    public String snakeAndLadder() {
+    public String snakeAndLadder(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "snake-and-ladder";
     }
 
     @GetMapping("/play-chess")
-    public String playChess() {
+    public String playChess(Model model, HttpSession session) {
+        model.addAttribute("user", getUserFromSession(session));
         return "chess";
     }
 

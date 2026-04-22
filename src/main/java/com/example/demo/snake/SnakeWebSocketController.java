@@ -44,6 +44,13 @@ public class SnakeWebSocketController {
 
         SnakeRoom room = rooms.get(roomId);
         if (room == null) return Map.of("error", "Room not found");
+
+        // Allow Re-join
+        int existingIdx = room.players.indexOf(playerName);
+        if (existingIdx != -1) {
+            return Map.of("roomId", roomId, "playerIndex", existingIdx);
+        }
+
         if (room.players.size() >= room.maxPlayers) return Map.of("error", "Room is full");
 
         int playerIdx = room.players.size();
@@ -59,19 +66,28 @@ public class SnakeWebSocketController {
 
     // WebSocket: Roll Dice (Sends roll value, then updates state)
     @MessageMapping("/snake/{roomId}/roll")
-    public void rollDice(@DestinationVariable String roomId, Map<String, Integer> payload) {
-        SnakeRoom room = rooms.get(roomId);
-        if (room == null)
+    public void rollDice(@DestinationVariable String roomId, Map<String, Object> payload) {
+        SnakeRoom room = rooms.get(roomId.toUpperCase());
+        if (room == null || !room.status.equals("active")) {
             return;
+        }
 
-        int steps = payload.get("steps");
-        int playerNum = payload.get("playerNum");
+        int steps = ((Number) payload.get("steps")).intValue();
+        int playerIdx = ((Number) payload.get("playerIndex")).intValue();
 
-        // Broadcast the roll animation first so clients know what was rolled
-        messagingTemplate.convertAndSend("/topic/snake/" + roomId + "/rollEvent", (Object) payload);
+        if (room.turn != playerIdx) {
+            return;
+        }
+
+        // Broadcast the roll animation first
+        Map<String, Object> event = new HashMap<>();
+        event.put("steps", steps);
+        event.put("playerIndex", playerIdx);
+        event.put("playerName", room.players.get(playerIdx));
+        messagingTemplate.convertAndSend("/topic/snake/" + roomId + "/rollEvent", (Object) event);
 
         // Update Backend state
-        room.applyRoll(steps, playerNum);
+        room.applyRoll(steps, playerIdx);
 
         // Broadcast new final positions
         messagingTemplate.convertAndSend("/topic/snake/" + roomId, (Object) room.toStateMap());
@@ -87,7 +103,7 @@ public class SnakeWebSocketController {
     @MessageMapping("/snake/{roomId}/subscribe")
     @SendTo("/topic/snake/{roomId}")
     public Map<String, Object> subscribe(@DestinationVariable String roomId) {
-        SnakeRoom room = rooms.get(roomId);
+        SnakeRoom room = rooms.get(roomId.toUpperCase());
         return room != null ? room.toStateMap() : Map.of("error", "Room not found");
     }
 

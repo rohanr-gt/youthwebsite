@@ -37,6 +37,15 @@ public class RpsWebSocketController {
 
         RpsRoom room = rooms.get(roomId);
         if (room == null) return Map.of("error", "Room not found");
+
+        // Allow Re-join
+        if (playerName.equals(room.player1)) {
+            return Map.of("roomId", roomId, "playerNum", "1");
+        }
+        if (playerName.equals(room.player2)) {
+            return Map.of("roomId", roomId, "playerNum", "2");
+        }
+
         if (room.player2 != null) return Map.of("error", "Room is full");
 
         room.player2 = playerName;

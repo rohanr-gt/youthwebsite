@@ -36,6 +36,14 @@ public class UnoWebSocketController {
 
         UnoRoom room = rooms.get(roomId);
         if (room == null) return Map.of("error", "Room not found");
+
+        // Allow Re-join
+        for (int i = 0; i < room.players.size(); i++) {
+            if (room.players.get(i).name.equals(playerName)) {
+                return Map.of("roomId", roomId, "playerIndex", i);
+            }
+        }
+
         if (room.players.size() >= 4) return Map.of("error", "Room is full");
 
         int playerIndex = room.players.size();
