@@ -378,6 +378,7 @@
             background: rgba(255, 255, 255, 0.2);
         }
     </style>
+    <script th:src="@{/js/game-rewards.js}"></script>
 </head>
 
 <body>
@@ -1011,8 +1012,21 @@
             document.getElementById('final-score').textContent = score;
         }
 
+        let lastScoreAwarded = 0;
         function addScore(n) {
-            score += n; updateHUD();
+            score += n;
+            updateHUD();
+            
+            // 1 coin per 1000 points rule
+            const currentMilestone = Math.floor(score / 1000);
+            const lastMilestone = Math.floor(lastScoreAwarded / 1000);
+            
+            if (currentMilestone > lastMilestone) {
+                // Award points specifically for the increase in milestones
+                const pointsToAward = (currentMilestone - lastMilestone) * 1000;
+                GameRewards.awardScore('Super Mario', pointsToAward);
+                lastScoreAwarded = score;
+            }
         }
 
         // ── Update ────────────────────────────────────────
@@ -1046,7 +1060,11 @@
 
                 if (mario.y > H) die();
                 if (mario.x < 0) mario.x = 0;
-                if (mario.x > flagX) { gameState = 'win'; setTimeout(() => location.reload(), 3000); }
+                if (mario.x > flagX) { 
+                    gameState = 'win'; 
+                    GameRewards.award('Super Mario', 'WIN'); // Level Clear Reward
+                    setTimeout(() => location.reload(), 3000); 
+                }
 
                 updateCamera();
 
@@ -1079,7 +1097,11 @@
                 mario.vy += 0.5; mario.y += mario.vy;
                 if (mario.y > H + 100) {
                     lives--;
-                    if (lives <= 0) { gameState = 'gameover'; document.getElementById('game-over-screen').style.display = 'flex'; }
+                    if (lives <= 0) { 
+                        gameState = 'gameover'; 
+                        document.getElementById('game-over-screen').style.display = 'flex'; 
+                        GameRewards.award('Super Mario', 'PLAY'); // Participation reward
+                    }
                     else { resetMario(); }
                 }
             }

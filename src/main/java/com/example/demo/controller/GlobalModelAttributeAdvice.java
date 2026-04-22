@@ -25,9 +25,13 @@ public class GlobalModelAttributeAdvice {
     public void addGlobalAttributes(HttpSession session, Model model) {
         User user = getUserFromSession(session);
         if (user != null) {
+            // Always refresh from DB to get latest coins/xp
+            user = userRepository.findById(user.getId()).orElse(user);
+            
             long unreadCount = chatService.getUnreadCount(user);
             model.addAttribute("unreadMessageCount", unreadCount);
-            model.addAttribute("currentUser", user); // Add this for UI
+            model.addAttribute("user", user); // Ensure "user" is the one used in templates
+            model.addAttribute("currentUser", user); 
         }
 
         Object token = httpServletRequest.getAttribute("urlToken");

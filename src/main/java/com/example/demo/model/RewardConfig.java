@@ -18,6 +18,8 @@ public class RewardConfig {
     private int referFriend = 20;
     private int talentPost = 5;
     private int musicVote = 1;
+    private int gamePlay = 5;
+    private int gameWin = 20;
 
     public RewardConfig() {}
 
@@ -50,4 +52,10 @@ public class RewardConfig {
 
     public int getMusicVote() { return musicVote; }
     public void setMusicVote(int musicVote) { this.musicVote = musicVote; }
+
+    public int getGamePlay() { return gamePlay; }
+    public void setGamePlay(int gamePlay) { this.gamePlay = gamePlay; }
+
+    public int getGameWin() { return gameWin; }
+    public void setGameWin(int gameWin) { this.gameWin = gameWin; }
 }

@@ -6,6 +6,7 @@
     <title th:text="${title}">Zentrix</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script th:src="@{/js/game-rewards.js}"></script>
 </head>
 <body>
     <header th:fragment="navbar(active)" th:style="${active} != 'home' and ${active} != 'games' and ${active} != 'about' and ${active} != 'support' and ${active} != 'events' and ${active} != 'event-details' ? '--nav-height: 86px;' : '--nav-height: 56px;'">
@@ -64,7 +65,7 @@
                 <a th:href="@{/music/leaderboard(auth=${auth})}" th:classappend="${active} == 'leaderboard' ? ' active' : ''"><i class="fas fa-trophy"></i> Leaderboard</a>
             </div>
             <div class="nav-actions">
-                <a href="/shop" class="btn btn-outline" style="gap:8px;">
+                <a href="javascript:void(0)" onclick="GameRewards.showHistory()" class="btn btn-outline" style="gap:8px;">
                     <i class="fas fa-coins" style="color: #f59e0b;"></i> <span th:text="${coins}">0</span>
                 </a>
                 <a href="/logout" class="btn btn-primary">Logout</a>

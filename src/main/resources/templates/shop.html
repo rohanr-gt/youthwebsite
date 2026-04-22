@@ -228,12 +228,34 @@
             color: #f84464;
         }
     </style>
+    <script th:src="@{/js/game-rewards.js}"></script>
+    <style>
+        .recent-activity-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .recent-activity-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #f84464;
+        }
+    </style>
 </head>
 
 <body>
     <nav>
         <a href="/dashboard" class="logo">ZENTRIX</a>
-        <div class="coin-balance">
+        <div class="coin-balance" onclick="GameRewards.showHistory()" style="cursor: pointer;">
             <i class="fas fa-coins text-warning"></i>
             <span th:text="${user.coins}">0</span> Coins
         </div>
@@ -245,6 +267,10 @@
         </div>
         <h1>Reward Shop</h1>
         <p>Spend your Zentrix Coins to unlock exclusive benefits and premium features.</p>
+        
+        <button class="recent-activity-btn" onclick="GameRewards.showHistory()">
+            <i class="fas fa-history"></i> View Game Earning History
+        </button>
 
         <!-- Alerts -->
         <div th:if="${param.success != null}" class="alert alert-success">

@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.model.CoinTransaction;
 import com.example.demo.model.RewardConfig;
 import com.example.demo.model.User;
+import com.example.demo.repository.CoinTransactionRepository;
 import com.example.demo.repository.RewardConfigRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class RewardService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CoinTransactionRepository coinTransactionRepository;
+
     public RewardConfig getConfig() {
         return rewardConfigRepository.findAll().stream().findFirst().orElseGet(() -> {
             RewardConfig newConfig = new RewardConfig();
@@ -28,16 +33,20 @@ public class RewardService {
     public void awardDailyLogin(User user) {
         if (user.getLastLoginDate() == null || !user.getLastLoginDate().equals(LocalDate.now())) {
             RewardConfig config = getConfig();
-            user.addCoins(config.getDailyLogin());
+            int amount = config.getDailyLogin();
+            user.addCoins(amount);
             user.setLastLoginDate(LocalDate.now());
             userRepository.save(user);
+            coinTransactionRepository.save(new CoinTransaction(user, amount, "System", "Daily Login"));
         }
     }
 
     public void awardVoting(User user) {
         RewardConfig config = getConfig();
-        user.addCoins(config.getVoteInEvent());
+        int amount = config.getVoteInEvent();
+        user.addCoins(amount);
         userRepository.save(user);
+        coinTransactionRepository.save(new CoinTransaction(user, amount, "Event", "Voting"));
     }
 
     public void awardMusicVote(User user) {
@@ -80,6 +89,29 @@ public class RewardService {
         RewardConfig config = getConfig();
         user.addCoins(config.getTalentPost());
         userRepository.save(user);
+    }
+
+    public void awardGamePlay(User user, String gameName) {
+        RewardConfig config = getConfig();
+        int amount = config.getGamePlay();
+        user.addCoins(amount);
+        userRepository.save(user);
+        coinTransactionRepository.save(new CoinTransaction(user, amount, gameName, "Played Game"));
+    }
+
+    public void awardGameWin(User user, String gameName) {
+        RewardConfig config = getConfig();
+        int amount = config.getGameWin();
+        user.addCoins(amount);
+        userRepository.save(user);
+        coinTransactionRepository.save(new CoinTransaction(user, amount, gameName, "Won Game"));
+    }
+
+    public void awardGameScore(User user, String gameName, int amount) {
+        if (amount <= 0) return;
+        user.addCoins(amount);
+        userRepository.save(user);
+        coinTransactionRepository.save(new CoinTransaction(user, amount, gameName, "Score Milestone"));
     }
 
     /**
