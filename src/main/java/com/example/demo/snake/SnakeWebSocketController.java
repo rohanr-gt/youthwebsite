@@ -26,32 +26,35 @@ public class SnakeWebSocketController {
     // REST: Create Room
     @PostMapping("/api/snake/create")
     @ResponseBody
-    public Map<String, String> createRoom(@RequestBody Map<String, String> body) {
+    public Map<String, Object> createRoom(@RequestBody Map<String, String> body) {
         String roomId = generateRoomId();
-        SnakeRoom room = new SnakeRoom(roomId, body.get("playerName"));
+        String playerName = body.get("playerName");
+        int maxPlayers = Integer.parseInt(body.getOrDefault("maxPlayers", "2"));
+        
+        SnakeRoom room = new SnakeRoom(roomId, playerName, maxPlayers);
         rooms.put(roomId, room);
-        return Map.of("roomId", roomId, "playerNum", "1");
+        return Map.of("roomId", roomId, "playerIndex", 0);
     }
 
-    // REST: Join Room
     @PostMapping("/api/snake/join")
     @ResponseBody
-    public Map<String, String> joinRoom(@RequestBody Map<String, String> body) {
+    public Map<String, Object> joinRoom(@RequestBody Map<String, String> body) {
         String roomId = body.get("roomId").toUpperCase();
         String playerName = body.get("playerName");
 
         SnakeRoom room = rooms.get(roomId);
-        if (room == null)
-            return Map.of("error", "Room not found");
-        if (room.player2 != null)
-            return Map.of("error", "Room is full");
+        if (room == null) return Map.of("error", "Room not found");
+        if (room.players.size() >= room.maxPlayers) return Map.of("error", "Room is full");
 
-        room.player2 = playerName;
-        room.status = "active";
+        int playerIdx = room.players.size();
+        room.players.add(playerName);
+        
+        if (room.players.size() == room.maxPlayers) {
+            room.status = "active";
+        }
 
-        // Notify the P1 that opponent joined
         messagingTemplate.convertAndSend("/topic/snake/" + roomId, (Object) room.toStateMap());
-        return Map.of("roomId", roomId, "playerNum", "2");
+        return Map.of("roomId", roomId, "playerIndex", playerIdx);
     }
 
     // WebSocket: Roll Dice (Sends roll value, then updates state)
