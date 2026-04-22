@@ -1674,8 +1674,8 @@ input[type="file"].form-input::file-selector-button:hover {
     grid-template-columns: 260px 1fr;
     gap: 30px;
     max-width: 1440px;
-    margin: 0 auto;
-    padding: 34px 40px 0;
+    margin: calc(var(--dashboard-nav-height) + 16px) auto 0;
+    padding: 20px 40px 0;
 }
 
 .events-page .content-main {
