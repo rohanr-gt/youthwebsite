@@ -1728,7 +1728,7 @@
         }
     </style>
 </head>
-
+<body style="overflow: hidden; height: 100vh; margin: 0;">
     <!-- Navbar -->
     <nav class="dashboard-navbar">
         <a class="dashboard-logo" href="/home">Zentrix</a>
@@ -2503,9 +2503,9 @@
         }
 
         function getConvPartner(c) {
-            if (c.type === 'GROUP') return null;
+            if (!c || !c.participants || c.type === 'GROUP') return null;
             // Use != to handle potential string/number mismatch for ID
-            return c.participants.find(p => p.id != currentUser.id) || c.participants[0];
+            return c.participants.find(p => p.id != currentUser.id) || (c.participants.length > 0 ? c.participants[0] : null);
         }
 
         function renderConversationList(convs) {
@@ -2540,8 +2540,11 @@
                 const previewText = c.lastMessage || 'New Conversation';
 
                 const div = document.createElement('div');
-                div.className = `conv-item ${c.id === activeConversationId ? 'active' : ''} ${c.unread ? 'unread' : ''}`;
-                div.onclick = () => selectConversation(c, partner);
+                div.className = `conv-item ${c.id == activeConversationId ? 'active' : ''} ${c.unread ? 'unread' : ''}`;
+                div.onclick = () => {
+                    console.log('[DEBUG] conv-item clicked, id:', c.id);
+                    selectConversation(c, partner);
+                };
 
                 let avatarHtml = '';
                 if (isGroup) {
@@ -2584,6 +2587,7 @@
         }
 
         async function selectConversation(conv, partner) {
+            console.log('[DEBUG] selectConversation called for conv:', conv.id, 'partner:', partner ? partner.username : 'none');
             activeConversationId = conv.id;
             activeRecipientId = partner ? partner.id : null; // null for groups
             vanishActive = conv.vanishModeEnabled || false;
@@ -2654,7 +2658,18 @@
             }
 
             // Visual selection
-            document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.conv-item').forEach(el => {
+                const isSelected = el.onclick && el.onclick.toString().includes(String(conv.id));
+                // Note: String matching ID in onclick is a bit hacky, but safer since we don't have the ID on the el
+                // Better: we'll just re-render list if needed, or find by data-id
+                // Just remove from all for now
+                el.classList.remove('active');
+            });
+            // Try to find the item in the list and mark it active
+            const listItems = document.querySelectorAll('.conv-item');
+            // We'll just rely on the next render for perfect visual sync, but let's try a quick loop
+            // Alternatively, we can just call renderConversationList(conversationsData) at the end of selectConversation
+            // if we want perfect visual sync.
 
             // Subscribe to typing topic for groups
             if (activeConversationId) {
@@ -2669,6 +2684,9 @@
 
             await loadMessages(conv.id);
             markAsSeen();
+            
+            // Re-render list to sync active state visually (and unread counts)
+            renderConversationList(conversationsData);
         }
 
         function updateManageGroupButton(conv) {
