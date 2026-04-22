@@ -6,12 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <style>
         :root {
             --bg-color: #efeae2;
-            --sidebar-bg: #ffffff;
+            --chat-sidebar-bg: #ffffff;
             --border-color: #efefef;
             --primary-accent: #00a884;
             --text-main: #111b21;
@@ -65,11 +67,11 @@
             border-right: 1px solid var(--border-color);
         }
 
-        /* Sidebar Styling */
-        .sidebar {
+        /* Chat Sidebar Styling */
+        .chat-sidebar {
             width: 350px;
             height: 100%;
-            background: var(--sidebar-bg);
+            background: var(--chat-sidebarbg);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
@@ -77,19 +79,19 @@
             z-index: 10;
         }
 
-        .sidebar-header {
+        .chat-sidebar-header {
             padding: 24px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .sidebar-actions {
+        .chat-sidebar-actions {
             display: flex;
             gap: 15px;
         }
 
-        .sidebar-header h1 {
+        .chat-sidebar-header h1 {
             font-size: 24px;
             font-weight: 600;
             margin: 0;
@@ -129,34 +131,33 @@
         }
 
         /* Sidebar Tabs */
-        .sidebar-tabs {
+        .chat-sidebar-tabs {
             display: flex;
             padding: 0 20px 10px;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 5px;
             gap: 20px;
         }
 
-        .sidebar-tab {
+        .chat-sidebar-tab {
             font-size: 14px;
             font-weight: 500;
             color: var(--text-secondary);
             cursor: pointer;
-            padding-bottom: 8px;
             position: relative;
+            padding-bottom: 10px;
             transition: all 0.2s;
         }
 
-        .sidebar-tab:hover {
+        .chat-sidebar-tab:hover {
             color: var(--text-main);
         }
 
-        .sidebar-tab.active {
+        .chat-sidebar-tab.active {
             color: var(--text-main);
             font-weight: 600;
         }
 
-        .sidebar-tab.active::after {
+        .chat-sidebar-tab.active::after {
             content: '';
             position: absolute;
             bottom: -1px;
@@ -177,7 +178,7 @@
             display: none;
         }
 
-        .sidebar-tab.has-requests .request-badge {
+        .chat-sidebar-tab.has-requests .request-badge {
             display: inline-block;
         }
 
@@ -1248,7 +1249,7 @@
                 width: 80px;
             }
 
-            .sidebar-header h1,
+            .chat-sidebar-header h1,
             .search-container,
             .conv-info {
                 display: none;
@@ -1454,7 +1455,7 @@
         /* Chat Themes Styles */
         body[data-theme="sunset"] {
             --bg-color: #fff9f5;
-            --sidebar-bg: #fff9f5;
+            --chat-sidebar-bg: #fff9f5;
             --primary-accent: #f83600;
             --sent-bubble: linear-gradient(135deg, #f83600 0%, #f9d423 100%);
             --text-main: #3d1c1c;
@@ -1469,7 +1470,7 @@
 
         body[data-theme="lavender"] {
             --bg-color: #f8f5fa;
-            --sidebar-bg: #f8f5fa;
+            --chat-sidebar-bg: #f8f5fa;
             --primary-accent: #9333ea;
             --sent-bubble: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
             --text-main: #3b2a54;
@@ -1484,7 +1485,7 @@
 
         body[data-theme="ocean"] {
             --bg-color: #f0f9ff;
-            --sidebar-bg: #f0f9ff;
+            --chat-sidebar-bg: #f0f9ff;
             --primary-accent: #0284c7;
             --sent-bubble: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
             --text-main: #0c4a6e;
@@ -1499,7 +1500,7 @@
 
         body[data-theme="midnight"] {
             --bg-color: #0d1117;
-            --sidebar-bg: #0d1117;
+            --chat-sidebar-bg: #0d1117;
             --primary-accent: #58a6ff;
             --sent-bubble: linear-gradient(135deg, #1f6feb 0%, #58a6ff 100%);
             --text-main: #c9d1d9;
@@ -1522,7 +1523,7 @@
 
         body[data-theme="dark"] {
             --bg-color: #121212;
-            --sidebar-bg: #121212;
+            --chat-sidebar-bg: #121212;
             --primary-accent: #bb86fc;
             --sent-bubble: linear-gradient(135deg, #bb86fc 0%, #9965f4 100%);
             --text-main: #e0e0e0;
@@ -1540,7 +1541,7 @@
 
         body[data-theme="forest"] {
             --bg-color: #f0fdf4;
-            --sidebar-bg: #f0fdf4;
+            --chat-sidebar-bg: #f0fdf4;
             --primary-accent: #16a34a;
             --sent-bubble: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
             --text-main: #14532d;
@@ -1555,7 +1556,7 @@
 
         body[data-theme="sunset"] {
             --bg-color: #fdf2f2;
-            --sidebar-bg: #ffffff;
+            --chat-sidebar-bg: #ffffff;
             --glass-bg: rgba(253, 242, 242, 0.8);
             --sent-bubble: #fed7d7;
             --text-on-sent: #742a2a;
@@ -1563,7 +1564,7 @@
 
         body[data-theme="lavender"] {
             --bg-color: #f5f3ff;
-            --sidebar-bg: #ffffff;
+            --chat-sidebar-bg: #ffffff;
             --glass-bg: rgba(245, 243, 255, 0.8);
             --sent-bubble: #e9d5ff;
             --text-on-sent: #4c1d95;
@@ -1571,7 +1572,7 @@
 
         body[data-theme="ocean"] {
             --bg-color: #f0f9ff;
-            --sidebar-bg: #ffffff;
+            --chat-sidebar-bg: #ffffff;
             --glass-bg: rgba(240, 249, 255, 0.8);
             --sent-bubble: #bae6fd;
             --text-on-sent: #0c4a6e;
@@ -1579,7 +1580,7 @@
 
         body[data-theme="forest"] {
             --bg-color: #f0fdf4;
-            --sidebar-bg: #ffffff;
+            --chat-sidebar-bg: #ffffff;
             --glass-bg: rgba(240, 253, 244, 0.8);
             --sent-bubble: #dcfce7;
             --text-on-sent: #14532d;
@@ -1592,7 +1593,7 @@
 
         [data-theme] .chat-header h2,
         [data-theme] .chat-header .header-icon,
-        [data-theme] .sidebar-header h1 {
+        [data-theme] .chat-sidebar-header h1 {
             color: var(--text-main);
         }
 
@@ -1728,14 +1729,51 @@
     </style>
 </head>
 
-<body>
+    <!-- Navbar -->
+    <nav class="dashboard-navbar">
+        <a class="dashboard-logo" href="/home">Zentrix</a>
+        <div class="dashboard-spacer"></div>
+        <div class="dashboard-nav-links">
+            <a href="/dashboard"><i class="fas fa-home"></i></a>
+            <a href="/explore"><i class="fas fa-compass"></i></a>
+            <div class="profile-dropdown">
+                <a href="/profile">
+                    <img th:src="${currentUser != null and currentUser.profilePhotoUrl != null ? currentUser.profilePhotoUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop'}"
+                        class="user-avatar" style="width:32px; height:32px; border:none;">
+                </a>
+                <div class="dropdown-menu">
+                    <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> View Profile</a>
+                    <a href="/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout" class="dropdown-item" style="color: #ff4444;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <div class="app-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h1 th:text="${currentUser.username}">Username</h1>
-                <div class="sidebar-actions">
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" style="height: calc(100vh - var(--dashboard-nav-height));">
+            <a href="/dashboard" class="sidebar-link"><i class="fas fa-home"></i> Home</a>
+            <a href="/explore" class="sidebar-link"><i class="fas fa-compass"></i> Explore</a>
+            <a href="/events" class="sidebar-link"><i class="fas fa-calendar-alt"></i> Events</a>
+            <a href="/achievements" class="sidebar-link"><i class="fas fa-trophy"></i> Achievements</a>
+            <a href="/messages" class="sidebar-link active"><i class="fas fa-comment-dots"></i> Chat</a>
+            <a href="/reels" class="sidebar-link"><i class="fas fa-film"></i> Reels</a>
+            <a href="/profile" class="sidebar-link"><i class="fas fa-user"></i> Profile</a>
+            <a href="/games" class="sidebar-link"><i class="fas fa-gamepad"></i> Games</a>
+            <a href="/music" class="sidebar-link"><i class="fas fa-music"></i> Music</a>
+            <a href="javascript:void(0)" class="sidebar-link" onclick="openCreateModal()"><i class="fas fa-plus-circle" style="color: var(--accent);"></i> Create Post</a>
+            <a href="/logout" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </aside>
+
+        <main class="content-main" style="padding: 0; overflow: hidden; height: calc(100vh - var(--dashboard-nav-height)); border-right: 1px solid var(--glass-border);">
+            <div class="app-container" style="max-width: none; border: none; margin: 0;">
+                <!-- Chat Sidebar -->
+                <div class="chat-sidebar">
+                    <div class="chat-sidebar-header">
+                        <h1 th:text="${currentUser.username}">Username</h1>
+                        <div class="chat-sidebar-actions">
                     <svg title="New Group" onclick="openNewGroupModal()" style="cursor:pointer;" width="24" height="24"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -1769,9 +1807,9 @@
                 </div>
             </div>
 
-            <div class="sidebar-tabs">
-                <div class="sidebar-tab active" id="tabAll" onclick="switchTab('all')">All Chats</div>
-                <div class="sidebar-tab" id="tabRequests" onclick="switchTab('requests')">
+            <div class="chat-sidebar-tabs">
+                <div class="chat-sidebar-tab active" id="tabAll" onclick="switchTab('all')">All Chats</div>
+                <div class="chat-sidebar-tab" id="tabRequests" onclick="switchTab('requests')">
                     Requests <span class="request-badge" id="requestBadge">0</span>
                 </div>
             </div>
