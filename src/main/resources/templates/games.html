@@ -199,21 +199,10 @@
                     <h3>Rock Paper Scissors</h3>
                     <p>The classic game of strategy and luck. Battle your friends in this local 2-player showdown.</p>
                     <div class="game-footer">
-                        <span
-                            style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">2-Player
-                            Battle</span>
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">2-Player Battle</span>
                         <div class="game-actions">
-                            <button class="btn-game btn-invite"
-                                onclick="inviteFriend('/games/rock-paper-scissors', 'Rock Paper Scissors')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                    <polyline points="16 6 12 2 8 6"></polyline>
-                                    <line x1="12" y1="2" x2="12" y2="15"></line>
-                                </svg>
-                                Invite
-                            </button>
-                            <a href="/games/rock-paper-scissors" class="btn-game btn-play">Play Now</a>
+                            <button class="btn-game btn-play" onclick="openGameLobby('Rock Paper Scissors')">Play Now</button>
+                            <button class="btn-game btn-invite" onclick="openGameLobby('Rock Paper Scissors', true)">Invite</button>
                         </div>
                     </div>
                 </div>
@@ -228,21 +217,10 @@
                     <h3>Snake & Ladder Legends</h3>
                     <p>Experience the classic board game with a modern neon twist. Roll the dice and reach the top!</p>
                     <div class="game-footer">
-                        <span
-                            style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Modern
-                            Twist</span>
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">2-4 Players</span>
                         <div class="game-actions">
-                            <button class="btn-game btn-invite"
-                                onclick="inviteFriend('/games/snake-and-ladder', 'Snake & Ladder Legends')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                    <polyline points="16 6 12 2 8 6"></polyline>
-                                    <line x1="12" y1="2" x2="12" y2="15"></line>
-                                </svg>
-                                Invite
-                            </button>
-                            <a href="/games/snake-and-ladder" class="btn-game btn-play">Play Now</a>
+                            <button class="btn-game btn-play" onclick="openGameLobby('Snake & Ladder Legends')">Play Now</button>
+                            <button class="btn-game btn-invite" onclick="openGameLobby('Snake & Ladder Legends', true)">Invite</button>
                         </div>
                     </div>
                 </div>
@@ -251,28 +229,16 @@
             <!-- Chess -->
             <div class="game-card">
                 <div class="game-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=2071&auto=format&fit=crop"
-                        class="game-img" alt="Chess">
+                    <img src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=2071&auto=format&fit=crop" class="game-img" alt="Chess">
                 </div>
                 <div class="game-content">
                     <h3>Chess Grandmaster</h3>
                     <p>The ultimate game of skill and patience. Challenge your mind in this strategic battle.</p>
                     <div class="game-footer">
-                        <span
-                            style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Strategy
-                            Classic</span>
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">2-Player Strategic</span>
                         <div class="game-actions">
-                            <button class="btn-game btn-invite"
-                                onclick="inviteFriend('/play-chess', 'Chess Grandmaster')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                    <polyline points="16 6 12 2 8 6"></polyline>
-                                    <line x1="12" y1="2" x2="12" y2="15"></line>
-                                </svg>
-                                Invite
-                            </button>
-                            <a href="/play-chess" class="btn-game btn-play">Play Now</a>
+                            <button class="btn-game btn-play" onclick="openGameLobby('Chess Grandmaster')">Play Now</button>
+                            <button class="btn-game btn-invite" onclick="openGameLobby('Chess Grandmaster', true)">Invite</button>
                         </div>
                     </div>
                 </div>
@@ -285,21 +251,12 @@
                 </div>
                 <div class="game-content">
                     <h3>Uno Realistic</h3>
-                    <p>The ultimate card showdown. Play against the AI in this high-stakes realistic version.</p>
+                    <p>The ultimate card showdown. Play against your friends in this high-stakes realistic version.</p>
                     <div class="game-footer">
-                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Card
-                            Battle</span>
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">2-4 Players</span>
                         <div class="game-actions">
-                            <button class="btn-game btn-invite" onclick="inviteFriend('/play-uno', 'Uno Realistic')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                    <polyline points="16 6 12 2 8 6"></polyline>
-                                    <line x1="12" y1="2" x2="12" y2="15"></line>
-                                </svg>
-                                Invite
-                            </button>
-                            <a href="/play-uno" class="btn-game btn-play">Play Now</a>
+                            <button class="btn-game btn-play" onclick="openGameLobby('Uno Realistic')">Play Now</button>
+                            <button class="btn-game btn-invite" onclick="openGameLobby('Uno Realistic', true)">Invite</button>
                         </div>
                     </div>
                 </div>
@@ -314,20 +271,10 @@
                     <h3>Ludo King</h3>
                     <p>The king of board games is here. Challenge your friends to a game of Ludo.</p>
                     <div class="game-footer">
-                        <span
-                            style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Board
-                            Classic</span>
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">2 or 4 Players</span>
                         <div class="game-actions">
-                            <button class="btn-game btn-invite" onclick="inviteFriend('/play-ludo', 'Ludo King')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                    <polyline points="16 6 12 2 8 6"></polyline>
-                                    <line x1="12" y1="2" x2="12" y2="15"></line>
-                                </svg>
-                                Invite
-                            </button>
-                            <a href="/play-ludo" class="btn-game btn-play">Play Now</a>
+                            <button class="btn-game btn-play" onclick="openGameLobby('Ludo King')">Play Now</button>
+                            <button class="btn-game btn-invite" onclick="openGameLobby('Ludo King', true)">Invite</button>
                         </div>
                     </div>
                 </div>
@@ -336,16 +283,13 @@
             <!-- Super Mario -->
             <div class="game-card">
                 <div class="game-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=2070&auto=format&fit=crop"
-                        class="game-img" alt="Super Mario">
+                    <img src="https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=2070&auto=format&fit=crop" class="game-img" alt="Super Mario">
                 </div>
                 <div class="game-content">
                     <h3>Super Mario</h3>
                     <p>Relive the platforming legend. Journey through World 1-1 and defeat Goombas.</p>
                     <div class="game-footer">
-                        <span
-                            style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Retro
-                            Adventure</span>
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Solo Adventure</span>
                         <div class="game-actions">
                             <a href="/play-mario" class="btn-game btn-play">Play Now</a>
                         </div>
@@ -436,153 +380,221 @@
 
     <!-- Join by Code Section -->
     <div class="container" style="margin-top: 40px; margin-bottom: -20px;">
-        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+        <div
+            style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
             <div style="text-align: center;">
                 <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 5px;">Have a Room Code?</h2>
                 <p style="opacity: 0.6; font-size: 14px;">Enter the 6-character code to join your friend's game.</p>
             </div>
             <div style="display: flex; gap: 12px; width: 100%; max-width: 400px;">
-                <input type="text" id="join-room-code" placeholder="ENTER CODE" maxlength="6" 
+                <input type="text" id="join-room-code" placeholder="ENTER CODE" maxlength="6"
                     style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 20px; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
-                <button onclick="handleJoinWithCode()" class="btn-game btn-play" style="flex: 0 0 120px; height: 45px;">Join Match</button>
+                <button onclick="handleJoinWithCode()" class="btn-game btn-play"
+                    style="flex: 0 0 120px; height: 45px;">Join Match</button>
             </div>
         </div>
     </div>
 
-    <!-- Invitation / Room Modal -->
+    <!-- Invitation / Lobby Modal -->
     <div id="room-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 10001; align-items: center; justify-content: center; padding: 20px;">
-        <div style="background: #1a1a20; width: 100%; max-width: 450px; border-radius: 24px; border: 1px solid rgba(255,193,7,0.3); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <div style="background: #1a1a20; width: 100%; max-width: 480px; border-radius: 24px; border: 1px solid rgba(255,193,7,0.2); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
             <div style="padding: 30px; text-align: center;">
                 <div style="width: 60px; height: 60px; background: rgba(255,193,7,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #FFC107; font-size: 24px;">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-gamepad"></i>
                 </div>
-                <h2 id="modal-game-title" style="margin-bottom: 10px; font-size: 20px; font-weight: 800;">Create Game Room</h2>
-                <p id="modal-description" style="opacity: 0.6; font-size: 14px; margin-bottom: 30px;">Do you want to host a private room for this game?</p>
+                <h2 id="modal-game-title" style="margin-bottom: 10px; font-size: 24px; font-weight: 900;">Game Lobby</h2>
+                <p id="modal-description" style="opacity: 0.6; font-size: 14px; margin-bottom: 30px;">Select how you want to play.</p>
                 
-                <!-- Create State -->
-                <div id="room-create-state">
-                    <button id="confirm-create-btn" class="btn-game btn-play" style="width: 100%; height: 50px; font-size: 14px;">Confirm & Generate Code</button>
-                    <button onclick="closeRoomModal()" style="margin-top: 15px; background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-weight: 600;">Cancel</button>
+                <!-- Main Lobby Selection -->
+                <div id="lobby-selection-state">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <button onclick="showCreateSettings()" class="btn-game btn-play" style="flex-direction: column; height: 120px; gap: 10px;">
+                            <i class="fas fa-plus-circle" style="font-size: 20px;"></i>
+                            Host Room
+                        </button>
+                        <button onclick="showJoinInput()" class="btn-game btn-invite" style="flex-direction: column; height: 120px; gap: 10px;">
+                            <i class="fas fa-key" style="font-size: 20px;"></i>
+                            Join with Code
+                        </button>
+                    </div>
+                    <button onclick="closeRoomModal()" style="background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-weight: 600;">Close</button>
                 </div>
 
-                <!-- Code State (Hidden initially) -->
-                <div id="room-code-state" style="display: none;">
-                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px dashed rgba(255,193,7,0.4); margin-bottom: 25px;">
-                        <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Room Code</div>
-                        <div id="display-room-code" style="font-size: 32px; font-weight: 900; letter-spacing: 5px; color: #FFC107;">------</div>
+                <!-- Host Settings State -->
+                <div id="lobby-host-state" style="display: none;">
+                    <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; opacity: 0.8;">Select Player Count</h3>
+                    <div id="player-options" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 30px;">
+                        <!-- Buttons injected via JS -->
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button id="copy-room-link" class="btn-game btn-invite" style="flex: 1;">Copy Link</button>
-                        <button id="go-to-game" class="btn-game btn-play" style="flex: 1;">Start Game</button>
+                    <button id="confirm-create-host" class="btn-game btn-play" style="width: 100%; height: 50px;">Create Room</button>
+                    <button onclick="showLobbyMain()" style="margin-top: 15px; background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-weight: 600;">Back</button>
+                </div>
+
+                <!-- Join State -->
+                <div id="lobby-join-state" style="display: none;">
+                    <input type="text" id="modal-join-code" placeholder="ENTER 6-DIGIT CODE" maxlength="6" 
+                        style="width: 100%; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; color: #FFC107; font-weight: 900; text-align: center; font-size: 20px; letter-spacing: 4px; margin-bottom: 20px;">
+                    <button onclick="handleModalJoin()" class="btn-game btn-play" style="width: 100%; height: 50px;">Join Match</button>
+                    <button onclick="showLobbyMain()" style="margin-top: 15px; background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-weight: 600;">Back</button>
+                </div>
+
+                <!-- Code Success State -->
+                <div id="lobby-code-state" style="display: none;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 20px; border: 2px dashed rgba(255,193,7,0.3); margin-bottom: 25px;">
+                        <span style="font-size: 12px; opacity: 0.5; text-transform: uppercase; letter-spacing: 2px;">Your Room Code</span>
+                        <div id="lobby-display-code" style="font-size: 42px; font-weight: 900; letter-spacing: 8px; color: #FFC107; margin: 10px 0;">------</div>
+                        <p style="font-size: 13px; opacity: 0.6;">Share this code with your friends!</p>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button id="lobby-copy-link" class="btn-game btn-invite" style="flex: 1;">Copy link</button>
+                        <button id="lobby-start-game" class="btn-game btn-play" style="flex: 1;">Start Game</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Styles for animations -->
     <style>
+        .player-opt {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .player-opt.active {
+            border-color: #FFC107;
+            background: rgba(255,193,7,0.2);
+            color: #FFC107;
+            transform: scale(1.1);
+        }
         @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 
     <div id="invite-toast">Link copied to clipboard!</div>
-
     <footer th:replace="~{fragments/template :: footer}"></footer>
 
     <script th:inline="javascript">
-        // Mapping of game names to their respective API and URLs
         const gameConfigs = {
-            'Rock Paper Scissors': { createApi: '/api/rps/create', gameUrl: '/games/rock-paper-scissors' },
-            'Snake & Ladder Legends': { createApi: '/api/snake/create', gameUrl: '/games/snake-and-ladder' },
-            'Chess Grandmaster': { createApi: '/api/chess/create', gameUrl: '/play-chess' },
-            'Uno Realistic': { createApi: '/api/uno/create', gameUrl: '/play-uno' },
-            'Ludo King': { createApi: '/api/ludo/create', gameUrl: '/play-ludo' }
+            'Rock Paper Scissors': { createApi: '/api/rps/create', gameUrl: '/games/rock-paper-scissors', players: [2] },
+            'Snake & Ladder Legends': { createApi: '/api/snake/create', gameUrl: '/games/snake-and-ladder', players: [2, 3, 4] },
+            'Chess Grandmaster': { createApi: '/api/chess/create', gameUrl: '/play-chess', players: [2] },
+            'Uno Realistic': { createApi: '/api/uno/create', gameUrl: '/play-uno', players: [2, 3, 4] },
+            'Ludo King': { createApi: '/api/ludo/create', gameUrl: '/play-ludo', players: [2, 4] }
         };
 
-        let currentActiveGame = null;
+        let currentGameName = null;
+        let selectedPlayerCount = 2;
         let generatedRoomId = null;
         const userName = /*[[${session.user != null ? session.user.username : 'Player'}]]*/ 'Player';
 
-        function inviteFriend(url, gameName) {
-            currentActiveGame = gameConfigs[gameName];
-            if (!currentActiveGame) {
-                // For solo games or unsupported, just copy current URL
-                const fullUrl = window.location.origin + url;
-                copyToClipboard(fullUrl);
-                return;
-            }
-
-            // Show Modal
+        function openGameLobby(gameName, skipToCreate = false) {
+            currentGameName = gameName;
+            const config = gameConfigs[gameName];
+            
             document.getElementById('modal-game-title').textContent = gameName;
             document.getElementById('room-modal').style.display = 'flex';
-            document.getElementById('room-create-state').style.display = 'block';
-            document.getElementById('room-code-state').style.display = 'none';
+            
+            if (skipToCreate) {
+                showCreateSettings();
+            } else {
+                showLobbyMain();
+            }
         }
 
         function closeRoomModal() {
             document.getElementById('room-modal').style.display = 'none';
         }
 
-        document.getElementById('confirm-create-btn').onclick = async function() {
-            if (!currentActiveGame) return;
+        function showLobbyMain() {
+            toggleStates('lobby-selection-state');
+        }
+
+        function showJoinInput() {
+            toggleStates('lobby-join-state');
+        }
+
+        function showCreateSettings() {
+            toggleStates('lobby-host-state');
+            const config = gameConfigs[currentGameName];
+            const container = document.getElementById('player-options');
+            container.innerHTML = '';
             
+            selectedPlayerCount = config.players[0];
+            config.players.forEach(num => {
+                const btn = document.createElement('button');
+                btn.className = `player-opt ${num === selectedPlayerCount ? 'active' : ''}`;
+                btn.textContent = num;
+                btn.onclick = () => {
+                    document.querySelectorAll('.player-opt').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedPlayerCount = num;
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function toggleStates(activeId) {
+            ['lobby-selection-state', 'lobby-host-state', 'lobby-join-state', 'lobby-code-state'].forEach(id => {
+                document.getElementById(id).style.display = (id === activeId) ? 'block' : 'none';
+            });
+        }
+
+        document.getElementById('confirm-create-host').onclick = async function() {
+            const config = gameConfigs[currentGameName];
             try {
-                this.textContent = 'Generating...';
+                this.textContent = 'Generating Room...';
                 this.disabled = true;
 
-                const response = await fetch(currentActiveGame.createApi, {
+                const response = await fetch(config.createApi, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerName: userName })
+                    body: JSON.stringify({ playerName: userName, maxPlayers: selectedPlayerCount })
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     generatedRoomId = data.roomId;
-                    
-                    document.getElementById('display-room-code').textContent = generatedRoomId;
-                    document.getElementById('room-create-state').style.display = 'none';
-                    document.getElementById('room-code-state').style.display = 'block';
+                    document.getElementById('lobby-display-code').textContent = generatedRoomId;
+                    toggleStates('lobby-code-state');
                 } else {
-                    alert('Failed to create room. Please try again.');
+                    alert('Server error creating room.');
                 }
             } catch (err) {
-                console.error(err);
                 alert('Connection error.');
             } finally {
-                this.textContent = 'Confirm & Generate Code';
+                this.textContent = 'Create Room';
                 this.disabled = false;
             }
         };
 
-        document.getElementById('copy-room-link').onclick = function() {
-            if (!generatedRoomId || !currentActiveGame) return;
-            const fullUrl = window.location.origin + currentActiveGame.gameUrl + '?room=' + generatedRoomId;
-            copyToClipboard(fullUrl);
+        function handleModalJoin() {
+            const code = document.getElementById('modal-join-code').value.trim().toUpperCase();
+            if (code.length !== 6) {
+                alert('Code must be 6 characters.');
+                return;
+            }
+            window.location.href = gameConfigs[currentGameName].gameUrl + '?room=' + code;
+        }
+
+        document.getElementById('lobby-copy-link').onclick = function() {
+            const url = window.location.origin + gameConfigs[currentGameName].gameUrl + '?room=' + generatedRoomId;
+            copyToClipboard(url);
         };
 
-        document.getElementById('go-to-game').onclick = function() {
-            if (!generatedRoomId || !currentActiveGame) return;
-            window.location.href = currentActiveGame.gameUrl + '?room=' + generatedRoomId;
+        document.getElementById('lobby-start-game').onclick = function() {
+            window.location.href = gameConfigs[currentGameName].gameUrl + '?room=' + generatedRoomId;
         };
 
         function handleJoinWithCode() {
             const code = document.getElementById('join-room-code').value.trim().toUpperCase();
-            if (code.length !== 6) {
-                alert('Please enter a valid 6-character room code.');
-                return;
+            if (code.length === 6) {
+                window.location.href = '/play-ludo?room=' + code; // Default to Ludo lobby if origin unknown
             }
-
-            // Since we don't know the game type from the code alone, we usually rely on search OR
-            // we could try to join a default or ask.
-            // For now, let's assume we search or provide a generic join link if possible.
-            // If the backend had a universal room registry, it would be easier.
-            // For this implementation, we will try to find which game it belongs to or just redirect to a Ludo/Rps join.
-            // BETTER: Direct users to enter code in a specific game page.
-            alert('Redirecting to lobby... (Code found: ' + code + ')');
-            // Logic: Usually, you'd go to a game page and it would handle the 'room' param.
-            // Let's redirect to Ludo by default for the demo.
-            window.location.href = '/play-ludo?room=' + code;
         }
 
         function copyToClipboard(text) {
