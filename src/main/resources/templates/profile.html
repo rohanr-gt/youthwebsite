@@ -11,6 +11,42 @@
         rel="stylesheet">
     <style>
         /* Additional profile-specific styles that aren't in style.css */
+        .follow-list-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+        }
+
+        .follow-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--glass-border);
+            transition: 0.2s;
+        }
+
+        .follow-item:last-child { border-bottom: none; }
+        .follow-item:hover { background: rgba(255,255,255,0.03); }
+
+        .follow-info { display: flex; align-items: center; gap: 14px; }
+        .follow-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--glass-border); }
+        .follow-name { font-size: 15px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .follow-name:hover { color: var(--accent); }
+        .follow-college { font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 2px; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i { font-size: 40px; margin-bottom: 12px; opacity: 0.3; display: block; }
+
         .profile-header {
             display: flex;
             gap: 52px;
@@ -603,6 +639,8 @@
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('grid',this)"><i class="fas fa-th"></i> Posts</button>
         <button class="tab-btn" onclick="switchTab('reels',this)"><i class="fas fa-film"></i> Reels</button>
+        <button class="tab-btn" onclick="switchTab('followers',this)"><i class="fas fa-users"></i> Followers</button>
+        <button class="tab-btn" onclick="switchTab('following',this)"><i class="fas fa-user-friends"></i> Following</button>
         <button class="tab-btn" th:if="${isOwnProfile}" onclick="switchTab('settings',this)"><i class="fas fa-cog"></i>
             Settings</button>
     </div>
@@ -681,8 +719,48 @@
         </div>
     </div>
 
+    <!-- Followers Tab -->
+    <div class="tab-panel" id="tab-followers" style="display:none;">
+        <div class="follow-list-container">
+            <div th:if="${followers == null or followers.isEmpty()}" class="empty-state">
+                <i class="fas fa-users"></i>
+                <p>No followers yet.</p>
+            </div>
+            <div th:each="f : ${followers}" class="follow-item">
+                <div class="follow-info">
+                    <img th:src="${f.profilePhotoUrl != null and !f.profilePhotoUrl.isEmpty() ? f.profilePhotoUrl : 'https://ui-avatars.com/api/?name=' + f.username + '&background=F84464&color=fff'}" class="follow-avatar">
+                    <div>
+                        <a th:href="@{'/profile/' + ${f.username}}" class="follow-name" th:text="${f.username}">username</a>
+                        <p class="follow-college" th:if="${f.collegeName != null and !f.collegeName.isEmpty()}" th:text="${f.collegeName}">College</p>
+                    </div>
+                </div>
+                <a th:href="@{'/profile/' + ${f.username}}" class="btn-edit" style="font-size:11px; padding:5px 12px;">Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Following Tab -->
+    <div class="tab-panel" id="tab-following" style="display:none;">
+        <div class="follow-list-container">
+            <div th:if="${following == null or following.isEmpty()}" class="empty-state">
+                <i class="fas fa-user-friends"></i>
+                <p>Not following anyone yet.</p>
+            </div>
+            <div th:each="f : ${following}" class="follow-item">
+                <div class="follow-info">
+                    <img th:src="${f.profilePhotoUrl != null and !f.profilePhotoUrl.isEmpty() ? f.profilePhotoUrl : 'https://ui-avatars.com/api/?name=' + f.username + '&background=F84464&color=fff'}" class="follow-avatar">
+                    <div>
+                        <a th:href="@{'/profile/' + ${f.username}}" class="follow-name" th:text="${f.username}">username</a>
+                        <p class="follow-college" th:if="${f.collegeName != null and !f.collegeName.isEmpty()}" th:text="${f.collegeName}">College</p>
+                    </div>
+                </div>
+                <a th:href="@{'/profile/' + ${f.username}}" class="btn-edit" style="font-size:11px; padding:5px 12px;">Profile</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings -->
-    <div class="tab-panel" id="tab-settings" th:if="${isOwnProfile}">
+    <div class="tab-panel" id="tab-settings" th:if="${isOwnProfile}" style="display:none;">
         <div style="max-width:500px; margin:0 auto;">
             <div class="feature-card" style="margin-bottom:20px;">
                 <h3 style="margin-bottom:15px;"><i class="fas fa-lock" style="color:var(--accent);"></i> Reset
@@ -1427,18 +1505,12 @@
         }
 
         function openFollowList(type) {
-            if (type === 'followers') {
-                document.getElementById('followersModal').style.display = 'flex';
-            } else {
-                document.getElementById('followingModal').style.display = 'flex';
-            }
-        }
-
-        function closeFollowList(type) {
-            if (type === 'followers') {
-                document.getElementById('followersModal').style.display = 'none';
-            } else {
-                document.getElementById('followingModal').style.display = 'none';
+            // Updated to use the Tab pattern
+            const targetBtn = document.querySelector(`.tab-btn[onclick*="${type}"]`);
+            if (targetBtn) {
+                switchTab(type, targetBtn);
+                // Scroll to tabs
+                document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -1741,55 +1813,6 @@
         </div>
     </div>
 
-    <!-- Followers Modal -->
-    <div id="followersModal" class="modal-overlay" style="display:none; z-index: 10001; align-items:center; justify-content:center; background: rgba(0,0,0,0.4);" onclick="if(event.target===this)closeFollowList('followers')">
-        <div class="modal-content" style="max-width:400px; width:90%; border-radius:18px; padding:0; overflow:hidden; background:var(--card-bg);">
-            <div style="padding:16px 20px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="font-size:16px; font-weight:700;">Followers</h3>
-                <button onclick="closeFollowList('followers')" style="background:none; border:none; cursor:pointer; color:var(--text-secondary); font-size:18px;">&times;</button>
-            </div>
-            <div style="max-height:400px; overflow-y:auto; padding:10px 0;">
-                <div th:if="${followers == null or followers.isEmpty()}" style="text-align:center; padding:30px; color:var(--text-secondary); font-size:14px;">
-                    No followers yet.
-                </div>
-                <div th:each="f : ${followers}" style="padding:10px 20px; display:flex; align-items:center; gap:12px; transition:0.2s;" 
-                     onmouseover="this.style.background='rgba(59,130,246,0.05)'" onmouseout="this.style.background='transparent'">
-                    <img th:src="${f.profilePhotoUrl != null and !f.profilePhotoUrl.isEmpty() ? f.profilePhotoUrl : 'https://ui-avatars.com/api/?name=' + f.username + '&background=F84464&color=fff'}" 
-                         style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid var(--glass-border);">
-                    <div style="flex:1;">
-                        <a th:href="@{'/profile/' + ${f.username}}" style="font-size:14px; font-weight:700; color:var(--text-primary); text-decoration:none;" th:text="${f.username}">username</a>
-                        <p th:if="${f.collegeName != null and !f.collegeName.isEmpty()}" style="font-size:11px; color:var(--primary); font-weight:600; margin-top:1px;" th:text="${f.collegeName}">College</p>
-                    </div>
-                    <a th:href="@{'/profile/' + ${f.username}}" class="btn btn-primary" style="padding:6px 14px; font-size:12px; border-radius:8px;">Profile</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Following Modal -->
-    <div id="followingModal" class="modal-overlay" style="display:none; z-index: 10001; align-items:center; justify-content:center; background: rgba(0,0,0,0.4);" onclick="if(event.target===this)closeFollowList('following')">
-        <div class="modal-content" style="max-width:400px; width:90%; border-radius:18px; padding:0; overflow:hidden; background:var(--card-bg);">
-            <div style="padding:16px 20px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="font-size:16px; font-weight:700;">Following</h3>
-                <button onclick="closeFollowList('following')" style="background:none; border:none; cursor:pointer; color:var(--text-secondary); font-size:18px;">&times;</button>
-            </div>
-            <div style="max-height:400px; overflow-y:auto; padding:10px 0;">
-                <div th:if="${following == null or following.isEmpty()}" style="text-align:center; padding:30px; color:var(--text-secondary); font-size:14px;">
-                    Not following anyone yet.
-                </div>
-                <div th:each="f : ${following}" style="padding:10px 20px; display:flex; align-items:center; gap:12px; transition:0.2s;" 
-                     onmouseover="this.style.background='rgba(59,130,246,0.05)'" onmouseout="this.style.background='transparent'">
-                    <img th:src="${f.profilePhotoUrl != null and !f.profilePhotoUrl.isEmpty() ? f.profilePhotoUrl : 'https://ui-avatars.com/api/?name=' + f.username + '&background=F84464&color=fff'}" 
-                         style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid var(--glass-border);">
-                    <div style="flex:1;">
-                        <a th:href="@{'/profile/' + ${f.username}}" style="font-size:14px; font-weight:700; color:var(--text-primary); text-decoration:none;" th:text="${f.username}">username</a>
-                        <p th:if="${f.collegeName != null and !f.collegeName.isEmpty()}" style="font-size:11px; color:var(--primary); font-weight:600; margin-top:1px;" th:text="${f.collegeName}">College</p>
-                    </div>
-                    <a th:href="@{'/profile/' + ${f.username}}" class="btn btn-primary" style="padding:6px 14px; font-size:12px; border-radius:8px;">Profile</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
