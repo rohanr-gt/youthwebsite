@@ -174,6 +174,7 @@ public class ProfileController {
             @RequestParam(required = false) String profilePhotoUrl,
             @RequestParam(required = false) String aboutMe,
             @RequestParam(required = false) String skills,
+            @RequestParam(required = false) String collegeName,
             HttpSession session) {
         Object sessionUser = session.getAttribute("user");
         if (!(sessionUser instanceof User)) {
@@ -196,6 +197,8 @@ public class ProfileController {
                 dbUser.setAboutMe(aboutMe);
             if (skills != null)
                 dbUser.setSkills(skills);
+            if (collegeName != null)
+                dbUser.setCollegeName(collegeName);
             userRepository.save(dbUser);
             session.setAttribute("user", dbUser);
         }

@@ -569,6 +569,10 @@
 
                 <p class="bio-text" style="color:var(--text-primary); font-weight:500;" th:text="${user.email}">
                     email</p>
+                <p class="bio-text" th:if="${user.collegeName != null and !user.collegeName.isEmpty()}" style="color:var(--primary); font-weight:600; margin-top:-4px;">
+                    <i class="fas fa-university" style="font-size:12px; margin-right:4px;"></i>
+                    <span th:text="${user.collegeName}">College</span>
+                </p>
                 <p class="bio-text"
                     th:text="${user.aboutMe != null and !user.aboutMe.isEmpty()} ? ${user.aboutMe} : 'No bio yet. Click Edit Profile to add one!'">
                     bio</p>
@@ -741,6 +745,11 @@
                         <label>Skills (comma separated)</label>
                         <input type="text" name="skills" th:value="${user.skills}" class="form-input"
                             placeholder="e.g. Design, Coding">
+                    </div>
+                    <div class="form-group">
+                        <label>College / Institution</label>
+                        <input type="text" name="collegeName" th:value="${user.collegeName}" class="form-input"
+                            placeholder="e.g. IIT Bombay">
                     </div>
                     <div class="form-group">
                         <label>About Me</label>
