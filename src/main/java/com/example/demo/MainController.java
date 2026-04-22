@@ -146,15 +146,40 @@ public class MainController {
     private com.example.demo.repository.GameRepository gameRepository;
 
     @GetMapping("/")
-    public String root(HttpSession session, HttpServletRequest request) {
-        validateSessionOnPublicPage(session, request);
-        return "home";
+    public String root(jakarta.servlet.http.HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
+        // Clear session to ensure we start fresh on landing
+        if (session != null) {
+            session.invalidate();
+        }
+        // Clear the JWT cookie
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwtToken", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // Delete cookie
+        response.addCookie(cookie);
+        
+        return "redirect:/home";
     }
 
     @GetMapping("/home")
-    public String home(Model model, HttpSession session, HttpServletRequest request) {
-        // Validate JWT on this public page — clears session if token is gone/blacklisted
-        validateSessionOnPublicPage(session, request);
+    public String home(Model model, HttpSession session, HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response) {
+        String authParam = request.getParameter("auth");
+        
+        // If arriving at home without an explicit auth token, force Guest view
+        if (authParam == null || authParam.isBlank()) {
+            if (session != null) {
+                try { session.invalidate(); } catch (Exception e) {}
+                session = request.getSession(true);
+            }
+            jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwtToken", null);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        } else {
+            validateSessionOnPublicPage(session, request);
+        }
+
         model.addAttribute("user", getUserFromSession(session));
         // Fetch real student thoughts
         model.addAttribute("thoughts", postRepository.findByPostTypeOrderByCreatedAtDesc("THOUGHT"));

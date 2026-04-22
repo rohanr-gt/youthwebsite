@@ -10,6 +10,7 @@
     <!-- SockJS + STOMP (WebSocket) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/js/game-rewards.js}"></script>
 
     <style>
         /* ... existing styles ... */
@@ -310,6 +311,15 @@
             } else {
                 resEl.innerText = (state.player2 || "P2") + " Wins! 🏆";
                 resEl.style.color = "#00f3ff";
+            }
+
+            // Award coins based on result
+            if (state.lastResult === 'draw') {
+                GameRewards.award('Rock Paper Scissors', 'PLAY');
+            } else if ((state.lastResult === 'p1' && playerNum === 1) || (state.lastResult === 'p2' && playerNum === 2)) {
+                GameRewards.award('Rock Paper Scissors', 'WIN');
+            } else {
+                GameRewards.award('Rock Paper Scissors', 'PLAY');
             }
 
             // Only P1 shows the next round button to avoid double triggers

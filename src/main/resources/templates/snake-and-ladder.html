@@ -16,6 +16,7 @@
     <!-- SockJS + STOMP (WebSocket) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/js/game-rewards.js}"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700;900&display=swap');
@@ -643,7 +644,18 @@
 
             const onStateUpdate = useCallback((data) => {
                 setState(data);
-            }, []);
+                
+                // Reward logic
+                if (data.status === "finished" && !data.rewarded) {
+                    data.rewarded = true; // Local flag to prevent double reward
+                    const winner = (data.p1Position >= 100) ? 1 : 2;
+                    if (winner === playerNum) {
+                        GameRewards.award('Snake & Ladder', 'WIN');
+                    } else {
+                        GameRewards.award('Snake & Ladder', 'PLAY');
+                    }
+                }
+            }, [playerNum]);
 
             const onRollAnim = useCallback((data) => {
                 setRolling(true);
