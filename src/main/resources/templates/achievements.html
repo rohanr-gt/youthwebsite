@@ -27,7 +27,8 @@
         /* ── Main Layout ── */
         .dashboard-container {
             display: flex;
-            min-height: calc(100vh - 62px);
+            min-height: calc(100vh - var(--dashboard-nav-height));
+            margin-top: var(--dashboard-nav-height);
         }
 
         .sidebar {
@@ -529,26 +530,26 @@
     <!-- Navbar -->
     <nav class="dashboard-navbar">
         <a class="dashboard-logo" href="/home">Zentrix</a>
-        <div class="dashboard-spacer"></div>
+        <div class="dashboard-search">
+            <input type="text" placeholder="Search for talents, events..." class="form-input"
+                style="background: var(--card-bg); border-radius: 20px; padding: 8px 15px;">
+        </div>
         <div class="dashboard-nav-links">
-            <a th:href="${isAdmin} ? '/admin' : '/dashboard'"><i class="fas fa-home"></i></a>
-            <a th:if="${!isAdmin}" href="/messages" style="position: relative;">
-                <i class="fas fa-comment-dots"></i>
-                <span th:if="${unreadMessageCount != null && unreadMessageCount > 0}" id="msg-badge"
-                    style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; padding: 2px 5px; font-size: 10px; font-weight: bold;"
-                    th:text="${unreadMessageCount}"></span>
-            </a>
-            <a th:if="${!isAdmin}" href="/notifications"><i class="fas fa-bell"></i></a>
-            <a th:if="${isAdmin}" href="/events/admin/manage" style="color:#f84464; font-weight:700;">
-                <i class="fas fa-cog"></i> Manage
-            </a>
-            <span th:if="${isAdmin}" style="color:#f84464;font-weight:800;font-size:13px;">
-                <i class="fas fa-user-shield"></i> Admin
-            </span>
-            <img th:if="${user != null}"
-                th:src="${user.profilePhotoUrl != null ? user.profilePhotoUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100'}"
-                style="width:32px;height:32px;border-radius:50%;object-fit:cover;cursor:pointer;"
-                onclick="location.href='/profile'">
+            <a href="/dashboard"><i class="fas fa-home"></i></a>
+            <a href="/messages"><i class="fas fa-comment-dots"></i></a>
+            <a href="/explore"><i class="fas fa-compass"></i></a>
+            <div class="profile-dropdown">
+                <a href="/profile">
+                    <img th:src="${user != null and user.profilePhotoUrl != null ? user.profilePhotoUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop'}"
+                        class="user-avatar" style="width:32px; height:32px; border:none;">
+                </a>
+                <div class="dropdown-menu">
+                    <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> View Profile</a>
+                    <a href="/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout" class="dropdown-item" style="color: #ff4444;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -561,8 +562,10 @@
             <a href="/events" class="sidebar-link"><i class="fas fa-calendar-alt"></i> Events</a>
             <a href="/achievements" class="sidebar-link active"><i class="fas fa-trophy"></i> Achievements</a>
             <a href="/messages" class="sidebar-link"><i class="fas fa-comment-dots"></i> Chat</a>
+            <a href="/reels" class="sidebar-link"><i class="fas fa-film"></i> Reels</a>
             <a href="/profile" class="sidebar-link"><i class="fas fa-user"></i> Profile</a>
             <a href="/games" class="sidebar-link"><i class="fas fa-gamepad"></i> Games</a>
+            <a href="/music" class="sidebar-link"><i class="fas fa-music"></i> Music</a>
             <a href="/logout" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </aside>
 
