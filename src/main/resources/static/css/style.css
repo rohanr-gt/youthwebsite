@@ -1384,6 +1384,11 @@ input[type="file"].form-input::file-selector-button:hover {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar {
+    width: 0;
+    display: none;
 }
 
 .sidebar-link {
