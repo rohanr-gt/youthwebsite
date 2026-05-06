@@ -427,7 +427,8 @@
             <div id="game-over-screen" style="display:none;">
                 <h2>GAME OVER</h2>
                 <div class="go-score">SCORE: <span id="final-score">0</span></div>
-                <button class="play-btn" id="restart-btn">▶ TRY AGAIN</button>
+                <div class="go-score" style="margin-top: 5px; color: #ffdd00;">BEST: <span id="best-score">0</span></div>
+                <button class="play-btn" id="restart-btn" style="margin-top: 10px;">▶ TRY AGAIN</button>
                 <div style="margin-top: 10px;">
                     <a href="/games" class="exit-btn">Exit Game</a>
                 </div>
@@ -497,6 +498,8 @@
         let particles = [];
         let coinAnims = [];
         let frameCount = 0;
+        let jumpPressed = false;
+        let bestScore = parseInt(localStorage.getItem('marioBest')) || 0;
 
         // ── Mario ──────────────────────────────────────────
         const mario = {
@@ -595,7 +598,7 @@
                 { x: 4640, h: 3 }, { x: 5056, h: 2 }, { x: 5312, h: 3 },
                 { x: 5600, h: 2 }, { x: 5760, h: 4 },
             ];
-            pp.forEach(p => pipes.push({ x: p.x, y: GROUND_Y - TILE * p.h, w: TILE * 2, h: TILE * p.h + TILE * .25, headY: GROUND_Y - TILE * p.h - 8 }));
+            pp.forEach(p => pipes.push({ x: p.x, y: GROUND_Y - TILE * p.h - 8, w: TILE * 2, h: TILE * p.h + 8, headY: GROUND_Y - TILE * p.h - 8 }));
 
             // Enemies (Goombas)
             const es = [
@@ -1046,9 +1049,17 @@
                 if (mario.vx > speedLimit) mario.vx = speedLimit;
                 if (mario.vx < -speedLimit) mario.vx = -speedLimit;
 
-                if ((keys['ArrowUp'] || keys['w'] || keys[' ']) && mario.onGround) {
-                    mario.vy = JUMP_FORCE;
-                    mario.onGround = false;
+                if (keys['ArrowUp'] || keys['w'] || keys[' ']) {
+                    if (mario.onGround && !jumpPressed) {
+                        mario.vy = JUMP_FORCE;
+                        mario.onGround = false;
+                    }
+                    jumpPressed = true;
+                } else {
+                    jumpPressed = false;
+                    if (mario.vy < 0) {
+                        mario.vy *= 0.5; // Variable jump height
+                    }
                 }
 
                 mario.vy += GRAVITY;
@@ -1099,6 +1110,11 @@
                     lives--;
                     if (lives <= 0) { 
                         gameState = 'gameover'; 
+                        if (score > bestScore) {
+                            bestScore = score;
+                            localStorage.setItem('marioBest', bestScore);
+                        }
+                        document.getElementById('best-score').textContent = bestScore;
                         document.getElementById('game-over-screen').style.display = 'flex'; 
                         GameRewards.award('Super Mario', 'PLAY'); // Participation reward
                     }

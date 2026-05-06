@@ -219,12 +219,11 @@
                 <!-- Empty State -->
                 <div th:if="${#lists.isEmpty(events)}" style="text-align:center; padding:80px 20px;">
                     <i class="fas fa-search" style="font-size:48px; color:#D1D5DB; margin-bottom:16px;"></i>
-                    <h3 style="color:#6B7280;">No events found</h3>
+                    <h3 style="color:#6B7280;">No upcoming events. Check back later!</h3>
                     <p style="color:#9CA3AF;">
                         <span th:if="${activeSearch != null and !activeSearch.isEmpty()}">
                             No events match the location &ldquo;<strong th:text="${activeSearch}">query</strong>&rdquo;.
                         </span>
-                        Try a different location, category, or check back later!
                     </p>
                     <a href="/events" style="display:inline-block; margin-top:20px; color:var(--purple); font-weight:700;">
                         <i class="fas fa-times-circle"></i> Reset All Filters
@@ -241,7 +240,8 @@
         // Submit form with selected category pill value
         function setCategory(cat) {
             document.getElementById('categoryInput').value = cat;
-            document.getElementById('eventsFilterForm').submit();
+            const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value : '';
+            window.location.href = '/events?category=' + encodeURIComponent(cat) + (searchVal ? '&search=' + encodeURIComponent(searchVal) : '');
         }
 
         // Show/hide clear button based on input content
@@ -261,5 +261,6 @@
         }
     </script>
 
+    <div th:replace="~{fragments/modals :: createPostModal}"></div>
 </body>
 </html>

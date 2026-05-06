@@ -239,6 +239,64 @@
             .explore-search-panel { flex-direction: column; }
             .explore-search-field { min-width: 100%; }
         }
+
+        /* ── Follow Requests Section ── */
+        .follow-requests-section {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1.5px solid var(--accent);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 12px 40px rgba(248, 68, 100, 0.12);
+        }
+
+        .fr-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .fr-card {
+            background: #fff;
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .fr-card:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        .fr-user-info { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .fr-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--glass-border); }
+        .fr-username { font-weight: 700; font-size: 14px; }
+        .fr-college { font-size: 11px; color: var(--primary); }
+
+        .fr-actions { display: flex; gap: 8px; }
+        .fr-btn {
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .fr-btn-accept { background: var(--accent); color: #fff; }
+        .fr-btn-reject { background: #f1f5f9; color: var(--text-secondary); }
+        .fr-btn:hover { opacity: 0.8; }
     </style>
     <script th:src="@{/js/tab-support.js}"></script>
 </head>
@@ -284,6 +342,30 @@
         </aside>
 
         <main class="explore-container">
+        
+        <!-- ══ Pending Follow Requests ══ -->
+        <div th:if="${not #lists.isEmpty(followRequests)}" class="follow-requests-section">
+            <div class="fr-title">
+                <i class="fas fa-user-clock" style="color: var(--accent);"></i>
+                Follow Requests
+                <span class="explore-count-badge" style="background: var(--accent); color: #fff; border: none;" th:text="${#lists.size(followRequests)}">0</span>
+            </div>
+            <div class="fr-grid">
+                <div th:each="fr : ${followRequests}" class="fr-card" th:id="'fr-row-' + ${fr.id}">
+                    <a th:href="@{'/profile/' + ${fr.sender.username}}" class="fr-user-info">
+                        <img th:src="${fr.sender.profilePhotoUrl != null and !fr.sender.profilePhotoUrl.isEmpty() ? fr.sender.profilePhotoUrl : 'https://ui-avatars.com/api/?name=' + fr.sender.username + '&background=f84464&color=fff'}" class="fr-avatar">
+                        <div>
+                            <div class="fr-username" th:text="${fr.sender.username}">Username</div>
+                            <div class="fr-college" th:if="${fr.sender.collegeName != null}" th:text="${fr.sender.collegeName}">College</div>
+                        </div>
+                    </a>
+                    <div class="fr-actions">
+                        <button class="fr-btn fr-btn-accept" th:onclick="'respondToRequest(' + ${fr.id} + ', true)'">Accept</button>
+                        <button class="fr-btn fr-btn-reject" th:onclick="'respondToRequest(' + ${fr.id} + ', false)'">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- ══ Search Panel ══ -->
         <div class="explore-search-panel">
             <div class="explore-search-field">
@@ -443,7 +525,31 @@
                 wrapper.innerHTML = original;
             }
         }
+
+        /* ─── Accept / Reject Follow Request AJAX ─── */
+        async function respondToRequest(requestId, accept) {
+            const row = document.getElementById('fr-row-' + requestId);
+            const endpoint = `/profile/follow-request/${requestId}/${accept ? 'accept' : 'reject'}/ajax`;
+            
+            try {
+                const res = await fetch(endpoint, { method: 'POST' });
+                if (res.ok) {
+                    row.style.opacity = '0';
+                    setTimeout(() => {
+                        row.remove();
+                        // Hide section if empty
+                        const grid = document.querySelector('.fr-grid');
+                        if (grid && grid.children.length === 0) {
+                            document.querySelector('.follow-requests-section').style.display = 'none';
+                        }
+                    }, 300);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
     </script>
 
+    <div th:replace="~{fragments/modals :: createPostModal}"></div>
 </body>
 </html>

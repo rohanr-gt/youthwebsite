@@ -225,6 +225,34 @@ public class MainController {
         return "about";
     }
 
+    @GetMapping("/faq")
+    public String faq(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
+        model.addAttribute("user", getUserFromSession(session));
+        return "faq";
+    }
+
+    @GetMapping("/terms")
+    public String terms(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
+        model.addAttribute("user", getUserFromSession(session));
+        return "terms";
+    }
+
+    @GetMapping("/privacy")
+    public String privacy(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
+        model.addAttribute("user", getUserFromSession(session));
+        return "privacy";
+    }
+
+    @GetMapping("/organizers")
+    public String organizers(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
+        model.addAttribute("user", getUserFromSession(session));
+        return "organizers";
+    }
+
     @GetMapping("/games")
     public String games(Model model, HttpSession session, HttpServletRequest request) {
         validateSessionOnPublicPage(session, request);
@@ -248,7 +276,7 @@ public class MainController {
     @GetMapping("/play-chess")
     public String playChess(Model model, HttpSession session) {
         model.addAttribute("user", getUserFromSession(session));
-        return "chess";
+        return "chess-game";
     }
 
     @GetMapping("/play-uno")
@@ -278,6 +306,11 @@ public class MainController {
     @GetMapping("/play-candy-crush")
     public String playCandyCrush() {
         return "candy-crush";
+    }
+
+    @GetMapping("/play-memory")
+    public String playMemory() {
+        return "memory-game";
     }
 
     @GetMapping("/play-runner")
@@ -489,6 +522,12 @@ public class MainController {
         model.addAttribute("requestedUserIds", requestedUserIds);
         model.addAttribute("followersCount", followersCount);
         model.addAttribute("totalPeopleCount", allUsers.size());
+
+        // Pending follow requests for current user
+        List<FollowRequest> followRequests = followRequestRepository.findAll().stream()
+                .filter(r -> r.getReceiver().getId().equals(finalUser.getId()))
+                .collect(Collectors.toList());
+        model.addAttribute("followRequests", followRequests);
 
         return "explore";
     }

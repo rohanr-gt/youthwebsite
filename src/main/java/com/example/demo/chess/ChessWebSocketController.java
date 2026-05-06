@@ -24,17 +24,19 @@ public class ChessWebSocketController {
     // REST: Create Room
     @PostMapping("/api/chess/create")
     @ResponseBody
-    public Map<String, String> createRoom(@RequestBody Map<String, String> body) {
+    public Map<String, Object> createRoom(@RequestBody Map<String, String> body) {
         String roomId = generateRoomId();
         ChessRoom room = new ChessRoom(roomId, body.get("playerName"));
         rooms.put(roomId, room);
-        return Map.of("roomId", roomId, "color", "w");
+        Map<String, Object> resp = new HashMap<>(room.toStateMap());
+        resp.put("color", "w");
+        return resp;
     }
 
     // REST: Join Room
     @PostMapping("/api/chess/join")
     @ResponseBody
-    public Map<String, String> joinRoom(@RequestBody Map<String, String> body) {
+    public Map<String, Object> joinRoom(@RequestBody Map<String, String> body) {
         String roomId = body.get("roomId").toUpperCase();
         String playerName = body.get("playerName");
 
@@ -42,23 +44,25 @@ public class ChessWebSocketController {
         if (room == null)
             return Map.of("error", "Room not found");
 
-        // Allow Re-join
+        String color = "";
         if (playerName.equals(room.whitePlayer)) {
-            return Map.of("roomId", roomId, "color", "w");
-        }
-        if (playerName.equals(room.blackPlayer)) {
-            return Map.of("roomId", roomId, "color", "b");
-        }
-
-        if (room.blackPlayer != null)
+            color = "w";
+        } else if (playerName.equals(room.blackPlayer)) {
+            color = "b";
+        } else if (room.blackPlayer == null) {
+            room.blackPlayer = playerName;
+            room.status = "active";
+            color = "b";
+        } else {
             return Map.of("error", "Room is full");
+        }
 
-        room.blackPlayer = playerName;
-        room.status = "active";
-
-        // Notify the white player that opponent joined
+        // Notify others
         messagingTemplate.convertAndSend("/topic/chess/" + roomId, (Object) room.toStateMap());
-        return Map.of("roomId", roomId, "color", "b");
+        
+        Map<String, Object> resp = new HashMap<>(room.toStateMap());
+        resp.put("color", color);
+        return resp;
     }
 
     // WebSocket: Make Move

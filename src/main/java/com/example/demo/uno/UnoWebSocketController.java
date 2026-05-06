@@ -25,7 +25,9 @@ public class UnoWebSocketController {
         String roomId = generateRoomId();
         UnoRoom room = new UnoRoom(roomId, body.get("playerName"));
         rooms.put(roomId, room);
-        return Map.of("roomId", roomId, "playerIndex", 0);
+        Map<String, Object> resp = new HashMap<>(room.toStateMap(0));
+        resp.put("playerIndex", 0);
+        return resp;
     }
 
     @PostMapping("/api/uno/join")
@@ -40,7 +42,9 @@ public class UnoWebSocketController {
         // Allow Re-join
         for (int i = 0; i < room.players.size(); i++) {
             if (room.players.get(i).name.equals(playerName)) {
-                return Map.of("roomId", roomId, "playerIndex", i);
+                Map<String, Object> resp = new HashMap<>(room.toStateMap(i));
+                resp.put("playerIndex", i);
+                return resp;
             }
         }
 
@@ -55,7 +59,9 @@ public class UnoWebSocketController {
         }
 
         broadcastState(room);
-        return Map.of("roomId", roomId, "playerIndex", playerIndex);
+        Map<String, Object> resp = new HashMap<>(room.toStateMap(playerIndex));
+        resp.put("playerIndex", playerIndex);
+        return resp;
     }
 
     @MessageMapping("/uno/{roomId}/play")

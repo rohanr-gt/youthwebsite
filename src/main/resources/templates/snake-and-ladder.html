@@ -13,8 +13,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- SockJS + STOMP -->
+<!-- SockJS + STOMP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:src="@{/js/game-rewards.js}"></script>
@@ -23,20 +22,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700;900&display=swap');
 
         :root {
-            --board-wood: #5d4037;
-            --tile-light: #f3e5f5;
-            --tile-dark: #e1bee7;
-            --p1-color: #f44336;
-            --p2-color: #2196f3;
-            --p3-color: #4caf50;
-            --p4-color: #ffeb3b;
-            --ladder-wood: #8d6e63;
-            --snake-skin: #2e7d32;
+            --board-wood: #2c1b18;
+            --tile-light: rgba(255, 255, 255, 0.03);
+            --tile-dark: rgba(255, 255, 255, 0.07);
+            --p1-color: #ff4757;
+            --p2-color: #2ed573;
+            --p3-color: #1e90ff;
+            --p4-color: #ffa502;
+            --ladder-gold: linear-gradient(to bottom, #ffd700, #b8860b);
+            --snake-skin: #2ecc71;
+            --premium-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            background: #121212 !important;
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%) !important;
+            background: #0a0a0c !important;
             color: #fff !important;
             font-family: 'Crimson Pro', serif;
             min-height: 100vh;
@@ -44,50 +45,112 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(50px);
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 100px) scale(1.2); }
         }
 
         .game-wrapper {
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.05) !important;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            background: rgba(15, 15, 20, 0.8) !important;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px);
+            box-shadow: var(--premium-shadow), inset 0 1px 1px rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 70%, rgba(236, 72, 153, 0.05) 0%, transparent 40%);
+            pointer-events: none;
         }
 
         .board-container {
-            width: 600px;
-            height: 600px;
-            background: #fff;
+            width: 620px;
+            height: 620px;
+            background: #0a0a0c;
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             grid-template-rows: repeat(10, 1fr);
-            border: 8px solid #3e2723;
+            border: 12px solid var(--board-wood);
+            border-radius: 12px;
             position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.8);
+            padding: 2px;
         }
 
         .cell {
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 900;
-            color: rgba(0, 0, 0, 0.4);
+            font-size: 15px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.15);
             background: var(--tile-light);
+            position: relative;
+            transition: all 0.3s ease;
+            animation: fadeInTile 0.5s ease backwards;
+        }
+
+        @keyframes fadeInTile {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .cell.dark {
             background: var(--tile-dark);
         }
 
+        .cell span {
+            position: relative;
+            z-index: 2;
+        }
+
         .cell[data-num="1"],
         .cell[data-num="100"] {
-            background: #ffd700 !important;
-            color: #000;
+            background: linear-gradient(135deg, #ffd700 0%, #daa520 100%) !important;
+            color: #000 !important;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+            font-weight: 900;
+            font-size: 18px;
         }
 
         #game-overlay {
@@ -144,26 +207,47 @@
         }
 
         .ladder-rail {
-            stroke: var(--ladder-wood);
-            stroke-width: 6;
+            stroke: #daa520;
+            stroke-width: 8;
             stroke-linecap: round;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            animation: ladderShimmer 3s infinite alternate;
         }
 
-        .ladder-rung {
-            stroke: var(--ladder-wood);
-            stroke-width: 4;
-            stroke-linecap: round;
+        @keyframes ladderShimmer {
+            0% { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) brightness(1); }
+            100% { filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4)) brightness(1.3); }
         }
 
         .snake-body-path {
             fill: none;
-            stroke-width: 10;
+            stroke-width: 12;
             stroke: var(--snake-skin);
             stroke-linecap: round;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+            stroke-dasharray: 10;
+            animation: snakeMove 20s linear infinite;
+            opacity: 0.9;
+        }
+
+        @keyframes snakeMove {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
         }
 
         .snake-head {
-            fill: var(--snake-skin);
+            fill: #1b5e20;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            animation: headPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes headPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .snake-eye {
+            fill: #fff;
         }
 
         .control-panel {
@@ -174,11 +258,13 @@
         }
 
         .card {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            padding: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         .dice-box {
@@ -312,6 +398,10 @@
 </head>
 
 <body th:data-username="${user != null ? user.username : 'Player'}">
+    <div class="bg-particles">
+        <div class="particle-glow" style="top: 10%; left: 10%; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);"></div>
+        <div class="particle-glow" style="bottom: 10%; right: 10%; animation-delay: -5s; background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);"></div>
+    </div>
     <div id="root"></div>
 
     <script type="text/babel" th:inline="none">
@@ -328,11 +418,7 @@
         };
         const userName = getUniqueGuestName();
         const cp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
-        window.onerror = function (msg, url, line) {
-            console.error("React Arena Error:", msg, "\nAt:", url, ":", line);
-            return false;
-        };
-        const { useState, useEffect, useCallback, useRef, useMemo } = React;
+const { useState, useEffect, useCallback, useRef, useMemo } = React;
 
         const MAPS = {
             2: 38, 7: 14, 8: 31, 15: 26, 21: 42, 28: 84, 36: 44, 51: 67, 71: 91, 78: 98,
@@ -350,22 +436,42 @@
 
         function SnakeSVG() {
             return (
-                <svg id="game-overlay" viewBox="0 0 600 600">
+                <svg id="game-overlay" viewBox="0 0 620 620">
+                    <defs>
+                        <linearGradient id="ladderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style={{stopColor:'#ffd700', stopOpacity:1}} />
+                            <stop offset="100%" style={{stopColor:'#b8860b', stopOpacity:1}} />
+                        </linearGradient>
+                        <linearGradient id="snakeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style={{stopColor:'#2ed573', stopOpacity:1}} />
+                            <stop offset="100%" style={{stopColor:'#1b5e20', stopOpacity:1}} />
+                        </linearGradient>
+                    </defs>
                     {Object.entries(MAPS).map(([f, t]) => {
                         let from = parseInt(f), to = parseInt(t);
                         const s = getCoord(from), e = getCoord(to);
                         const sx = s.x + 5, sy = s.y + 10, ex = e.x + 5, ey = e.y + 10;
                         if (to > from) {
-                            const angle = Math.atan2(ey - sy, ex - sx), dx = 6 * Math.sin(angle), dy = 6 * Math.cos(angle);
-                            const steps = Math.floor(Math.hypot(ex - sx, ey - sy) / 20), rungs = [];
+                            const angle = Math.atan2(ey - sy, ex - sx), dx = 8 * Math.sin(angle), dy = 8 * Math.cos(angle);
+                            const steps = Math.floor(Math.hypot(ex - sx, ey - sy) / 22), rungs = [];
                             for (let i = 1; i < steps; i++) {
                                 const px = sx + (ex - sx) * (i / steps), py = sy + (ey - sy) * (i / steps);
                                 rungs.push(<line key={i} x1={px - dx} y1={py + dy} x2={px + dx} y2={py - dy} className="ladder-rung" />);
                             }
                             return <g key={f}><line x1={sx - dx} y1={sy + dy} x2={ex - dx} y2={ey + dy} className="ladder-rail" /><line x1={sx + dx} y1={sy - dy} x2={ex + dx} y2={ey - dy} className="ladder-rail" />{rungs}</g>;
                         } else {
-                            const d = `M ${sx} ${sy} Q ${(sx + ex) / 2 + (from % 2 == 0 ? 30 : -30)} ${(sy + ey) / 2}, ${ex} ${ey}`;
-                            return <g key={f}><path d={d} className="snake-body-path" /><circle cx={sx} cy={sy} r="6" className="snake-head" /></g>;
+                            const curve = (from % 2 == 0 ? 40 : -40);
+                            const d = `M ${sx} ${sy} Q ${(sx + ex) / 2 + curve} ${(sy + ey) / 2}, ${ex} ${ey}`;
+                            return (
+                                <g key={f}>
+                                    <path d={d} className="snake-body-path" style={{stroke: 'url(#snakeGrad)'}} />
+                                    <g transform={`translate(${sx},${sy})`}>
+                                        <circle cx="0" cy="0" r="8" className="snake-head" />
+                                        <circle cx="-2" cy="-2" r="1.5" className="snake-eye" />
+                                        <circle cx="2" cy="-2" r="1.5" className="snake-eye" />
+                                    </g>
+                                </g>
+                            );
                         }
                     })}
                 </svg>
@@ -401,8 +507,8 @@
             };
         }
 
-        function Game({ roomId, playerIndex }) {
-            const [state, setState] = useState(null);
+        function Game({ roomId, playerIndex, initialState }) {
+            const [state, setState] = useState(initialState || null);
             const [rolling, setRolling] = useState(false);
             const [diceVal, setDiceVal] = useState(1);
             const [logs, setLogs] = useState(["> Arena Online."]);
@@ -441,10 +547,10 @@
                     <div className="board-outer">
                         <div className="board-container">
                             {Array.from({ length: 100 }).map((_, i) => {
-                                let row = Math.floor(i / 10), col = i % 10, actualRow = 9 - row;
-                                let num = (actualRow % 2 === 0) ? (actualRow * 10) + col + 1 : (actualRow * 10) + (9 - col) + 1;
-                                return <div key={i} className={`cell ${i % 2 === 0 ? "" : "dark"}`} data-num={num}><span>{num}</span></div>;
-                            })}
+                                 let row = Math.floor(i / 10), col = i % 10, actualRow = 9 - row;
+                                 let num = (actualRow % 2 === 0) ? (actualRow * 10) + col + 1 : (actualRow * 10) + (9 - col) + 1;
+                                 return <div key={i} className={`cell ${i % 2 === 0 ? "" : "dark"}`} data-num={num} style={{animationDelay: `${i * 0.01}s`}}><span>{num}</span></div>;
+                             })}
                             <SnakeSVG />
                             {state.players.map((p, idx) => {
                                 const c = getCoord(p.pos);
@@ -519,7 +625,10 @@
                 }).then(resp => {
                     console.log("Join response:", resp);
                     if (resp.error) setError(resp.error);
-                    else setData(resp);
+                    else {
+                        if (resp.status) window.__INITIAL_SNAKE_GS__ = resp; // Set global for instant use
+                        setData(resp);
+                    }
                 }).catch((e) => {
                     console.error("Join Failed:", e);
                     setError("Arena link failed: " + e.message);
@@ -534,7 +643,7 @@
                 </div>
             );
             if (!data) return <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#121212", color: "#fff", letterSpacing: 5 }}>INITIALIZING...</div>;
-            return <Game roomId={data.roomId} playerIndex={data.playerIndex} />;
+            return <Game roomId={data.roomId} playerIndex={data.playerIndex} initialState={window.__INITIAL_SNAKE_GS__} />;
         }
 
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);

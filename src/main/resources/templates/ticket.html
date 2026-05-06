@@ -506,17 +506,17 @@
             <div class="ticket-body">
                 <div class="ticket-field">
                     <label>Attendee Name</label>
-                    <div class="val" th:text="${registration.fullName != null ? registration.fullName : user.username}">
+                    <div class="val" th:text="${canSeePII ? (registration.fullName != null ? registration.fullName : user.username) : 'Verified Attendee'}">
                         Name</div>
                 </div>
                 <div class="ticket-field">
                     <label>Email</label>
                     <div class="val" style="font-size:12px;"
-                        th:text="${registration.email != null ? registration.email : '—'}">email@email.com</div>
+                        th:text="${canSeePII ? (registration.email != null ? registration.email : '—') : '••••@••••.com'}">email@email.com</div>
                 </div>
                 <div class="ticket-field">
                     <label>Phone</label>
-                    <div class="val" th:text="${registration.phone != null ? registration.phone : '—'}">Phone</div>
+                    <div class="val" th:text="${canSeePII ? (registration.phone != null ? registration.phone : '—') : '••••••••••'}">Phone</div>
                 </div>
                 <div class="ticket-field">
                     <label>College / Org</label>

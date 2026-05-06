@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
     <style>
@@ -41,7 +41,7 @@
         };
         const userName = getUniqueGuestName();
         const cp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
-        const { useState, useEffect, useCallback, useRef } = React;
+        const { useState, useEffect, useCallback, useRef, useMemo } = React;
         const W = "w", B = "b";
         const GLYPHS = { wK:"♔", wQ:"♕", wR:"♖", wB:"♗", wN:"♘", wP:"♙", bK:"♚", bQ:"♛", bR:"♜", bB:"♝", bN:"♞", bP:"♟" };
 
@@ -60,24 +60,25 @@
 
         function useChessSocket(roomId, onMessage) {
             const stompRef = useRef(null);
+            const rid = useMemo(() => roomId ? roomId.toUpperCase() : null, [roomId]);
             useEffect(() => {
-                if (!roomId) return;
+                if (!rid) return;
                 const configCp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
                 const wsPath = configCp + '/ws';
                 const finalWsPath = wsPath.startsWith('/') ? wsPath : '/' + wsPath;
                 const socket = new SockJS(finalWsPath), stomp = Stomp.over(socket);
                 stomp.debug = () => {}; stompRef.current = stomp;
                 stomp.connect({}, () => {
-                    stomp.subscribe(`/topic/chess/${roomId}`, (m) => onMessage(JSON.parse(m.body)));
-                    stomp.send(`/app/chess/${roomId}/subscribe`, {}, "{}");
+                    stomp.subscribe(`/topic/chess/${rid}`, (m) => onMessage(JSON.parse(m.body)));
+                    stomp.send(`/app/chess/${rid}/subscribe`, {}, "{}");
                 });
                 return () => stomp.disconnect();
-            }, [roomId]);
-            return { sendMove: (data) => stompRef.current?.send(`/app/chess/${roomId}/move`, {}, JSON.stringify(data)) };
+            }, [rid]);
+            return { sendMove: (data) => stompRef.current?.send(`/app/chess/${rid}/move`, {}, JSON.stringify(data)) };
         }
 
         function ChessGame({ roomId, myColor }) {
-            const [gs, setGs] = useState(null);
+            const [gs, setGs] = useState(window.__INITIAL_GS__ || null);
             const [sel, setSel] = useState(null);
             const [hls, setHls] = useState([]);
             const { sendMove } = useChessSocket(roomId, (d) => setGs(d));
@@ -103,7 +104,7 @@
                 <div style={{ padding: 20, textAlign: "center" }}>
                     <div style={{ color: "#d4af37", fontSize: 32, fontWeight: 900, letterSpacing: 8, marginBottom: 20 }}>CHESS ARENA</div>
                     
-                    {!gs.players.b ? (
+                    {(gs.status === 'waiting' && !gs.players.b) ? (
                         <div style={{ background: "#2a1a08", padding: 40, borderRadius: 16, border: "1px solid #d4af3744" }}>
                             <h2 style={{ color: "#d4af37" }}>WAITING FOR OPPONENT</h2>
                             <div style={{ fontSize: 44, letterSpacing: 10, margin: "20px 0", color: "#d4af37", background: "#000", padding: 20, borderRadius: 12 }}>{roomId}</div>
@@ -153,7 +154,11 @@
                     body: JSON.stringify({ roomId: room.toUpperCase(), playerName: userName })
                 }).then(r => r.json()).then(resp => {
                     if (resp.error) setError(resp.error);
-                    else setData(resp);
+                    else {
+                        setData(resp);
+                        // If response contains board state, use it as initial gs
+                        if (resp.board) window.__INITIAL_GS__ = resp;
+                    }
                 }).catch(() => setError("Sync failed."));
             }, []);
             if (error) return (

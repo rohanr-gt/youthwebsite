@@ -315,6 +315,24 @@
                 </div>
             </div>
 
+            <!-- Memory Game -->
+            <div class="game-card">
+                <div class="game-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1596443686812-2f45229eebc3?q=80&w=2071&auto=format&fit=crop"
+                        class="game-img" alt="Memory Game">
+                </div>
+                <div class="game-content">
+                    <h3>Memory Game</h3>
+                    <p>Challenge your brain with our classic memory matching game. Find all pairs to win!</p>
+                    <div class="game-footer">
+                        <span style="color: #00bcd4; font-weight: 700; font-size: 12px; text-transform: uppercase;">Mind Training</span>
+                        <div class="game-actions">
+                            <a href="/play-memory" class="btn-game btn-play">Play Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Bubble Shooter -->
             <div class="game-card">
                 <div class="game-img-wrap">
@@ -646,7 +664,8 @@
         function handleJoinWithCode() {
             const code = document.getElementById('join-room-code').value.trim().toUpperCase();
             if (code.length === 6) {
-                window.location.href = '/play-ludo?room=' + code; // Default to Ludo lobby if origin unknown
+                const url = currentGameName ? gameConfigs[currentGameName].gameUrl : '/play-chess';
+                window.location.href = url + '?room=' + code;
             }
         }
 

@@ -26,7 +26,9 @@ public class LudoWebSocketController {
         String roomId = generateRoomId();
         LudoRoom room = new LudoRoom(roomId, body.get("playerName"));
         rooms.put(roomId, room);
-        return Map.of("roomId", roomId, "playerIndex", 0);
+        Map<String, Object> resp = new HashMap<>(room.toStateMap());
+        resp.put("playerIndex", 0);
+        return resp;
     }
 
     @PostMapping("/api/ludo/join")
@@ -41,7 +43,9 @@ public class LudoWebSocketController {
         // Allow Re-join
         for (int i = 0; i < 4; i++) {
             if (room.players.get(i).name.equals(playerName)) {
-                return Map.of("roomId", roomId, "playerIndex", i);
+                Map<String, Object> resp = new HashMap<>(room.toStateMap());
+                resp.put("playerIndex", i);
+                return resp;
             }
         }
         
@@ -60,7 +64,9 @@ public class LudoWebSocketController {
         room.status = "active";
 
         messagingTemplate.convertAndSend("/topic/ludo/" + roomId, (Object) room.toStateMap());
-        return Map.of("roomId", roomId, "playerIndex", slot);
+        Map<String, Object> resp = new HashMap<>(room.toStateMap());
+        resp.put("playerIndex", slot);
+        return resp;
     }
 
     @MessageMapping("/ludo/{roomId}/roll")

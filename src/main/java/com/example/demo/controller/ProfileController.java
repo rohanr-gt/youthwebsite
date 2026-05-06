@@ -77,6 +77,7 @@ public class ProfileController {
     @Autowired
     private com.example.demo.repository.EventRegistrationRepository eventRegistrationRepository;
 
+    @Transactional(readOnly = true)
     @GetMapping("/{username}")
     public String showPublicProfile(@PathVariable String username, HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("user");
@@ -169,6 +170,7 @@ public class ProfileController {
         return showPublicProfile(user.getUsername(), session, model);
     }
 
+    @Transactional
     @PostMapping("/update")
     public String updateProfile(@RequestParam String username,
             @RequestParam String email,
@@ -185,27 +187,44 @@ public class ProfileController {
         }
         User user = (User) sessionUser;
 
-        User dbUser = userRepository.findById(user.getId()).orElse(null);
-        if (dbUser != null) {
-            dbUser.setUsername(username);
-            dbUser.setEmail(email);
-            if (dob != null && !dob.isEmpty()) {
-                dbUser.setDob(java.time.LocalDate.parse(dob));
+        try {
+            User dbUser = userRepository.findById(user.getId()).orElse(null);
+            if (dbUser != null) {
+                dbUser.setUsername(username);
+                dbUser.setEmail(email);
+                if (dob != null && !dob.trim().isEmpty()) {
+                    java.time.LocalDate birthDate = java.time.LocalDate.parse(dob);
+                    if (birthDate.isAfter(java.time.LocalDate.now())) {
+                        System.err.println("Attempted to set future date of birth: " + dob);
+                    } else {
+                        dbUser.setDob(birthDate);
+                    }
+                }
+                if (gender != null)
+                    dbUser.setGender(gender);
+                if (profilePhotoUrl != null)
+                    dbUser.setProfilePhotoUrl(profilePhotoUrl.length() > 255 ? profilePhotoUrl.substring(0, 255) : profilePhotoUrl);
+                if (aboutMe != null)
+                    dbUser.setAboutMe(aboutMe.length() > 1000 ? aboutMe.substring(0, 1000) : aboutMe);
+                if (skills != null)
+                    dbUser.setSkills(skills.length() > 255 ? skills.substring(0, 255) : skills);
+                if (collegeName != null)
+                    dbUser.setCollegeName(collegeName.length() > 255 ? collegeName.substring(0, 255) : collegeName);
+                userRepository.save(dbUser);
+                // Force reload with collections if needed, or just set the basic user
+                session.setAttribute("user", dbUser);
             }
-            if (gender != null)
-                dbUser.setGender(gender);
-            if (profilePhotoUrl != null)
-                dbUser.setProfilePhotoUrl(profilePhotoUrl);
-            if (aboutMe != null)
-                dbUser.setAboutMe(aboutMe);
-            if (skills != null)
-                dbUser.setSkills(skills);
-            if (collegeName != null)
-                dbUser.setCollegeName(collegeName);
-            userRepository.save(dbUser);
-            session.setAttribute("user", dbUser);
+            return "redirect:/profile?success";
+        } catch (Exception e) {
+            System.err.println("Error updating profile for user: " + username);
+            e.printStackTrace();
+            String errorMessage = e.getMessage() != null ? e.getMessage() : "Unknown error";
+            try {
+                return "redirect:/profile?error=" + java.net.URLEncoder.encode(errorMessage, "UTF-8");
+            } catch (java.io.UnsupportedEncodingException ex) {
+                return "redirect:/profile?error=encoding_error";
+            }
         }
-        return "redirect:/profile?success";
     }
 
     @PostMapping("/reset-password")
@@ -491,15 +510,13 @@ public class ProfileController {
     @GetMapping("/api/users/search")
     @ResponseBody
     public List<Map<String, Object>> searchUsers(@RequestParam String q) {
-        List<User> users = userRepository.findAll(); // Simple search for demo
+        List<User> users = userRepository.findByUsernameContainingIgnoreCase(q);
         List<Map<String, Object>> result = new java.util.ArrayList<>();
         for (User u : users) {
-            if (u.getUsername().toLowerCase().contains(q.toLowerCase())) {
-                Map<String, Object> map = new java.util.HashMap<>();
-                map.put("username", u.getUsername());
-                map.put("profilePhotoUrl", u.getProfilePhotoUrl());
-                result.add(map);
-            }
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("username", u.getUsername());
+            map.put("profilePhotoUrl", u.getProfilePhotoUrl());
+            result.add(map);
         }
         return result;
     }

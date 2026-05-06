@@ -38,6 +38,12 @@ public class AuthController {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return "redirect:/register?error=duplicate";
         }
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            return "redirect:/register?error=duplicate_email";
+        }
+        if (user.getDob() != null && user.getDob().isAfter(java.time.LocalDate.now())) {
+            return "redirect:/register?error=future_dob";
+        }
         userRepository.save(user);
         return "redirect:/home";
     }

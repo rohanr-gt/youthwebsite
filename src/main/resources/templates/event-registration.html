@@ -1433,7 +1433,7 @@
                         <div class="input-wrap">
                             <i class="fas fa-phone"></i>
                             <input type="tel" name="phone" id="regPhone" placeholder="+91 98765 43210" maxlength="15"
-                                required>
+                                required pattern="[+]?[0-9]{10,15}" oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
                         </div>
                     </div>
                 </div>

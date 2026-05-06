@@ -677,60 +677,52 @@
             </div>
         </div>
     </div>
-    <!-- Create Post Modal -->
-    <div class="modal" id="createPostModal" style="display:none; max-width:520px; z-index:2200;">
-        <div class="modal-header">
-            <h3>Create Post</h3>
-            <i class="fas fa-times close-modal" onclick="closeCreateModal()"></i>
-        </div>
-        <div style="padding:20px;">
-            <form id="createPostForm" th:action="@{/profile/post}" method="POST" enctype="multipart/form-data">
-                <textarea name="content" placeholder="What's on your mind?" required
-                    style="width:100%; min-height:110px; background:var(--card-bg); border:1px solid var(--glass-border); border-radius:12px; padding:12px; color:var(--text-primary); font-size:14px; resize:vertical; outline:none; font-family:inherit; box-sizing:border-box;"></textarea>
-                <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-                    <input name="hashtags" placeholder="#hashtags"
-                        style="flex:1; min-width:120px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px solid var(--glass-border); color:var(--text-primary); font-size:13px; outline:none;">
-                    <select name="postType"
-                        style="flex:1; min-width:120px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px solid var(--glass-border); color:var(--text-primary); font-size:13px; outline:none;">
-                        <option value="POST">Normal Post</option>
-                        <option value="REEL">Reel (Video)</option>
-                        <option value="THOUGHT">Thought (Testimonial)</option>
-                        <option value="STORY">Story (24h)</option>
-                    </select>
-                    <select name="category"
-                        style="flex:1; min-width:120px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px solid var(--glass-border); color:var(--text-primary); font-size:13px; outline:none;">
-                        <option value="">Category (optional)</option>
-                        <option value="GAMING">Gaming</option>
-                        <option value="FITNESS">Fitness</option>
-                        <option value="LIFESTYLE">Lifestyle</option>
-                        <option value="MUSIC">Music</option>
-                        <option value="ART">Art</option>
-                        <option value="FOOD">Food</option>
-                        <option value="TRAVEL">Travel</option>
-                        <option value="TECH">Tech</option>
-                        <option value="SPORTS">Sports</option>
-                        <option value="OTHER">Other</option>
-                    </select>
-                </div>
-                <div style="margin-top:12px;">
-                    <label
-                        style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:var(--text-secondary); background:var(--card-bg); border:1px dashed var(--glass-border); border-radius:10px; padding:10px 14px;">
-                        <i class="fas fa-image" style="color:var(--accent);"></i>
-                        <span>Add Photo / Video</span>
-                        <input type="file" name="media" accept="image/*,video/*" style="display:none;"
-                            onchange="showFileName(this)">
-                    </label>
-                    <span id="selectedFileName"
-                        style="font-size:12px; color:var(--text-secondary); margin-top:6px; display:block;"></span>
-                </div>
-                <button type="submit"
-                    style="margin-top:16px; width:100%; padding:12px; background:var(--accent); color:white; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer;">
-                    <i class="fas fa-paper-plane"></i> Post
-                </button>
-            </form>
-        </div>
-    </div>
-    <div class="overlay" id="overlay"></div>
+    <div th:replace="~{fragments/modals :: createPostModal}"></div>
+    <div class="overlay" id="overlay" onclick="closeAllModals()"></div>
+
+    <script>
+        function openM(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('open');
+                el.style.display = 'block'; 
+                const modal = el.querySelector('.modal');
+                if (modal) modal.style.display = 'block';
+            }
+            const overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.classList.add('open');
+                overlay.style.display = 'block';
+            }
+        }
+        function closeM(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('open');
+                el.style.display = 'none';
+                const modal = el.querySelector('.modal');
+                if (modal) modal.style.display = 'none';
+            }
+            const overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.classList.remove('open');
+                overlay.style.display = 'none';
+            }
+        }
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => {
+                m.classList.remove('open');
+                m.style.display = 'none';
+            });
+            const overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.classList.remove('open');
+                overlay.style.display = 'none';
+            }
+            // Also close the fragment modal if it's open
+            if (typeof closeCreateModal === 'function') closeCreateModal();
+        }
+    </script>
     <!-- Share Modal -->
     <div class="modal" id="shareModal" style="display:none; z-index:2100;">
         <div class="modal-header">
@@ -768,26 +760,12 @@
         });
 
         // ── Create Post Modal ──────────────────────────────
-        function openCreateModal() {
-            document.getElementById('createPostModal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        }
         function openThoughtModal() {
-            // Pre-select THOUGHT type in the dropdown
-            const sel = document.querySelector('select[name="postType"]');
-            if (sel) sel.value = 'THOUGHT';
-            // Update placeholder to be more relevant
-            const ta = document.querySelector('textarea[name="content"]');
-            if (ta) ta.placeholder = 'Share your experience with Zentrix... (this will appear on the public home page!)';
             openCreateModal();
-        }
-        function closeCreateModal() {
-            document.getElementById('createPostModal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-        function openM(id) {
-            document.getElementById(id).style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            const btn = document.querySelector('.type-btn[data-type="THOUGHT"]');
+            if (btn) selectPostType(btn);
+            const ta = document.querySelector('#postContent');
+            if (ta) ta.placeholder = 'Share your experience with Zentrix... (this will appear on the public home page!)';
         }
         function showFileName(input) {
             const span = document.getElementById('selectedFileName');
@@ -985,8 +963,7 @@
         let allFollowers = [];
         async function openShareModal(postId) {
             currentSharePostId = postId;
-            document.getElementById('shareModal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            openM('shareModal');
             document.getElementById('shareSearchInput').value = '';
 
             try {
@@ -1035,8 +1012,7 @@
         }
 
         function closeShareModal() {
-            document.getElementById('shareModal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
+            closeM('shareModal');
         }
         async function shareToUser(userId) {
             const res = await fetch('/api/chat/share-post-to-user', {
@@ -1054,8 +1030,7 @@
         }
 
         function openNotifications() {
-            document.getElementById('notifModal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            openM('notifModal');
 
             // Clear badge and mark as read immediately
             const badge = document.getElementById('notif-badge');

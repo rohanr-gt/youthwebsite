@@ -11,8 +11,7 @@
     <meta name="context-path" th:content="@{/}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:src="@{/js/game-rewards.js}"></script>
-
-    <style>
+<style>
         body { background: #0f172a; color: #fff; font-family: 'Inter', sans-serif; }
         .game-status { font-size: 24px; font-weight: 800; color: #fbcc15; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 4px; }
         .choices-card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); }
@@ -30,7 +29,7 @@
         
         <div id="waitArea" style="display: none; text-align: center;">
             <div style="background: #1e293b; padding: 30px; border-radius: 20px; border: 1px solid #334155;">
-                <h2 style={{ color: "#fbcc15" }}>WAITING FOR OPPONENT</h2>
+                <h2 style="color: #fbcc15;">WAITING FOR OPPONENT</h2>
                 <div id="roomCode" style="font-size: 48px; letter-spacing: 12px; margin: 20px 0; color: #fbcc15; font-family: monospace;"></div>
                 <p style="color: #94a3b8;">Share this code to start the battle.</p>
             </div>

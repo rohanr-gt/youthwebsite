@@ -434,7 +434,7 @@ public class EventController {
         session.setAttribute("regTier", selectedTier);
         session.setAttribute("regSeatIds", selectedSeatIds);
 
-        if ("Paid".equalsIgnoreCase(event.getEntryFeeType())) {
+        if ("Paid".equalsIgnoreCase(event.getEntryFeeType()) || (event.getPrice() != null && !event.getPrice().equalsIgnoreCase("Free"))) {
             User dbUser = userRepository.findById(user.getId()).orElse(user);
             if (dbUser.isHasFreeEntry()) {
                 dbUser.setHasFreeEntry(false);
@@ -486,6 +486,7 @@ public class EventController {
     //  PAYMENT: Process payment (simulate success)
     // ─────────────────────────────────────────────────────────
     @PostMapping("/{id}/payment/confirm")
+    @SuppressWarnings("unchecked")
     public String confirmPayment(
             @PathVariable Long id,
             @RequestParam(required = false) String cardName,
@@ -579,6 +580,10 @@ public class EventController {
 
         model.addAttribute("registration", reg);
         model.addAttribute("event", reg.getEvent());
+        
+        boolean canSeePII = adminViewing || (user != null && reg.getUser() != null && reg.getUser().getId().equals(user.getId()));
+        model.addAttribute("canSeePII", canSeePII);
+        
         model.addAttribute("user", reg.getUser() != null ? reg.getUser() : user);
         model.addAttribute("isAdmin", adminViewing);
         return "ticket";

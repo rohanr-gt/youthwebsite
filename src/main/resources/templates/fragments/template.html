@@ -18,7 +18,7 @@
                 </div>
                 <div class="top-links">
                     <a href="/support">Support</a>
-                    <a href="/about">Help Center</a>
+                    <a href="/home#faq">Help Center</a>
                 </div>
             </div>
         </div>
@@ -35,10 +35,11 @@
                 <th:block th:if="${active} != 'games' and ${active} != 'events' and ${active} != 'event-details'">
                     <a class="logo" href="/home">Zentrix</a>
                     <div class="nav-links">
-                        <a href="/events" th:classappend="${active} == 'events' ? ' active' : ''">Events</a>
+                        <a href="/home#featured-events">Events</a>
                         <a href="/games" th:if="${active} != 'home'" th:classappend="${active} == 'games' ? ' active' : ''">Games</a>
-                        <a href="/about" th:classappend="${active} == 'about' ? ' active' : ''">About Us</a>
-                        <a href="/support" th:classappend="${active} == 'support' ? ' active' : ''">Contact</a>
+                        <a href="/home#about">About Us</a>
+                        <a href="/home#contact">Contact</a>
+                        <a href="/home#faq">FAQs</a>
                     </div>
                     <div class="nav-actions">
                         <th:block th:if="${session.user == null}">
@@ -75,7 +76,7 @@
 
     <header th:fragment="adminNavbar(active)" class="admin-header">
         <nav class="navbar" style="background: rgba(5, 5, 8, 0.95) !important; border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;">
-            <a class="logo" href="/admin/dashboard" style="color: #fff !important;">Zentrix<span>Admin</span></a>
+            <a class="logo" href="/admin" style="color: #fff !important;">Zentrix<span>Admin</span></a>
             
             <div class="nav-links">
                 <a href="/events/admin/manage" th:classappend="${active} == 'manage' ? ' active' : ''">
@@ -102,17 +103,16 @@
         <div class="footer-content">
             <div class="footer-col">
                 <h3>Zentrix</h3>
-                <a href="/about">About Us</a>
-                <a href="/events">Events</a>
-                <a href="/support">Contact</a>
-                <a href="#">Organizers</a>
+                <a href="/home#about">About Us</a>
+                <a href="/home#featured-events">Events</a>
+                <a href="/home#organizers">Organizers</a>
             </div>
             <div class="footer-col">
                 <h3>Help</h3>
-                <a href="/support">Contact Us</a>
-                <a href="#">FAQs</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Privacy Policy</a>
+                <a href="/home#contact">Contact Us</a>
+                <a href="/home#faq">FAQs</a>
+                <a href="/home#terms">Terms of Service</a>
+                <a href="/home#privacy">Privacy Policy</a>
             </div>
         </div>
         <script th:src="@{/js/animations.js}"></script>

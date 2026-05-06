@@ -138,7 +138,10 @@
         }
 
         .cell.hint {
+            border: 3px solid gold !important;
+            transform: scale(1.1);
             animation: pulse 0.6s ease-in-out infinite alternate;
+            z-index: 5;
         }
 
         @keyframes pulse {
@@ -212,6 +215,14 @@
             box-shadow: 0 4px 15px rgba(255, 150, 0, 0.4);
         }
 
+        #btn-hint:disabled {
+            background: #444;
+            color: #888;
+            box-shadow: none;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
         .exit-btn {
             padding: 10px 24px;
             background: rgba(255, 255, 255, 0.1);
@@ -268,6 +279,10 @@
             <div class="label">Moves</div>
             <div class="value" id="moves">30</div>
         </div>
+        <div class="score-box">
+            <div class="label">Hints</div>
+            <div class="value" id="hints">3</div>
+        </div>
     </div>
 
     <div id="board-wrap">
@@ -285,19 +300,21 @@
         /*<![CDATA[*/
         const COLS = 8, ROWS = 8;
         const CANDIES = ['🍭', '🍬', '🍫', '🍡', '🧁', '🍩', '🍦'];
-        let board = [], selected = null, score = 0, best = 0, movesLeft = 30;
+        let board = [], selected = null, score = 0, best = parseInt(localStorage.getItem('candyBest')) || 0, movesLeft = 30, hintsLeft = 3;
         let busy = false, hintCells = [];
 
         const boardEl = document.getElementById('board');
         const scoreEl = document.getElementById('score');
         const bestEl = document.getElementById('best');
         const movesEl = document.getElementById('moves');
+        const hintsEl = document.getElementById('hints');
         const msgEl = document.getElementById('message');
+        const hintBtn = document.getElementById('btn-hint');
 
         function idx(r, c) { return r * COLS + c; }
 
         function initBoard() {
-            score = 0; movesLeft = 30;
+            score = 0; movesLeft = 30; hintsLeft = 3;
             selected = null; busy = false;
             updateHUD();
             msgEl.classList.remove('show');
@@ -336,7 +353,7 @@
         function cellEl(i) { return boardEl.children[i]; }
 
         function onCellClick(i) {
-            if (busy) return;
+            if (busy || movesLeft <= 0) return;
             clearHint();
 
             if (selected === null) {
@@ -469,13 +486,19 @@
         }
 
         function showHint() {
-            if (busy) return;
+            if (busy || hintsLeft <= 0) return;
             clearHint();
             const valid = findValidMoves();
             if (!valid.length) return;
+            
+            // Show only ONE random move from valid ones
             const pick = valid[Math.floor(Math.random() * valid.length)];
             hintCells = pick;
             pick.forEach(i => { const el = cellEl(i); if (el) el.classList.add('hint'); });
+            
+            hintsLeft--;
+            updateHUD();
+            
             setTimeout(clearHint, 2000);
         }
 
@@ -486,7 +509,7 @@
 
         function checkGameOver() {
             if (movesLeft <= 0) {
-                if (score > best) { best = score; bestEl.textContent = best; }
+                if (score > best) { best = score; bestEl.textContent = best; localStorage.setItem('candyBest', best); }
                 showMessage('Game Over! 😢\nScore: ' + score);
                 return;
             }
@@ -507,6 +530,9 @@
             scoreEl.textContent = score;
             bestEl.textContent = best;
             movesEl.textContent = movesLeft;
+            hintsEl.textContent = hintsLeft;
+            if (hintsLeft <= 0) hintBtn.disabled = true;
+            else hintBtn.disabled = false;
         }
 
         function delay(ms) { return new Promise(r => setTimeout(r, ms)); }

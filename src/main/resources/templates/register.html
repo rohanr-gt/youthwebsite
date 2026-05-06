@@ -99,9 +99,23 @@
     </style>
 </head>
 <body>
+    <div style="position: absolute; top: 30px; left: 30px; z-index: 10;">
+        <a href="/home" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-primary); text-decoration: none; font-weight: 700; background: rgba(255,255,255,0.8); padding: 10px 16px; border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s;">
+            <i class="fas fa-arrow-left"></i> Back to Website
+        </a>
+    </div>
 
 <div class="register-container">
     <h2>Create Account</h2>
+    <div th:if="${param.error == 'duplicate'}" style="background-color: #fce8e8; border: 1px solid #f5c2c2; color: #a94442; padding: 10px; border-radius: 4px; margin-bottom: 1rem; text-align: center;">
+        Username already exists.
+    </div>
+    <div th:if="${param.error == 'duplicate_email'}" style="background-color: #fce8e8; border: 1px solid #f5c2c2; color: #a94442; padding: 10px; border-radius: 4px; margin-bottom: 1rem; text-align: center;">
+        Email address already in use.
+    </div>
+    <div th:if="${param.error == 'future_dob'}" style="background-color: #fce8e8; border: 1px solid #f5c2c2; color: #a94442; padding: 10px; border-radius: 4px; margin-bottom: 1rem; text-align: center;">
+        Date of Birth cannot be in the future.
+    </div>
     <form th:action="@{/register}" th:object="${user}" method="post">
         <div class="form-group">
             <label for="username">Username</label>
@@ -146,5 +160,11 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("dob").setAttribute("max", today);
+    });
+</script>
 </body>
 </html>

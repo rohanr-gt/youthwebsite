@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<div th:fragment="createPostModal">
+    <!-- Create Post Modal -->
+    <div class="overlay" id="createPostModal">
+        <div class="modal">
+            <div style="padding:20px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-size:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-plus-circle" style="color:var(--accent);"></i>
+                    Create Content
+                </h3>
+                <button class="nav-btn" onclick="closeM('createPostModal')"
+                    style="background:none; border:none; color:var(--text-secondary); font-size:20px;">&times;</button>
+            </div>
+            <div style="padding:20px;">
+                <form id="createPostForm" th:action="@{/profile/post}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="postType" id="postTypeInput" value="POST">
+                    <input type="hidden" name="category" id="categoryInput" value="">
+
+                    <div class="form-group">
+                        <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">
+                            <i class="fas fa-layer-group"></i> &nbsp;Select Type
+                        </label>
+                        <div id="typeSelector" style="display:flex; gap:8px; margin-bottom:4px;">
+                            <button type="button" class="type-btn active" data-type="POST" onclick="selectPostType(this)"
+                                style="flex:1; padding:10px 6px; border-radius:10px; border:2px solid var(--accent); background:rgba(34,211,238,0.15); color:var(--accent); font-weight:600; font-size:13px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.2s;">
+                                <i class="fas fa-image" style="font-size:18px;"></i> Post
+                            </button>
+                            <button type="button" class="type-btn" data-type="REEL" onclick="selectPostType(this)"
+                                style="flex:1; padding:10px 6px; border-radius:10px; border:2px solid var(--glass-border); background:transparent; color:var(--text-secondary); font-weight:600; font-size:13px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.2s;">
+                                <i class="fas fa-film" style="font-size:18px;"></i> Reel
+                            </button>
+                            <button type="button" class="type-btn" data-type="STORY" onclick="selectPostType(this)"
+                                style="flex:1; padding:10px 6px; border-radius:10px; border:2px solid var(--glass-border); background:transparent; color:var(--text-secondary); font-weight:600; font-size:13px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.2s;">
+                                <i class="fas fa-circle-notch" style="font-size:18px;"></i> Story
+                            </button>
+                            <button type="button" class="type-btn" data-type="THOUGHT" onclick="selectPostType(this)"
+                                style="flex:1; padding:10px 6px; border-radius:10px; border:2px solid var(--glass-border); background:transparent; color:var(--text-secondary); font-weight:600; font-size:13px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.2s;">
+                                <i class="fas fa-lightbulb" style="font-size:18px;"></i> Thought
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea id="postContent" name="content" class="form-input" rows="3" placeholder="What's on your mind?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size:12px; color:var(--text-secondary); margin-bottom:6px; display:block;">
+                            <i class="fas fa-paperclip"></i> &nbsp;Media
+                        </label>
+                        <div id="mediaDropZone" style="border:2px dashed var(--glass-border); border-radius:12px; padding:20px; text-align:center; cursor:pointer;" onclick="document.getElementById('mediaFile').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:28px; color:var(--text-secondary); display:block; margin-bottom:6px;"></i>
+                            <span style="font-size:13px; color:var(--text-secondary);">Click to upload</span>
+                            <input type="file" id="mediaFile" name="file" accept="image/*,video/*" style="display:none;" onchange="previewMedia(this)">
+                        </div>
+                        <div id="mediaPreview" style="display:none; margin-top:10px;"></div>
+                    </div>
+
+                    <button type="submit" class="cta-btn" style="width:100%; margin-top:10px;">
+                        <i class="fas fa-paper-plane"></i> &nbsp;Share Post
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function openM(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('open');
+                el.style.display = 'block'; 
+                const modal = el.querySelector('.modal');
+                if (modal) modal.style.display = 'block';
+            }
+            const overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.classList.add('open');
+                overlay.style.display = 'block';
+            }
+        }
+        function closeM(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('open');
+                el.style.display = 'none';
+                const modal = el.querySelector('.modal');
+                if (modal) modal.style.display = 'none';
+            }
+            const overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.classList.remove('open');
+                overlay.style.display = 'none';
+            }
+        }
+        function openCreateModal() { openM('createPostModal'); }
+
+        function selectPostType(btn) {
+            document.querySelectorAll('.type-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = 'var(--glass-border)';
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-secondary)';
+            });
+            btn.classList.add('active');
+            btn.style.borderColor = 'var(--accent)';
+            btn.style.background = 'rgba(34,211,238,0.15)';
+            btn.style.color = 'var(--accent)';
+            document.getElementById('postTypeInput').value = btn.dataset.type;
+        }
+
+        function previewMedia(input) {
+            const preview = document.getElementById('mediaPreview');
+            preview.innerHTML = '';
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const isVideo = input.files[0].type.startsWith('video/');
+                    if (isVideo) {
+                        preview.innerHTML = `<video src="${e.target.result}" controls style="width:100%; border-radius:8px;"></video>`;
+                    } else {
+                        preview.innerHTML = `<img src="${e.target.result}" style="width:100%; border-radius:8px;">`;
+                    }
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</div>
+
+</body>
+</html>

@@ -681,9 +681,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             const input = document.getElementById('playerNameInput');
             if (input && !input.value) input.value = userName;
+            
+            const rId = new URLSearchParams(window.location.search).get('room');
+            if (rId) {
+                document.getElementById('roomCodeInput').value = rId;
+                // Auto-join
+                setTimeout(joinRoom, 500);
+            }
         });
-
-        const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
+const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
         const C = BOARD_SIZE / 15;
         const canvas = document.getElementById('boardCanvas');
         canvas.width = BOARD_SIZE;
@@ -782,6 +788,7 @@
             const data = await res.json();
             state.roomId = data.roomId;
             state.playerIndex = data.playerIndex;
+            if (data.status) updateState(data); // Apply initial state
             initMultiplayer();
         }
 
@@ -803,6 +810,7 @@
             if (data.error) return alert(data.error);
             state.roomId = data.roomId;
             state.playerIndex = data.playerIndex;
+            if (data.status) updateState(data); // Apply initial state
             initMultiplayer();
         }
 

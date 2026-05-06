@@ -12,8 +12,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- SockJS + STOMP (WebSocket) -->
+<!-- SockJS + STOMP (WebSocket) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <meta name="context-path" th:content="@{/}">
@@ -49,7 +48,7 @@
         };
         const userName = getUniqueGuestName();
         const cp = (document.querySelector('meta[name="context-path"]')?.content || '').replace(/\/$/, '');
-        const { useState, useEffect, useCallback, useRef } = React;
+        const { useState, useEffect, useCallback, useRef, useMemo } = React;
 
         /* --- Constants & Helpers --- */
         const COLORS = ["red", "green", "blue", "yellow"];
@@ -64,6 +63,7 @@
 
         /* --- UI Components (SVG/ColorPicker/Toast) --- */
         function CardFace({ card, width = 72, height = 108 }) {
+            if (!card) return null;
             const t = THEME[card.color] || THEME.wild;
             const isWild = card.color === "wild";
             const sym = SYMBOL[card.value] || card.value;
@@ -104,7 +104,7 @@
             const w = small ? 44 : width, h = small ? 66 : height;
             return (
                 <svg width={w} height={h} viewBox="0 0 72 108" style={{ display: "block", filter: "drop-shadow(0 3px 8px #0008)" }}>
-                    <rect x="0" y="0" width="72" height="108" rx="8" fill="linear-gradient(135deg,#c1121f,#6a0572)" />
+                    <rect x="0" y="0" width="72" height="108" rx="8" fill="#c1121f" />
                     <text x="36" y="60" textAnchor="middle" fill="#fff" fontSize="16" fontFamily="Arial Black" fontWeight="900" opacity="0.9">UNO</text>
                 </svg>
             );
@@ -149,7 +149,7 @@
         function UnoGame() {
             const roomParam = new URLSearchParams(window.location.search).get('room');
             const [roomState, setRoomState] = useState(null);
-            const [roomId, setRoomId] = useState(null); // Keep null to trigger useEffect join
+            const [roomId, setRoomId] = useState(null); 
             const [initializing, setInitializing] = useState(!!roomParam);
             const [playerIndex, setPlayerIndex] = useState(-1);
             const [pickingColor, setPickingColor] = useState(null);
@@ -185,8 +185,11 @@
                 const json = await res.json();
                 setInitializing(false);
                 if (json.error) return alert(json.error);
+                
                 setRoomId(json.roomId);
                 setPlayerIndex(json.playerIndex);
+                if (json.players) setRoomState(json); // Use initial state from REST
+                
                 connectWebSocket(json.roomId, json.playerIndex);
             };
 
@@ -214,9 +217,11 @@
 
             if (initializing) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background:"#060e0a" }}>Initializing Match...</div>;
             if (!roomId) return <UnoLobby onStart={handleStart} />;
-            if (!roomState) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Connecting to Table...</div>;
+            if (!roomState || playerIndex === -1) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Connecting to Table...</div>;
 
             const myData = roomState.players[playerIndex];
+            if (!myData) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Syncing Player Data...</div>;
+            
             const colT = THEME[roomState.currentColor] || THEME.wild;
 
             return (
