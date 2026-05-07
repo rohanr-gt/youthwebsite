@@ -35,7 +35,8 @@
     <nav class="navbar" th:replace="~{fragments/template :: navbar('games')}"></nav>
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script type="text/babel" th:inline="none">
+    /*<![CDATA[*/
         const { useState, useEffect, useCallback } = React;
 
         const ICONS = ['🍎', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑', '🍍'];
@@ -132,6 +133,7 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<MemoryGame />);
+    /*]]>*/
     </script>
 </body>
 </html>

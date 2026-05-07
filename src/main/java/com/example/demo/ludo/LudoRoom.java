@@ -48,12 +48,49 @@ public class LudoRoom {
         this.diceRolled = true;
     }
 
+    private static final int[] STARTS = {0, 13, 26, 39};
+    private static final Set<Integer> SAFE_SQUARES = new HashSet<>(Arrays.asList(0, 8, 13, 21, 26, 34, 39, 47));
+
     public void applyMove(int playerIdx, int pieceIdx, int newPos) {
         players.get(playerIdx).pieces[pieceIdx] = newPos;
-        diceRolled = false;
         
-        // Handle next turn if not a 6
-        if (diceValue != 6) {
+        boolean captured = false;
+        if (newPos >= 0 && newPos < 52) {
+            int globalIdx = (STARTS[playerIdx] + newPos) % 52;
+            if (!SAFE_SQUARES.contains(globalIdx)) {
+                for (int i = 0; i < players.size(); i++) {
+                    if (i == playerIdx) continue;
+                    LudoPlayer opponent = players.get(i);
+                    for (int j = 0; j < 4; j++) {
+                        if (opponent.pieces[j] >= 0 && opponent.pieces[j] < 52) {
+                            int oppGlobalIdx = (STARTS[i] + opponent.pieces[j]) % 52;
+                            if (oppGlobalIdx == globalIdx) {
+                                opponent.pieces[j] = -1;
+                                captured = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        diceRolled = false;
+
+        // Check if current player won
+        boolean allHome = true;
+        for (int p : players.get(playerIdx).pieces) {
+            if (p < 57) {
+                allHome = false;
+                break;
+            }
+        }
+        if (allHome) {
+            this.status = "finished";
+            return;
+        }
+        
+        // Handle next turn if not a 6 and no capture
+        if (diceValue != 6 && !captured) {
             nextTurn();
         }
     }

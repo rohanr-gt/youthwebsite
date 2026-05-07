@@ -314,7 +314,10 @@ public class MainController {
     }
 
     @GetMapping("/play-runner")
-    public String playRunner() {
+    @Transactional
+    public String playRunner(Model model, HttpSession session, HttpServletRequest request) {
+        validateSessionOnPublicPage(session, request);
+        model.addAttribute("user", getUserFromSession(session));
         return "runner";
     }
 

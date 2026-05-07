@@ -100,7 +100,7 @@ public class LudoWebSocketController {
     }
 
     @MessageMapping("/ludo/{roomId}/subscribe")
-    @SendTo("/topic/ludo/" + "{roomId}")
+    @SendTo("/topic/ludo/{roomId}")
     public Map<String, Object> subscribe(@DestinationVariable String roomId) {
         LudoRoom room = rooms.get(roomId);
         return room != null ? room.toStateMap() : Map.of("error", "Room not found");

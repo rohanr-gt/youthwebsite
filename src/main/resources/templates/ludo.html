@@ -606,6 +606,7 @@
                 opacity: 0
             }
         }
+    </style>
     <h1>🎲 LUDO KING</h1>
 
     <!-- Toast -->
@@ -760,10 +761,12 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             activeSlots: [0, 2], currentSlotIndex: 0,
             currentPlayer: 0,
             diceValue: 0, diceRolled: false,
-            pieces: [], playerTypes: [],
+            pieces: Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => ({ pos: -1 }))),
+            playerTypes: Array(4).fill('inactive'),
             isGameOver: false,
             moveableIndices: [],
             roomId: null,
+            status: 'waiting',
             playerIndex: -1 // -1 = local, 0-3 = network player
         };
 
@@ -780,16 +783,22 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             const path = auth ? `${configCp}/api/ludo/create?auth=${auth}` : `${configCp}/api/ludo/create`;
             const finalPath = path.startsWith('/') ? path : '/' + path;
             
-            const res = await fetch(finalPath, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ playerName })
-            });
-            const data = await res.json();
-            state.roomId = data.roomId;
-            state.playerIndex = data.playerIndex;
-            if (data.status) updateState(data); // Apply initial state
-            initMultiplayer();
+            try {
+                const res = await fetch(finalPath, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerName })
+                });
+                if (!res.ok) throw new Error("Failed to create room");
+                const data = await res.json();
+                state.roomId = data.roomId;
+                state.playerIndex = data.playerIndex;
+                if (data.status) syncState(data); // Apply initial state
+                initMultiplayer();
+            } catch (err) {
+                console.error(err);
+                alert("Error creating room: " + err.message);
+            }
         }
 
         async function joinRoom() {
@@ -801,17 +810,23 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             const path = auth ? `${configCp}/api/ludo/join?auth=${auth}` : `${configCp}/api/ludo/join`;
             const finalPath = path.startsWith('/') ? path : '/' + path;
 
-            const res = await fetch(finalPath, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ playerName, roomId: rId })
-            });
-            const data = await res.json();
-            if (data.error) return alert(data.error);
-            state.roomId = data.roomId;
-            state.playerIndex = data.playerIndex;
-            if (data.status) updateState(data); // Apply initial state
-            initMultiplayer();
+            try {
+                const res = await fetch(finalPath, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerName, roomId: rId })
+                });
+                if (!res.ok) throw new Error("Failed to join room");
+                const data = await res.json();
+                if (data.error) return alert(data.error);
+                state.roomId = data.roomId;
+                state.playerIndex = data.playerIndex;
+                if (data.status) syncState(data); // Apply initial state
+                initMultiplayer();
+            } catch (err) {
+                console.error(err);
+                alert("Error joining room: " + err.message);
+            }
         }
 
         function initMultiplayer() {
@@ -819,6 +834,10 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('roomInfo').style.display = 'block';
             document.getElementById('displayRoomId').innerText = state.roomId;
+            
+            if (rafId) cancelAnimationFrame(rafId);
+            render();
+            
             connectWebSocket();
         }
 
@@ -855,7 +874,9 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
                     state.playerTypes[pi] = 'inactive';
                 }
                 p.pieces.forEach((pos, i) => {
-                    state.pieces[pi][i].pos = pos;
+                    if (state.pieces[pi] && state.pieces[pi][i]) {
+                        state.pieces[pi][i].pos = pos;
+                    }
                 });
             });
 
@@ -864,13 +885,17 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             state.diceRolled = roomState.diceRolled;
             
             // Only show slots with players
-            state.activeSlots = roomState.players.filter(p => !p.name == "").map(p => p.index);
+            state.activeSlots = roomState.players.filter(p => p.name !== "").map(p => p.index);
             if (state.activeSlots.length === 0) state.activeSlots = [0];
 
             if (state.status === 'waiting' && roomState.status === 'active') {
-                // Game just started
                 if (rafId) cancelAnimationFrame(rafId);
                 render();
+            }
+            if (state.status === 'finished' || roomState.status === 'finished') {
+                state.status = 'finished';
+                checkWin(); // Show win modal
+                return;
             }
             state.status = roomState.status;
 
@@ -878,7 +903,8 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             updateTurnUI();
             
             // If it's my turn and dice not rolled, enable dice
-            diceDisabled = (state.currentPlayer !== state.playerIndex) || state.diceRolled;
+            // In multiplayer, state.playerIndex is 0-3. In local, it's -1.
+            diceDisabled = (state.playerIndex !== -1 && state.currentPlayer !== state.playerIndex) || state.diceRolled;
             document.getElementById('rollBtn').disabled = diceDisabled;
         }
 
@@ -1506,6 +1532,14 @@ const BOARD_SIZE = Math.min(520, window.innerWidth * 0.92);
             t.classList.add('show');
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+        }
+        
+        function initLocalIfNoRoom() {
+            const rId = new URLSearchParams(window.location.search).get('room');
+            if (!rId && !state.roomId) {
+                document.getElementById('overlay').style.display = 'flex';
+                document.getElementById('startModal').style.display = 'block';
+            }
         }
 
         // ---- CONFETTI ----

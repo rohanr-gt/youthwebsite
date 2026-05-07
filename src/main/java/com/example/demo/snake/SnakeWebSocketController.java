@@ -76,7 +76,7 @@ public class SnakeWebSocketController {
         messagingTemplate.convertAndSend("/topic/snake/" + roomId + "/rollEvent", msg);
 
         // Apply to room state
-        room.applyRoll(msg.steps, msg.playerIndex);
+        room.applyRoll(msg.getSteps(), msg.getPlayerIndex());
 
         // Broadcast new state
         messagingTemplate.convertAndSend("/topic/snake/" + roomId, (Object) room.toStateMap());
